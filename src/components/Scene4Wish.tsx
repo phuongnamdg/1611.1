@@ -40,15 +40,15 @@ export default function Scene4Wish({ config, onWishSubmitted, onNext }: Props) {
       exit={{ opacity: 0 }}
       className="relative z-20 flex flex-col items-center justify-between min-h-screen px-4 py-8 max-w-lg mx-auto text-center"
     >
-      {/* Tiêu đề & Bầu trời đêm */}
+      {/* Tiêu đề tự sửa trong birthdayData.ts */}
       <div className="mt-1">
         <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-100 text-indigo-700 text-xs font-semibold mb-1 border border-indigo-200">
           <Moon className="w-3.5 h-3.5 text-indigo-500" />
           Điều Ước Tuổi Mới
           <Stars className="w-3.5 h-3.5 text-amber-500" />
         </span>
-        <h1 className="font-dancing text-3xl sm:text-4xl font-bold bg-gradient-to-r from-pink-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent py-1">
-          Gửi Điều Ước Đến Ngàn Vì Sao
+        <h1 className="text-2xl sm:text-3xl font-extrabold bg-gradient-to-r from-pink-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent py-1 tracking-tight">
+          {config.scene4Title}
         </h1>
         <p className="text-xs sm:text-sm text-stone-600 mt-0.5">
           Vũ trụ luôn lắng nghe những điều ước chân thành nhất của bạn
@@ -128,7 +128,7 @@ export default function Scene4Wish({ config, onWishSubmitted, onNext }: Props) {
               >
                 <div className="w-28 h-36 rounded-3xl bg-gradient-to-t from-amber-400 via-orange-300 to-yellow-100 shadow-[0_0_50px_#f59e0b] flex flex-col items-center justify-center p-2.5 text-center border border-amber-200">
                   <span className="text-3xl animate-pulse">🏮</span>
-                  <p className="font-dancing text-sm font-bold text-amber-950 mt-1 line-clamp-2 px-1">
+                  <p className="text-xs font-bold text-amber-950 mt-1 line-clamp-2 px-1">
                     &ldquo;{wishText}&rdquo;
                   </p>
                 </div>
@@ -136,7 +136,7 @@ export default function Scene4Wish({ config, onWishSubmitted, onNext }: Props) {
               </motion.div>
 
               <div className="mt-8 p-5 rounded-2xl bg-white/90 backdrop-blur-md border border-pink-200 shadow-md max-w-xs text-center">
-                <p className="font-dancing text-2xl font-bold text-pink-600 flex items-center justify-center gap-1.5">
+                <p className="text-lg font-bold text-pink-600 flex items-center justify-center gap-1.5">
                   <Sparkles className="w-5 h-5 text-amber-500" />
                   Điều ước đã được gửi đi!
                 </p>

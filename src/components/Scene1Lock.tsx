@@ -15,7 +15,7 @@ export default function Scene1Lock({ config, onUnlock }: Props) {
   const [pin, setPin] = useState<string>('');
   const [isError, setIsError] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
-  const maxDigits = 4; // e.g. 1611
+  const maxDigits = 4;
 
   const handleKeyPress = (num: string) => {
     soundManager.playKeypress();
@@ -81,11 +81,12 @@ export default function Scene1Lock({ config, onUnlock }: Props) {
           </motion.div>
         </div>
 
-        <h1 className="font-dancing text-3xl sm:text-4xl font-bold bg-gradient-to-r from-pink-600 via-rose-500 to-pink-500 bg-clip-text text-transparent">
-          Cổng Mở Quà Bí Mật
+        {/* Tiêu đề tự sửa trong birthdayData.ts */}
+        <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-pink-600 via-rose-500 to-pink-500 bg-clip-text text-transparent tracking-tight">
+          {config.scene1Title}
         </h1>
-        <p className="mt-1 text-base text-pink-700/80 flex items-center justify-center gap-1.5 font-medium">
-          Dành riêng cho <span className="font-dancing font-bold text-xl text-pink-600">{config.recipientName}</span>
+        <p className="mt-1.5 text-sm text-pink-700/80 flex items-center justify-center gap-1.5 font-semibold">
+          Dành riêng cho <span className="text-pink-600 font-bold">{config.recipientName}</span>
           <Heart className="w-4 h-4 text-pink-500 fill-pink-500 inline" />
         </p>
 
@@ -142,8 +143,7 @@ export default function Scene1Lock({ config, onUnlock }: Props) {
             </motion.button>
           ))}
 
-          {/* Nút gợi ý */}
-          <div className="h-12 flex items-center justify-center text-xs text-pink-400 font-bold font-dancing text-base">
+          <div className="h-12 flex items-center justify-center text-xs text-pink-400 font-bold">
             16.11 🌸
           </div>
 

@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
-import { Heart, RotateCcw, Sparkles, Camera, Check, Share2 } from 'lucide-react';
+import { Heart, RotateCcw, Sparkles, Check, Share2 } from 'lucide-react';
 import { soundManager } from '@/utils/sound';
 import { BirthdayConfig } from '@/types/birthday';
 
@@ -45,18 +45,18 @@ export default function Scene5Finale({ config, userWish, onRestart }: Props) {
       exit={{ opacity: 0 }}
       className="relative z-20 flex flex-col items-center justify-between min-h-screen px-4 py-8 max-w-lg mx-auto text-center"
     >
-      {/* Tiêu đề */}
+      {/* Tiêu đề tự sửa trong birthdayData.ts */}
       <div className="mt-1">
         <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-pink-100 text-pink-700 text-xs font-semibold mb-1 border border-pink-200">
           <Sparkles className="w-3.5 h-3.5 text-pink-500" />
           Kỷ Niệm Đẹp Đẽ
         </span>
-        <h1 className="font-dancing text-4xl sm:text-5xl font-bold bg-gradient-to-r from-pink-600 via-rose-500 to-pink-500 bg-clip-text text-transparent py-1">
-          Tuổi Mới Thật Rực Rỡ Nhé!
+        <h1 className="text-2xl sm:text-3xl font-extrabold bg-gradient-to-r from-pink-600 via-rose-500 to-pink-500 bg-clip-text text-transparent py-1 tracking-tight">
+          {config.scene5Title}
         </h1>
       </div>
 
-      {/* TẤM THẺ POLAROID KỶ NIỆM */}
+      {/* TẤM THẺ POLAROID KỶ NIỆM (THIỆP CUỐI TRANG) - Tự sửa trong birthdayData.ts */}
       <motion.div
         initial={{ rotate: -2, scale: 0.95 }}
         animate={{ rotate: 1, scale: 1 }}
@@ -71,7 +71,7 @@ export default function Scene5Finale({ config, userWish, onRestart }: Props) {
             🎂
           </div>
 
-          <h3 className="font-dancing text-2xl font-bold text-pink-700">
+          <h3 className="text-xl font-bold text-pink-700">
             {config.recipientName}
           </h3>
           <p className="text-xs font-semibold text-pink-500">
@@ -85,11 +85,11 @@ export default function Scene5Finale({ config, userWish, onRestart }: Props) {
           )}
         </div>
 
-        {/* Chữ viết tay dưới khung ảnh */}
-        <div className="w-full mt-3 text-stone-600 font-dancing text-lg italic flex items-center justify-between px-1">
-          <span>Forever Young & Happy</span>
-          <span className="text-xs text-pink-500 not-italic font-sans font-bold">
-            #SakuraBirthday
+        {/* Chữ viết tay dưới khung ảnh - Sửa tại finaleCardQuote & finaleCardHashtag */}
+        <div className="w-full mt-3 text-stone-600 text-xs italic flex items-center justify-between px-1 font-semibold">
+          <span>{config.finaleCardQuote}</span>
+          <span className="text-xs text-pink-500 not-italic font-bold">
+            {config.finaleCardHashtag}
           </span>
         </div>
       </motion.div>

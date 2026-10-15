@@ -130,7 +130,7 @@ export default function Scene2Cake({ config, onNext }: Props) {
       exit={{ opacity: 0 }}
       className="relative z-20 flex flex-col items-center justify-between min-h-screen px-4 py-8 max-w-lg mx-auto text-center"
     >
-      {/* Tiêu đề chúc mừng sinh nhật */}
+      {/* Tiêu đề tự sửa trong birthdayData.ts */}
       <motion.div
         initial={{ y: -30, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -142,10 +142,10 @@ export default function Scene2Cake({ config, onNext }: Props) {
           Happy Birthday {config.birthDateDisplay}
           <Sparkles className="w-3.5 h-3.5 text-pink-500" />
         </span>
-        <h1 className="font-dancing text-4xl sm:text-5xl font-bold bg-gradient-to-r from-pink-600 via-rose-500 to-pink-500 bg-clip-text text-transparent leading-tight py-1">
-          Chúc Mừng Sinh Nhật
+        <h1 className="text-3xl sm:text-4xl font-extrabold bg-gradient-to-r from-pink-600 via-rose-500 to-pink-500 bg-clip-text text-transparent leading-tight py-1 tracking-tight">
+          {config.scene2Title}
         </h1>
-        <h2 className="font-dancing text-2xl sm:text-3xl font-bold text-rose-600 mt-0.5 flex items-center justify-center gap-2">
+        <h2 className="text-2xl sm:text-3xl font-bold text-rose-600 mt-1 flex items-center justify-center gap-2">
           {config.recipientName}
           <Heart className="w-5 h-5 text-pink-500 fill-pink-500 inline animate-bounce" />
         </h2>
@@ -169,7 +169,6 @@ export default function Scene2Cake({ config, onNext }: Props) {
 
       {/* Khu vực Bánh Kem & Thổi Nến */}
       <div className="relative flex flex-col items-center my-1">
-        {/* Ngọn nến với ánh lửa bập bùng */}
         <div
           onClick={handleExtinguishCandle}
           className="relative cursor-pointer group flex flex-col items-center"
@@ -208,7 +207,6 @@ export default function Scene2Cake({ config, onNext }: Props) {
 
         {/* Bánh kem sinh nhật anh đào 2 tầng */}
         <div className="relative flex flex-col items-center mt-[-2px]">
-          {/* Tầng trên của bánh */}
           <div className="w-36 h-16 rounded-t-2xl bg-gradient-to-b from-pink-100 via-pink-200 to-rose-200 border-2 border-pink-300 shadow-md relative overflow-hidden flex items-center justify-center">
             <div className="absolute top-0 inset-x-0 h-4 bg-white/90 rounded-b-xl border-b border-pink-200" />
             <div className="flex gap-2 z-10">
@@ -218,19 +216,17 @@ export default function Scene2Cake({ config, onNext }: Props) {
             </div>
           </div>
 
-          {/* Tầng dưới của bánh */}
           <div className="w-52 h-20 rounded-t-3xl rounded-b-xl bg-gradient-to-b from-rose-200 via-pink-100 to-pink-200 border-2 border-pink-300 shadow-xl relative overflow-hidden flex items-center justify-center">
             <div className="absolute top-0 inset-x-0 h-5 bg-white/90 rounded-b-2xl border-b border-pink-200" />
             <div className="flex gap-4 z-10 mt-2">
               <span className="text-sm">🌸</span>
-              <span className="font-dancing text-sm font-bold text-pink-600 bg-white/80 px-2 py-0.5 rounded-full border border-pink-200">
+              <span className="text-xs font-bold text-pink-600 bg-white/80 px-2 py-0.5 rounded-full border border-pink-200">
                 16.11
               </span>
               <span className="text-sm">🌸</span>
             </div>
           </div>
 
-          {/* Đĩa đựng bánh kim loại vàng nhạt */}
           <div className="w-64 h-3.5 rounded-full bg-gradient-to-r from-amber-200 via-amber-100 to-amber-300 shadow-md border border-amber-300" />
         </div>
 
@@ -269,7 +265,7 @@ export default function Scene2Cake({ config, onNext }: Props) {
               animate={{ scale: 1, opacity: 1 }}
               className="text-center"
             >
-              <p className="font-dancing text-xl font-bold text-pink-600 flex items-center justify-center gap-1">
+              <p className="text-lg font-bold text-pink-600 flex items-center justify-center gap-1">
                 🎉 Nến đã tắt! Tuổi mới vạn điều như ý! 🎉
               </p>
             </motion.div>
