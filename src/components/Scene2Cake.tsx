@@ -14,7 +14,7 @@ interface Props {
 
 export default function Scene2Cake({ config, onNext }: Props) {
   // =========================================================================
-  // 📜 3 DÒNG CHỮ UỐN LƯỢN CHẠY MỜ DẦN ĐÈ LÊN NHAU (HOÀN TOÀN KHÔNG CÓ KHUNG)
+  // 📜 3 DÒNG CHỮ CHẠY MỜ DẦN ĐÈ LÊN NHAU (HOÀN TOÀN KHÔNG CÓ KHUNG)
   // =========================================================================
   const introSentences = [
     "Hôm nay là một ngày thật đặc biệt, ngày công chúa nhỏ ra đời...",
@@ -51,7 +51,7 @@ export default function Scene2Cake({ config, onNext }: Props) {
           clearInterval(timer);
           setTimeout(() => {
             startCakeDrop();
-          }, 1000);
+          }, 900);
           return prev;
         }
       });
@@ -60,52 +60,52 @@ export default function Scene2Cake({ config, onNext }: Props) {
     return () => clearInterval(timer);
   }, [stage]);
 
-  // 2. CHUỖI RƠI TỪNG TẦNG BÁNH KEM PASTRY NHÚN NHẢY ĐÀN HỒI (JELLY BOUNCE)
+  // 2. CHUỖI RƠI BÁNH KEM MỀM MẠI (SQUASH & STRETCH JELLY BOUNCE)
   const startCakeDrop = () => {
     setStage('CAKE_DROPPING');
 
-    // 0.2s: Đĩa sứ mềm mại xuất hiện
+    // 0.2s: Đĩa sứ chân cao xuất hiện mềm mại
     setTimeout(() => {
       setCakeStep(1);
       soundManager.playKeypress(350);
     }, 200);
 
-    // 0.8s: Tầng bánh dưới rơi xuống đàn hồi
+    // 0.7s: Tầng bánh dưới rơi xuống đàn hồi (nhún nảy)
     setTimeout(() => {
       setCakeStep(2);
       soundManager.playKeypress(440);
-    }, 800);
+    }, 700);
 
-    // 1.5s: Tầng bánh trên rơi xuống nhún nảy
+    // 1.3s: Tầng bánh trên rơi xuống nhún nảy
     setTimeout(() => {
       setCakeStep(3);
       soundManager.playKeypress(523);
-    }, 1500);
+    }, 1300);
 
-    // 2.1s: Kem xốp, dâu tây mọng nước & anh đào rơi xuống bồng bềnh
+    // 1.9s: Kem xốp, dâu tây mọng nước & anh đào rơi xuống bồng bềnh
     setTimeout(() => {
       setCakeStep(4);
       soundManager.playKeypress(659);
-    }, 2100);
+    }, 1900);
 
-    // 2.7s: Cây nến mềm mại cắm vào bánh
+    // 2.5s: Cây nến pastel cắm vào giữa bánh
     setTimeout(() => {
       setCakeStep(5);
       soundManager.playKeypress(784);
-    }, 2700);
+    }, 2500);
 
-    // 3.2s: Ngọn lửa bừng sáng + Nổ pháo hoa + Bật nhạc sinh nhật
+    // 3.0s: Ngọn nến lung linh bừng sáng + Nổ pháo hoa + Bật nhạc sinh nhật
     setTimeout(() => {
       setCakeStep(6);
       setStage('READY_TO_BLOW');
       fireConfetti();
       soundManager.playBirthdayMelody();
-    }, 3200);
+    }, 3000);
   };
 
   const fireConfetti = () => {
     confetti({
-      particleCount: 150,
+      particleCount: 160,
       spread: 75,
       origin: { y: 0.65 },
       colors: ['#FFB7C5', '#FF69B4', '#FFD700', '#FFF0F5', '#FF1493'],
@@ -203,7 +203,7 @@ export default function Scene2Cake({ config, onNext }: Props) {
       )}
 
       {/* ===================================================================== */}
-      {/* 🎂 GIAI ĐOẠN 2: BÁNH KEM PASTRY DỄ THƯƠNG & DÒNG CHÚC MỀM MẠI         */}
+      {/* 🎂 GIAI ĐOẠN 2: BÁNH KEM PASTRY DỄ THƯƠNG & NGỌN NẾN LUNG LINH        */}
       {/* ===================================================================== */}
       {stage !== 'TYPING' && (
         <motion.div
@@ -224,92 +224,93 @@ export default function Scene2Cake({ config, onNext }: Props) {
             </h1>
           </motion.div>
 
-          {/* 🍰 TÁC PHẨM BÁNH KEM PASTRY THIẾT KẾ CỰC KỲ DỄ THƯƠNG & MỀM MẠI (3D SVG) */}
+          {/* 🍰 BÁNH KEM MỚI HOÀN TOÀN: CHUẨN 3D VỚI CÁC KHỐI TRỤ HOÀN HẢO & NGỌN NẾN LUNG LINH */}
           <div className="relative flex flex-col items-center justify-center my-auto py-2">
             <svg
-              viewBox="0 0 340 310"
-              className="w-[300px] sm:w-[350px] h-auto overflow-visible select-none drop-shadow-[0_18px_40px_rgba(255,170,185,0.38)]"
+              viewBox="0 0 360 340"
+              className="w-[310px] sm:w-[360px] h-auto overflow-visible select-none drop-shadow-[0_20px_45px_rgba(255,170,185,0.4)]"
             >
               <defs>
-                {/* 1. Gradient Đĩa Sứ Ngọc Trai */}
-                <linearGradient id="plateGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                {/* Gradient đĩa sứ ngọc trai chân cao */}
+                <linearGradient id="plateNewGrad" x1="0%" y1="0%" x2="0%" y2="100%">
                   <stop offset="0%" stopColor="#ffffff" />
-                  <stop offset="50%" stopColor="#fff5f7" />
+                  <stop offset="60%" stopColor="#fff5f7" />
                   <stop offset="100%" stopColor="#fed7e2" />
                 </linearGradient>
 
-                {/* 2. Gradient Tầng Bánh 1 (Dưới - Dâu sữa chiffon) */}
-                <linearGradient id="tier1BodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#ffe4e8" />
-                  <stop offset="35%" stopColor="#fca5b9" />
-                  <stop offset="85%" stopColor="#f472b6" />
-                  <stop offset="100%" stopColor="#ec4899" />
+                {/* Gradient Tầng 1 (Dưới - Dâu sữa pastel đa chiều 3D) */}
+                <linearGradient id="tier1CylinderGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#f8a5c2" />
+                  <stop offset="25%" stopColor="#ffccd5" />
+                  <stop offset="70%" stopColor="#fca5b9" />
+                  <stop offset="100%" stopColor="#f472b6" />
                 </linearGradient>
 
-                <linearGradient id="tier1TopGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <linearGradient id="tier1TopNewGrad" x1="0%" y1="0%" x2="0%" y2="100%">
                   <stop offset="0%" stopColor="#ffffff" />
                   <stop offset="70%" stopColor="#fff0f3" />
-                  <stop offset="100%" stopColor="#fbcfe8" />
+                  <stop offset="100%" stopColor="#ffd6e0" />
                 </linearGradient>
 
-                {/* 3. Gradient Tầng Bánh 2 (Trên - Vani hồng phấn) */}
-                <linearGradient id="tier2BodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#fff1f3" />
-                  <stop offset="40%" stopColor="#fbcfe8" />
-                  <stop offset="85%" stopColor="#f472b6" />
+                {/* Gradient Tầng 2 (Trên - Vani hồng phấn) */}
+                <linearGradient id="tier2CylinderGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#fca5b9" />
+                  <stop offset="25%" stopColor="#fbcfe8" />
+                  <stop offset="70%" stopColor="#fda4af" />
                   <stop offset="100%" stopColor="#fb7185" />
                 </linearGradient>
 
-                <linearGradient id="tier2TopGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <linearGradient id="tier2TopNewGrad" x1="0%" y1="0%" x2="0%" y2="100%">
                   <stop offset="0%" stopColor="#ffffff" />
-                  <stop offset="80%" stopColor="#fff5f7" />
-                  <stop offset="100%" stopColor="#ffe4e8" />
+                  <stop offset="75%" stopColor="#fff5f7" />
+                  <stop offset="100%" stopColor="#fed7e2" />
                 </linearGradient>
 
-                {/* 4. Lớp Kem Vani Sóng Lượn Tan Chảy */}
-                <linearGradient id="creamDripGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                  <stop offset="0%" stopColor="#ffffff" />
-                  <stop offset="75%" stopColor="#ffffff" />
-                  <stop offset="100%" stopColor="#ffe4e8" />
-                </linearGradient>
-
-                {/* 5. Cây Nến Xoắn Sọc Dễ Thương */}
-                <linearGradient id="candleBodyGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                {/* Gradient Nến kẻ sọc hồng trắng */}
+                <linearGradient id="candleNewGrad" x1="0%" y1="0%" x2="100%" y2="0%">
                   <stop offset="0%" stopColor="#ffb3c6" />
                   <stop offset="35%" stopColor="#ffffff" />
                   <stop offset="70%" stopColor="#ffccd5" />
                   <stop offset="100%" stopColor="#ff8fab" />
                 </linearGradient>
 
-                {/* 6. Quả Dâu Tây 3D Mọng Nước */}
-                <radialGradient id="strawberryGrad" cx="35%" cy="30%" r="70%">
+                {/* Gradient Dâu tây 3D mọng nước */}
+                <radialGradient id="strawberryNewGrad" cx="35%" cy="30%" r="70%">
                   <stop offset="0%" stopColor="#ff6b8b" />
                   <stop offset="40%" stopColor="#e63946" />
                   <stop offset="90%" stopColor="#9d0208" />
                   <stop offset="100%" stopColor="#6a040f" />
                 </radialGradient>
 
-                {/* 7. Quả Cherry Anh Đào Đỏ Bóng */}
-                <radialGradient id="cherryGrad" cx="30%" cy="30%" r="70%">
+                {/* Gradient Cherry đỏ bóng */}
+                <radialGradient id="cherryNewGrad" cx="30%" cy="30%" r="70%">
                   <stop offset="0%" stopColor="#ff4d6d" />
                   <stop offset="45%" stopColor="#d90429" />
                   <stop offset="95%" stopColor="#590d22" />
                 </radialGradient>
 
-                {/* 8. Vầng Sáng Ấm Áp Của Ngọn Lửa */}
-                <radialGradient id="flameAura" cx="50%" cy="50%" r="50%">
-                  <stop offset="0%" stopColor="#ffbe0b" stopOpacity="0.9" />
-                  <stop offset="45%" stopColor="#fb5607" stopOpacity="0.55" />
+                {/* Vầng hào quang lung linh của ngọn nến */}
+                <radialGradient id="flameLuminousAura" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stopColor="#ffeaa7" stopOpacity="0.95" />
+                  <stop offset="30%" stopColor="#ffbe0b" stopOpacity="0.7" />
+                  <stop offset="65%" stopColor="#fb5607" stopOpacity="0.35" />
                   <stop offset="100%" stopColor="#ff006e" stopOpacity="0" />
+                </radialGradient>
+
+                {/* Điểm sáng lấp lánh (Sparkle Star) */}
+                <radialGradient id="sparkleCore" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stopColor="#ffffff" />
+                  <stop offset="50%" stopColor="#ffd166" />
+                  <stop offset="100%" stopColor="#ffb703" stopOpacity="0" />
                 </radialGradient>
               </defs>
 
-              {/* BÓNG ĐỔ TRÊN BÀN */}
-              <ellipse cx="170" cy="285" rx="125" ry="12" fill="rgba(244, 114, 182, 0.22)" />
+              {/* BÓNG ĐỔ MỀM DƯỚI BÀN */}
+              <ellipse cx="180" cy="305" rx="130" ry="12" fill="rgba(244, 114, 182, 0.22)" filter="blur(6px)" />
 
-              {/* ----------------------------------------------------------- */}
-              {/* BƯỚC 1: ĐĨA SỨ CHÂN CAO NGỌC TRAI TINH TẾ                   */}
-              {/* ----------------------------------------------------------- */}
+              {/* ============================================================= */}
+              {/* BƯỚC 1: ĐĨA SỨ CHÂN CAO HOÀNG GIA PASTEL                       */}
+              {/* ============================================================= */}
               {cakeStep >= 1 && (
                 <motion.g
                   initial={{ scale: 0.6, opacity: 0 }}
@@ -317,40 +318,25 @@ export default function Scene2Cake({ config, onNext }: Props) {
                   transition={{ duration: 0.5, ease: 'easeOut' }}
                 >
                   {/* Chân đế đĩa sứ */}
+                  <ellipse cx="180" cy="296" rx="55" ry="9" fill="#fbcfe8" stroke="#f472b6" strokeWidth="1" />
                   <path
-                    d="M 135 252 Q 170 274 205 252 L 195 276 Q 170 282 145 276 Z"
-                    fill="#fed7e2"
+                    d="M 152 272 C 160 286 162 292 145 296 L 215 296 C 198 292 200 286 208 272 Z"
+                    fill="url(#plateNewGrad)"
                     stroke="#fbcfe8"
-                    strokeWidth="1.2"
+                    strokeWidth="1"
                   />
                   {/* Mặt đĩa lớn */}
-                  <ellipse
-                    cx="170"
-                    cy="252"
-                    rx="138"
-                    ry="20"
-                    fill="url(#plateGrad)"
-                    stroke="#fbcfe8"
-                    strokeWidth="1.5"
-                  />
-                  {/* Đường viền ngọc trai phản chiếu bên trong */}
-                  <ellipse
-                    cx="170"
-                    cy="251"
-                    rx="124"
-                    ry="15"
-                    fill="none"
-                    stroke="rgba(255, 182, 193, 0.5)"
-                    strokeWidth="1.2"
-                  />
+                  <ellipse cx="180" cy="272" rx="145" ry="22" fill="url(#plateNewGrad)" stroke="#f472b6" strokeWidth="1.5" />
+                  {/* Viền nổi phản chiếu trong đĩa */}
+                  <ellipse cx="180" cy="271" rx="130" ry="17" fill="none" stroke="rgba(255, 182, 193, 0.6)" strokeWidth="1.2" />
                   {/* Bóng bánh kem lên đĩa */}
-                  <ellipse cx="170" cy="242" rx="100" ry="11" fill="rgba(190, 80, 110, 0.16)" />
+                  <ellipse cx="180" cy="262" rx="105" ry="12" fill="rgba(190, 80, 110, 0.16)" />
                 </motion.g>
               )}
 
-              {/* ----------------------------------------------------------- */}
-              {/* BƯỚC 2: TẦNG BÁNH DƯỚI RƠI NHÚN NHẢY ĐÀN HỒI (JELLY BOUNCE)  */}
-              {/* ----------------------------------------------------------- */}
+              {/* ============================================================= */}
+              {/* BƯỚC 2: TẦNG BÁNH DƯỚI RƠI NHÚN NẢY ĐÀN HỒI (JELLY BOUNCE)    */}
+              {/* ============================================================= */}
               {cakeStep >= 2 && (
                 <motion.g
                   initial={{ y: -340, opacity: 0, scaleY: 1.4, scaleX: 0.72 }}
@@ -364,71 +350,61 @@ export default function Scene2Cake({ config, onNext }: Props) {
                     duration: 0.85,
                     ease: [0.34, 1.56, 0.64, 1],
                   }}
-                  style={{ originX: '170px', originY: '245px' }}
+                  style={{ originX: '180px', originY: '265px' }}
                 >
-                  {/* Thân bánh hình trụ tròn 3D */}
-                  <path
-                    d="M 75 182
-                       L 75 230
-                       A 95 19 0 0 0 265 230
-                       L 265 182
-                       A 95 19 0 0 1 75 182 Z"
-                    fill="url(#tier1BodyGrad)"
-                  />
+                  {/* Đáy cong của khối trụ tầng 1 */}
+                  <ellipse cx="180" cy="250" rx="100" ry="20" fill="url(#tier1CylinderGrad)" />
 
-                  {/* Mặt trên tầng 1 */}
-                  <ellipse cx="170" cy="182" rx="95" ry="19" fill="url(#tier1TopGrad)" />
+                  {/* Thân thẳng của khối trụ tầng 1 */}
+                  <rect x="80" y="195" width="200" height="55" fill="url(#tier1CylinderGrad)" />
+
+                  {/* Mặt trên cong của tầng 1 */}
+                  <ellipse cx="180" cy="195" rx="100" ry="20" fill="url(#tier1TopNewGrad)" />
 
                   {/* Lớp kem tươi vani chảy viền sóng tự nhiên quanh tầng 1 */}
                   <path
-                    d="M 75 182
-                       C 75 192, 84 206, 92 206
-                       C 98 206, 102 189, 108 189
-                       C 114 189, 118 214, 126 214
-                       C 134 214, 138 190, 146 190
-                       C 154 190, 160 216, 170 216
-                       C 180 216, 186 190, 194 190
-                       C 202 190, 206 214, 214 214
-                       C 222 214, 226 189, 232 189
-                       C 238 189, 242 206, 248 206
-                       C 256 206, 265 192, 265 182
-                       A 95 19 0 0 1 75 182 Z"
-                    fill="url(#creamDripGrad)"
+                    d="M 80 195
+                       C 80 205 90 222 98 222
+                       C 106 222 110 202 116 202
+                       C 122 202 126 228 135 228
+                       C 144 228 148 204 156 204
+                       C 164 204 170 230 180 230
+                       C 190 230 196 204 204 204
+                       C 212 204 216 228 225 228
+                       C 234 228 238 202 244 202
+                       C 250 202 254 222 262 222
+                       C 270 222 280 205 280 195
+                       A 100 20 0 0 1 80 195 Z"
+                    fill="#ffffff"
                     filter="drop-shadow(0 3px 4px rgba(219, 112, 147, 0.28))"
                   />
 
-                  {/* Chuỗi hạt kem tròn bo chân bánh (Pearly piping) */}
+                  {/* Chuỗi hạt kem ngọc trai bo quanh chân tầng 1 */}
                   {[
-                    [84, 222], [98, 228], [114, 233], [132, 236], [151, 238],
-                    [170, 238.5], [189, 238], [208, 236], [226, 233], [242, 228], [256, 222]
+                    [86, 255], [102, 261], [125, 266], [152, 269], [180, 270],
+                    [208, 269], [235, 266], [258, 261], [274, 255]
                   ].map(([x, y], idx) => (
-                    <circle
-                      key={idx}
-                      cx={x}
-                      cy={y}
-                      r="4.2"
-                      fill="#ffffff"
-                      stroke="#fbcfe8"
-                      strokeWidth="0.8"
-                      filter="drop-shadow(0 1px 2px rgba(255, 182, 193, 0.5))"
-                    />
+                    <g key={idx}>
+                      <circle cx={x} cy={y} r="4.6" fill="#ffffff" stroke="#fbcfe8" strokeWidth="0.8" />
+                      <circle cx={x - 1.2} cy={y - 1.2} r="1.3" fill="#ffffff" />
+                    </g>
                   ))}
 
-                  {/* Điểm xuyết hoa đường dâu pastel xinh xắn trên thân bánh */}
-                  <g transform="translate(140, 206)">
-                    <circle cx="0" cy="0" r="3" fill="#ffffff" />
+                  {/* Điểm hoa đường trang trí tầng 1 */}
+                  <g transform="translate(145, 218)">
+                    <circle cx="0" cy="0" r="3.2" fill="#ffffff" />
                     <circle cx="0" cy="0" r="1.5" fill="#ffd166" />
                   </g>
-                  <g transform="translate(200, 206)">
-                    <circle cx="0" cy="0" r="3" fill="#ffffff" />
+                  <g transform="translate(215, 218)">
+                    <circle cx="0" cy="0" r="3.2" fill="#ffffff" />
                     <circle cx="0" cy="0" r="1.5" fill="#ffd166" />
                   </g>
                 </motion.g>
               )}
 
-              {/* ----------------------------------------------------------- */}
-              {/* BƯỚC 3: TẦNG BÁNH TRÊN RƠI XUỐNG ĐÀN HỒI                      */}
-              {/* ----------------------------------------------------------- */}
+              {/* ============================================================= */}
+              {/* BƯỚC 3: TẦNG BÁNH TRÊN RƠI XUỐNG ĐÀN HỒI (JELLY BOUNCE)       */}
+              {/* ============================================================= */}
               {cakeStep >= 3 && (
                 <motion.g
                   initial={{ y: -300, opacity: 0, scaleY: 1.35, scaleX: 0.75 }}
@@ -442,58 +418,46 @@ export default function Scene2Cake({ config, onNext }: Props) {
                     duration: 0.75,
                     ease: [0.34, 1.56, 0.64, 1],
                   }}
-                  style={{ originX: '170px', originY: '180px' }}
+                  style={{ originX: '180px', originY: '190px' }}
                 >
-                  {/* Thân bánh tầng 2 */}
-                  <path
-                    d="M 105 125
-                       L 105 170
-                       A 65 14 0 0 0 235 170
-                       L 235 125
-                       A 65 14 0 0 1 105 125 Z"
-                    fill="url(#tier2BodyGrad)"
-                  />
+                  {/* Đáy cong của tầng 2 */}
+                  <ellipse cx="180" cy="185" rx="70" ry="15" fill="url(#tier2CylinderGrad)" />
 
-                  {/* Mặt trên tầng 2 */}
-                  <ellipse cx="170" cy="125" rx="65" ry="14" fill="url(#tier2TopGrad)" />
+                  {/* Thân thẳng của tầng 2 */}
+                  <rect x="110" y="135" width="140" height="50" fill="url(#tier2CylinderGrad)" />
 
-                  {/* Lớp kem vani sóng lượn tầng 2 */}
+                  {/* Mặt trên cong của tầng 2 */}
+                  <ellipse cx="180" cy="135" rx="70" ry="15" fill="url(#tier2TopNewGrad)" />
+
+                  {/* Lớp kem vani sóng lượn chảy tầng 2 */}
                   <path
-                    d="M 105 125
-                       C 105 133, 112 147, 118 147
-                       C 124 147, 128 131, 134 131
-                       C 140 131, 145 152, 153 152
-                       C 161 152, 164 132, 170 132
-                       C 176 132, 180 153, 188 153
-                       C 195 153, 199 131, 206 131
-                       C 212 131, 217 147, 223 147
-                       C 229 147, 235 133, 235 125
-                       A 65 14 0 0 1 105 125 Z"
-                    fill="url(#creamDripGrad)"
+                    d="M 110 135
+                       C 110 144 118 160 125 160
+                       C 132 160 136 142 142 142
+                       C 148 142 153 166 162 166
+                       C 171 166 174 144 180 144
+                       C 186 144 190 166 198 166
+                       C 207 166 211 142 218 142
+                       C 224 142 228 160 235 160
+                       C 242 160 250 144 250 135
+                       A 70 15 0 0 1 110 135 Z"
+                    fill="#ffffff"
                     filter="drop-shadow(0 3px 4px rgba(219, 112, 147, 0.3))"
                   />
 
                   {/* Hạt kem bo viền chân tầng 2 */}
                   {[
-                    [112, 165], [124, 168.5], [138, 171], [154, 172.5],
-                    [170, 173], [186, 172.5], [202, 171], [216, 168.5], [228, 165]
+                    [114, 189], [128, 194], [152, 198], [180, 200],
+                    [208, 198], [232, 194], [246, 189]
                   ].map(([x, y], idx) => (
-                    <circle
-                      key={idx}
-                      cx={x}
-                      cy={y}
-                      r="3.5"
-                      fill="#ffffff"
-                      stroke="#fbcfe8"
-                      strokeWidth="0.7"
-                    />
+                    <circle key={idx} cx={x} cy={y} r="3.6" fill="#ffffff" stroke="#fbcfe8" strokeWidth="0.7" />
                   ))}
                 </motion.g>
               )}
 
-              {/* ----------------------------------------------------------- */}
-              {/* BƯỚC 4: KEM TƯƠI, DÂU TÂY MỌNG NƯỚC & ANH ĐÀO BỒNG BỀNH    */}
-              {/* ----------------------------------------------------------- */}
+              {/* ============================================================= */}
+              {/* BƯỚC 4: KEM TƯƠI, DÂU TÂY MỌNG NƯỚC & ANH ĐÀO BỒNG BỀNH       */}
+              {/* ============================================================= */}
               {cakeStep >= 4 && (
                 <motion.g
                   initial={{ y: -260, opacity: 0, scale: 0.6 }}
@@ -506,85 +470,69 @@ export default function Scene2Cake({ config, onNext }: Props) {
                     duration: 0.7,
                     ease: [0.34, 1.56, 0.64, 1],
                   }}
-                  style={{ originX: '170px', originY: '125px' }}
+                  style={{ originX: '180px', originY: '135px' }}
                 >
-                  {/* Bông kem xoắn meringue trên đỉnh */}
+                  {/* 4 Bông kem xoắn meringue trên đỉnh */}
                   {[
-                    [120, 120], [142, 126], [198, 126], [220, 120]
+                    [128, 130], [152, 136], [208, 136], [232, 130]
                   ].map(([cx, cy], idx) => (
                     <g key={idx} transform={`translate(${cx}, ${cy})`}>
-                      <ellipse cx="0" cy="0" rx="8" ry="6" fill="#ffffff" filter="drop-shadow(0 2px 3px rgba(255, 182, 193, 0.4))" />
-                      <path d="M -5 0 Q 0 -9 5 0 Q 0 -5 -5 0 Z" fill="#fff0f3" />
-                      <circle cx="0" cy="-6" r="1.5" fill="#ffffff" />
+                      <ellipse cx="0" cy="0" rx="9" ry="6.5" fill="#ffffff" filter="drop-shadow(0 2px 3px rgba(255, 182, 193, 0.4))" />
+                      <path d="M -6 0 Q 0 -10 6 0 Q 0 -5 -6 0 Z" fill="#fff0f3" />
+                      <circle cx="0" cy="-7" r="1.8" fill="#ffffff" />
                     </g>
                   ))}
 
                   {/* 🍓 QUẢ DÂU TÂY 1 (TRÁI - TO MỌNG NƯỚC) */}
-                  <g transform="translate(133, 92) rotate(-8)">
-                    {/* Thân dâu */}
+                  <g transform="translate(142, 100) rotate(-10)">
                     <path
-                      d="M 16 0 C 29 0 33 16 27 28 C 22 36 16 42 16 42 C 16 42 10 36 5 28 C -1 16 3 0 16 0 Z"
-                      fill="url(#strawberryGrad)"
+                      d="M 16 0 C 30 0 34 18 28 30 C 23 39 16 45 16 45 C 16 45 9 39 4 30 C -2 18 2 0 16 0 Z"
+                      fill="url(#strawberryNewGrad)"
                       filter="drop-shadow(0 4px 6px rgba(180, 20, 50, 0.45))"
                     />
                     {/* Hạt dâu tây lấp lánh */}
-                    <ellipse cx="10" cy="14" rx="0.9" ry="1.4" fill="#ffea79" />
-                    <ellipse cx="20" cy="14" rx="0.9" ry="1.4" fill="#ffea79" />
-                    <ellipse cx="15" cy="22" rx="0.9" ry="1.4" fill="#ffea79" />
-                    <ellipse cx="9" cy="27" rx="0.9" ry="1.4" fill="#ffea79" />
-                    <ellipse cx="21" cy="27" rx="0.9" ry="1.4" fill="#ffea79" />
-                    {/* Vết bóng sáng trên vỏ dâu căng mọng */}
-                    <path d="M 7 12 Q 9 6 15 4" stroke="rgba(255,255,255,0.75)" strokeWidth="1.8" strokeLinecap="round" fill="none" />
+                    <ellipse cx="10" cy="15" rx="1" ry="1.5" fill="#ffea79" />
+                    <ellipse cx="20" cy="15" rx="1" ry="1.5" fill="#ffea79" />
+                    <ellipse cx="15" cy="24" rx="1" ry="1.5" fill="#ffea79" />
+                    <ellipse cx="9" cy="29" rx="1" ry="1.5" fill="#ffea79" />
+                    <ellipse cx="21" cy="29" rx="1" ry="1.5" fill="#ffea79" />
+                    {/* Độ bóng vỏ dâu căng mọng */}
+                    <path d="M 8 13 Q 10 7 16 5" stroke="rgba(255,255,255,0.85)" strokeWidth="2" strokeLinecap="round" fill="none" />
                     {/* Cuống lá xanh */}
                     <path d="M 16 2 L 9 -3 Q 16 0 23 -3 Z" fill="#2d6a4f" />
                     <circle cx="16" cy="1" r="2.2" fill="#52b788" />
                   </g>
 
                   {/* 🍓 QUẢ DÂU TÂY 2 (PHẢI - XINH XẮN) */}
-                  <g transform="translate(186, 96) rotate(12) scale(0.9)">
+                  <g transform="translate(202, 104) rotate(12) scale(0.9)">
                     <path
-                      d="M 16 0 C 29 0 33 16 27 28 C 22 36 16 42 16 42 C 16 42 10 36 5 28 C -1 16 3 0 16 0 Z"
-                      fill="url(#strawberryGrad)"
+                      d="M 16 0 C 30 0 34 18 28 30 C 23 39 16 45 16 45 C 16 45 9 39 4 30 C -2 18 2 0 16 0 Z"
+                      fill="url(#strawberryNewGrad)"
                       filter="drop-shadow(0 4px 6px rgba(180, 20, 50, 0.4))"
                     />
-                    <ellipse cx="10" cy="14" rx="0.9" ry="1.4" fill="#ffea79" />
-                    <ellipse cx="20" cy="14" rx="0.9" ry="1.4" fill="#ffea79" />
-                    <ellipse cx="15" cy="22" rx="0.9" ry="1.4" fill="#ffea79" />
-                    <ellipse cx="9" cy="27" rx="0.9" ry="1.4" fill="#ffea79" />
-                    <ellipse cx="21" cy="27" rx="0.9" ry="1.4" fill="#ffea79" />
-                    <path d="M 7 12 Q 9 6 15 4" stroke="rgba(255,255,255,0.75)" strokeWidth="1.8" strokeLinecap="round" fill="none" />
+                    <ellipse cx="10" cy="15" rx="1" ry="1.5" fill="#ffea79" />
+                    <ellipse cx="20" cy="15" rx="1" ry="1.5" fill="#ffea79" />
+                    <ellipse cx="15" cy="24" rx="1" ry="1.5" fill="#ffea79" />
+                    <ellipse cx="9" cy="29" rx="1" ry="1.5" fill="#ffea79" />
+                    <ellipse cx="21" cy="29" rx="1" ry="1.5" fill="#ffea79" />
+                    <path d="M 8 13 Q 10 7 16 5" stroke="rgba(255,255,255,0.85)" strokeWidth="2" strokeLinecap="round" fill="none" />
                     <path d="M 16 2 L 9 -3 Q 16 0 23 -3 Z" fill="#2d6a4f" />
                     <circle cx="16" cy="1" r="2.2" fill="#52b788" />
                   </g>
 
                   {/* 🍒 QUẢ ANH ĐÀO ĐỎ NGỌT NGÀO CÓ CUỐNG UỐN LƯỢN */}
-                  <g transform="translate(170, 94)">
-                    <ellipse
-                      cx="0"
-                      cy="12"
-                      rx="8"
-                      ry="7.5"
-                      fill="url(#cherryGrad)"
-                      filter="drop-shadow(0 3px 5px rgba(150, 0, 30, 0.45))"
-                    />
-                    <ellipse cx="-2.5" cy="9.5" rx="2" ry="1.2" fill="rgba(255,255,255,0.75)" />
-                    {/* Cuống cong mềm mại */}
-                    <path
-                      d="M 0 6 C 5 -4 14 -8 18 -16"
-                      fill="none"
-                      stroke="#40916c"
-                      strokeWidth="1.6"
-                      strokeLinecap="round"
-                    />
-                    {/* Chiếc lá nhỏ ở cuống */}
-                    <path d="M 15 -12 Q 22 -16 20 -9 Z" fill="#74c69d" />
+                  <g transform="translate(172, 102)">
+                    <ellipse cx="0" cy="14" rx="8.5" ry="8" fill="url(#cherryNewGrad)" filter="drop-shadow(0 3px 5px rgba(150, 0, 30, 0.45))" />
+                    <ellipse cx="-2.5" cy="11.5" rx="2" ry="1.2" fill="rgba(255,255,255,0.85)" />
+                    <path d="M 0 7 C 6 -3 15 -7 20 -16" fill="none" stroke="#40916c" strokeWidth="1.8" strokeLinecap="round" />
+                    <path d="M 17 -12 Q 24 -16 22 -9 Z" fill="#74c69d" />
                   </g>
                 </motion.g>
               )}
 
-              {/* ----------------------------------------------------------- */}
-              {/* BƯỚC 5: CÂY NẾN SLENDER CẮM VÀO GIỮA BÁNH                    */}
-              {/* ----------------------------------------------------------- */}
+              {/* ============================================================= */}
+              {/* BƯỚC 5: CÂY NẾN SLENDER & NGỌN NẾN LUNG LINH HUY HOÀNG         */}
+              {/* ============================================================= */}
               {cakeStep >= 5 && (
                 <motion.g
                   initial={{ y: -220, opacity: 0, scaleY: 1.4 }}
@@ -601,62 +549,198 @@ export default function Scene2Cake({ config, onNext }: Props) {
                   className="cursor-pointer"
                 >
                   {/* Bấc nến */}
-                  <line x1="170" y1="62" x2="170" y2="52" stroke="#44403c" strokeWidth="2" strokeLinecap="round" />
+                  <line x1="180" y1="68" x2="180" y2="58" stroke="#333333" strokeWidth="2" strokeLinecap="round" />
 
                   {/* Thân nến sọc pastel hồng trắng */}
                   <rect
-                    x="165.5"
-                    y="62"
+                    x="175.5"
+                    y="68"
                     width="9"
-                    height="46"
+                    height="50"
                     rx="4.5"
-                    fill="url(#candleBodyGrad)"
+                    fill="url(#candleNewGrad)"
                     stroke="#f472b6"
                     strokeWidth="0.8"
                     filter="drop-shadow(0 2px 4px rgba(255, 150, 170, 0.4))"
                   />
                   {/* Sọc trang trí xoắn */}
-                  <line x1="166" y1="72" x2="174" y2="76" stroke="#ffffff" strokeWidth="2.2" opacity="0.85" />
-                  <line x1="166" y1="84" x2="174" y2="88" stroke="#ffffff" strokeWidth="2.2" opacity="0.85" />
-                  <line x1="166" y1="96" x2="174" y2="100" stroke="#ffffff" strokeWidth="2.2" opacity="0.85" />
+                  <line x1="176" y1="78" x2="184" y2="82" stroke="#ffffff" strokeWidth="2.2" opacity="0.85" />
+                  <line x1="176" y1="90" x2="184" y2="94" stroke="#ffffff" strokeWidth="2.2" opacity="0.85" />
+                  <line x1="176" y1="102" x2="184" y2="106" stroke="#ffffff" strokeWidth="2.2" opacity="0.85" />
 
-                  {/* ------------------------------------------------------- */}
-                  {/* BƯỚC 6: NGỌN LỬA VÀNG ẤM ÁP BỪNG SÁNG LUNG LINH         */}
-                  {/* ------------------------------------------------------- */}
+                  {/* Giọt nến tan chảy mềm mại */}
+                  <circle cx="175" cy="82" r="1.5" fill="#ffb3c6" />
+
+                  {/* ========================================================= */}
+                  {/* BƯỚC 6: NGỌN NẾN LUNG LINH & CÁC NGÔI SAO TỎA SÁNG KỲ DIỆU */}
+                  {/* ========================================================= */}
                   {cakeStep >= 6 && !isCandleBlown && (
-                    <motion.g
-                      animate={{
-                        scale: [1, 1.14, 0.96, 1.1, 1],
-                        rotate: [-2, 3, -1, 2, -2],
-                      }}
-                      transition={{
-                        repeat: Infinity,
-                        duration: 1.4,
-                        ease: 'easeInOut',
-                      }}
-                      style={{ originX: '170px', originY: '52px' }}
-                    >
-                      {/* Vầng sáng vàng cam bao quanh */}
-                      <circle cx="170" cy="38" r="32" fill="url(#flameAura)" />
-
-                      {/* Ngọn lửa vàng ngoài */}
-                      <path
-                        d="M 170 20 C 177 30 181 38 175 46 C 168 52 159 48 162 40 C 165 32 161 28 170 20 Z"
-                        fill="#ffb703"
+                    <g>
+                      {/* 🌟 1. VẦNG HÀO QUANG TOẢ SÁNG LUNG LINH (PULSING AURA) */}
+                      <motion.circle
+                        cx="180"
+                        cy="42"
+                        r="48"
+                        fill="url(#flameLuminousAura)"
+                        animate={{
+                          scale: [1, 1.24, 0.96, 1.18, 1],
+                          opacity: [0.85, 1, 0.75, 1, 0.85],
+                        }}
+                        transition={{
+                          repeat: Infinity,
+                          duration: 1.6,
+                          ease: 'easeInOut',
+                        }}
+                        style={{ originX: '180px', originY: '42px' }}
                       />
 
-                      {/* Lõi lửa trắng sáng bên trong */}
-                      <path
-                        d="M 170 28 C 174 34 176 40 172 44 C 168 47 165 44 167 39 C 169 35 167 32 170 28 Z"
-                        fill="#ffffff"
-                      />
-                    </motion.g>
+                      {/* 🌟 2. TIA SÁNG CHỮ THẬP LẤP LÁNH (CROSS LIGHT FLARE) */}
+                      <motion.g
+                        animate={{
+                          rotate: [0, 90, 180, 270, 360],
+                          scale: [0.9, 1.15, 0.9],
+                          opacity: [0.6, 0.9, 0.6],
+                        }}
+                        transition={{
+                          repeat: Infinity,
+                          duration: 6,
+                          ease: 'linear',
+                        }}
+                        style={{ originX: '180px', originY: '42px' }}
+                      >
+                        <line x1="150" y1="42" x2="210" y2="42" stroke="rgba(255, 235, 160, 0.5)" strokeWidth="1.2" strokeLinecap="round" />
+                        <line x1="180" y1="12" x2="180" y2="72" stroke="rgba(255, 235, 160, 0.5)" strokeWidth="1.2" strokeLinecap="round" />
+                      </motion.g>
+
+                      {/* 🌟 3. NGỌN LỬA DẬP DỜN SỐNG ĐỘNG (DANCING FLAME) */}
+                      <motion.g
+                        animate={{
+                          scale: [1, 1.16, 0.94, 1.12, 1],
+                          rotate: [-3, 4, -2, 3, -3],
+                          y: [0, -2, 1, -1, 0],
+                        }}
+                        transition={{
+                          repeat: Infinity,
+                          duration: 1.3,
+                          ease: 'easeInOut',
+                        }}
+                        style={{ originX: '180px', originY: '58px' }}
+                      >
+                        {/* Ngọn lửa vàng ngoài */}
+                        <path
+                          d="M 180 20 C 188 32 193 42 186 50 C 178 57 168 52 171 44 C 174 35 170 30 180 20 Z"
+                          fill="#ffb703"
+                          filter="drop-shadow(0 0 6px #ffbe0b)"
+                        />
+
+                        {/* Lõi lửa trắng sáng bên trong */}
+                        <path
+                          d="M 180 28 C 185 35 188 42 183 47 C 178 50 174 47 176 42 C 178 38 176 34 180 28 Z"
+                          fill="#ffffff"
+                        />
+
+                        {/* Đốm lửa xanh lam chân nến chân thực */}
+                        <ellipse cx="180" cy="53" rx="3" ry="1.6" fill="#3a86ff" opacity="0.75" />
+                      </motion.g>
+
+                      {/* 🌟 4. CÁC NGÔI SAO LẤP LÁNH BAY LƯỢN QUANH NẾN (LUNG LINH) */}
+                      {/* Ngôi sao 1: Phía trên bên phải */}
+                      <motion.g
+                        transform="translate(204, 24)"
+                        animate={{
+                          scale: [0, 1.3, 0],
+                          opacity: [0, 1, 0],
+                          rotate: [0, 90, 180],
+                        }}
+                        transition={{
+                          repeat: Infinity,
+                          duration: 1.8,
+                          ease: 'easeInOut',
+                          delay: 0.1,
+                        }}
+                      >
+                        <path d="M 0 -7 Q 1 -1 7 0 Q 1 1 0 7 Q -1 1 -7 0 Q -1 -1 0 -7 Z" fill="#ffffff" />
+                        <circle cx="0" cy="0" r="1.5" fill="#ffd166" />
+                      </motion.g>
+
+                      {/* Ngôi sao 2: Phía trên bên trái */}
+                      <motion.g
+                        transform="translate(156, 28)"
+                        animate={{
+                          scale: [0, 1.2, 0],
+                          opacity: [0, 1, 0],
+                          rotate: [0, -90, -180],
+                        }}
+                        transition={{
+                          repeat: Infinity,
+                          duration: 2.1,
+                          ease: 'easeInOut',
+                          delay: 0.7,
+                        }}
+                      >
+                        <path d="M 0 -6 Q 1 -1 6 0 Q 1 1 0 6 Q -1 1 -6 0 Q -1 -1 0 -6 Z" fill="#ffffff" />
+                        <circle cx="0" cy="0" r="1.2" fill="#ffd166" />
+                      </motion.g>
+
+                      {/* Ngôi sao 3: Đỉnh cao nhất */}
+                      <motion.g
+                        transform="translate(180, 10)"
+                        animate={{
+                          scale: [0, 1.4, 0],
+                          opacity: [0, 1, 0],
+                          rotate: [0, 180, 360],
+                        }}
+                        transition={{
+                          repeat: Infinity,
+                          duration: 1.9,
+                          ease: 'easeInOut',
+                          delay: 1.2,
+                        }}
+                      >
+                        <path d="M 0 -8 Q 1.2 -1.2 8 0 Q 1.2 1.2 0 8 Q -1.2 1.2 -8 0 Q -1.2 -1.2 0 -8 Z" fill="#ffffff" />
+                        <circle cx="0" cy="0" r="1.8" fill="#ffd166" />
+                      </motion.g>
+
+                      {/* Ngôi sao 4: Phía dưới bên phải */}
+                      <motion.g
+                        transform="translate(212, 46)"
+                        animate={{
+                          scale: [0, 1.1, 0],
+                          opacity: [0, 0.9, 0],
+                        }}
+                        transition={{
+                          repeat: Infinity,
+                          duration: 2.3,
+                          ease: 'easeInOut',
+                          delay: 0.4,
+                        }}
+                      >
+                        <path d="M 0 -5 Q 1 -1 5 0 Q 1 1 0 5 Q -1 1 -5 0 Q -1 -1 0 -5 Z" fill="#ffe599" />
+                      </motion.g>
+
+                      {/* Ngôi sao 5: Phía dưới bên trái */}
+                      <motion.g
+                        transform="translate(148, 50)"
+                        animate={{
+                          scale: [0, 1.1, 0],
+                          opacity: [0, 0.9, 0],
+                        }}
+                        transition={{
+                          repeat: Infinity,
+                          duration: 2.0,
+                          ease: 'easeInOut',
+                          delay: 1.0,
+                        }}
+                      >
+                        <path d="M 0 -5 Q 1 -1 5 0 Q 1 1 0 5 Q -1 1 -5 0 Q -1 -1 0 -5 Z" fill="#ffccd5" />
+                      </motion.g>
+                    </g>
                   )}
 
                   {/* Làn khói mềm mại khi nến tắt */}
                   {isCandleBlown && (
                     <motion.path
-                      d="M 170 48 Q 163 36 172 24 T 167 10"
+                      d="M 180 54 Q 172 40 182 26 T 176 10"
                       fill="none"
                       stroke="#a8a29e"
                       strokeWidth="2.5"
