@@ -4,7 +4,7 @@ export const birthdayData: BirthdayConfig = {
   // ==========================================
   // 1. THÔNG TIN CƠ BẢN
   // ==========================================
-  recipientName: "Bé Yêu",
+  recipientName: "",
   birthDatePassword: "1611", // Mật khẩu ngày sinh: 16/11 (nhập 1611)
   birthDateDisplay: "16 Tháng 11",
   senderName: "Người luôn ủng hộ bạn",
