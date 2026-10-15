@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import { Sparkles, Mic, MicOff, Gift, Heart, ArrowRight } from 'lucide-react';
 import { soundManager } from '@/utils/sound';
@@ -14,7 +14,7 @@ interface Props {
 
 export default function Scene2Cake({ config, onNext }: Props) {
   // =========================================================================
-  // 👇 3 DÒNG CHỮ CHẠY CHỮ UỐN LƯỢN (KHÔNG CÓ KHUNG) BẠN CÓ THỂ SỬA Ở ĐÂY 👇
+  // 👇 3 DÒNG CHỮ CHẠY MỜ DẦN ĐÈ LÊN NHAU (BẠN CÓ THỂ SỬA Ở ĐÂY) 👇
   // =========================================================================
   const introSentences = [
     "Hôm nay là một ngày thật đặc biệt, ngày công chúa nhỏ ra đời...",
@@ -22,10 +22,9 @@ export default function Scene2Cake({ config, onNext }: Props) {
     "Và bây giờ, hãy nhắm mắt lại, cùng thổi nến và ước một điều ước nhé! ✨",
   ];
 
-  // Trạng thái: 'TYPING' -> 'CAKE_DROPPING' -> 'READY_TO_BLOW'
+  // Trạng thái: 'TYPING' (chạy chữ) -> 'CAKE_DROPPING' (rơi bánh) -> 'READY_TO_BLOW' (thổi nến)
   const [stage, setStage] = useState<'TYPING' | 'CAKE_DROPPING' | 'READY_TO_BLOW'>('TYPING');
   const [sentenceIdx, setSentenceIdx] = useState<number>(0);
-  const [charIdx, setCharIdx] = useState<number>(0);
 
   // Các bước rơi bánh kem mềm mại từng tầng
   const [cakeStep, setCakeStep] = useState<number>(0);
@@ -37,33 +36,31 @@ export default function Scene2Cake({ config, onNext }: Props) {
   const audioContextRef = useRef<AudioContext | null>(null);
   const micStreamRef = useRef<MediaStream | null>(null);
 
-  // 1. HIỆU ỨNG GÕ CHỮ UỐN LƯỢN TỪNG KÝ TỰ (KHÔNG KHUNG)
+  // 1. HIỆU ỨNG TỪNG DÒNG CHỮ MỜ DẦN CHO DÒNG TIẾP THEO ĐÈ LÊN
   useEffect(() => {
     if (stage !== 'TYPING') return;
 
-    const currentSentence = introSentences[sentenceIdx];
+    soundManager.playKeypress(520);
 
-    if (charIdx < currentSentence.length) {
-      const timer = setTimeout(() => {
-        setCharIdx((prev) => prev + 1);
-        if (charIdx % 4 === 0) {
-          soundManager.playKeypress(580 + Math.random() * 80);
-        }
-      }, 55); // Tốc độ gõ mềm mại 55ms/chữ
-      return () => clearTimeout(timer);
-    } else {
-      // Gõ xong 1 câu -> Dừng 1.8s để đọc
-      const waitTimer = setTimeout(() => {
-        if (sentenceIdx < introSentences.length - 1) {
-          setSentenceIdx((prev) => prev + 1);
-          setCharIdx(0);
+    // Mỗi dòng hiển thị khoảng 3.8s (mờ vào -> dừng để đọc -> mờ dần đi)
+    const timer = setInterval(() => {
+      setSentenceIdx((prev) => {
+        if (prev < introSentences.length - 1) {
+          soundManager.playKeypress(560 + (prev + 1) * 60);
+          return prev + 1;
         } else {
-          startCakeDrop();
+          clearInterval(timer);
+          // Sau khi dòng 3 mờ dần kết thúc -> Chuyển sang thả rơi bánh kem
+          setTimeout(() => {
+            startCakeDrop();
+          }, 1000);
+          return prev;
         }
-      }, 1800);
-      return () => clearTimeout(waitTimer);
-    }
-  }, [stage, sentenceIdx, charIdx]);
+      });
+    }, 3800);
+
+    return () => clearInterval(timer);
+  }, [stage]);
 
   // 2. BẮT ĐẦU CHUỖI RƠI BÁNH KEM TỪNG TẦNG CỰC KỲ MỀM MẠI (SQUASH & STRETCH)
   const startCakeDrop = () => {
@@ -187,46 +184,24 @@ export default function Scene2Cake({ config, onNext }: Props) {
       className="relative z-20 flex flex-col items-center justify-center min-h-screen px-4 py-8 max-w-lg mx-auto text-center w-full"
     >
       {/* ===================================================================== */}
-      {/* 📜 GIAI ĐOẠN 1: CHỮ UỐN LƯỢN BAY BỔNG - HOÀN TOÀN KHÔNG CÓ KHUNG       */}
+      {/* 📜 GIAI ĐOẠN 1: DÒNG CHỮ UỐN LƯỢN MỜ DẦN CHO DÒNG SAU ĐÈ LÊN         */}
+      {/* (Hoàn toàn không có khung, không có nút bỏ qua, không có 3 sọc gạch)   */}
       {/* ===================================================================== */}
       {stage === 'TYPING' && (
-        <motion.div
-          key="typing-container"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0, scale: 0.95 }}
-          className="w-full flex flex-col items-center justify-center min-h-[50vh] px-4 my-auto"
-        >
-          {/* Dòng chữ uốn lượn mềm mại bay bổng tự do trên nền hoa */}
-          <div className="w-full max-w-md my-auto py-6">
-            <p className="font-dancing text-3xl sm:text-4xl text-[#b84358] font-bold leading-relaxed tracking-wide drop-shadow-[0_4px_16px_rgba(255,182,193,0.5)]">
-              {introSentences[sentenceIdx].slice(0, charIdx)}
-              <span className="w-1 h-7 bg-pink-500/80 inline-block ml-1 animate-pulse rounded-full" />
-            </p>
-
-            {/* Chấm tròn dịu dàng báo tiến trình */}
-            <div className="flex justify-center items-center gap-2.5 mt-8">
-              {[0, 1, 2].map((i) => (
-                <div
-                  key={i}
-                  className={`h-1.5 rounded-full transition-all duration-500 ${
-                    i === sentenceIdx
-                      ? 'w-6 bg-pink-400 shadow-[0_0_8px_#f472b6]'
-                      : 'w-2 bg-pink-200/70'
-                  }`}
-                />
-              ))}
-            </div>
-          </div>
-
-          {/* Nút xem bánh kem nhanh */}
-          <button
-            onClick={startCakeDrop}
-            className="mt-6 px-4 py-1.5 rounded-full bg-white/60 hover:bg-white text-pink-500/80 hover:text-pink-600 text-xs font-semibold backdrop-blur-sm transition-all hover:scale-105 active:scale-95 flex items-center gap-1 shadow-sm"
-          >
-            <span>Bỏ qua ➔</span>
-          </button>
-        </motion.div>
+        <div className="w-full flex items-center justify-center min-h-[55vh] px-4 my-auto relative">
+          <AnimatePresence mode="wait">
+            <motion.p
+              key={sentenceIdx}
+              initial={{ opacity: 0, y: 14, filter: 'blur(8px)' }}
+              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              exit={{ opacity: 0, y: -14, filter: 'blur(8px)' }}
+              transition={{ duration: 0.9, ease: 'easeInOut' }}
+              className="font-dancing text-3xl sm:text-4xl md:text-5xl text-[#b84358] font-bold leading-relaxed tracking-wide drop-shadow-[0_4px_20px_rgba(255,182,193,0.5)] max-w-md mx-auto"
+            >
+              {introSentences[sentenceIdx]}
+            </motion.p>
+          </AnimatePresence>
+        </div>
       )}
 
       {/* ===================================================================== */}
@@ -269,7 +244,7 @@ export default function Scene2Cake({ config, onNext }: Props) {
                 }}
                 transition={{
                   duration: 0.7,
-                  ease: [0.34, 1.56, 0.64, 1], // Spring bounce curve
+                  ease: [0.34, 1.56, 0.64, 1],
                 }}
                 onClick={handleExtinguishCandle}
                 className="relative cursor-pointer group flex flex-col items-center z-30"
@@ -323,7 +298,7 @@ export default function Scene2Cake({ config, onNext }: Props) {
                 animate={{
                   y: [null, 0, -14, 0],
                   opacity: 1,
-                  scaleY: [1.6, 0.78, 1.12, 0.96, 1], // Nhún nảy mềm mại
+                  scaleY: [1.6, 0.78, 1.12, 0.96, 1],
                   scaleX: [0.7, 1.25, 0.92, 1.04, 1],
                 }}
                 transition={{
@@ -370,7 +345,7 @@ export default function Scene2Cake({ config, onNext }: Props) {
                 animate={{
                   y: [null, 0, -16, 0],
                   opacity: 1,
-                  scaleY: [1.6, 0.75, 1.15, 0.95, 1], // Nhún nảy sâu mềm mại
+                  scaleY: [1.6, 0.75, 1.15, 0.95, 1],
                   scaleX: [0.7, 1.28, 0.9, 1.05, 1],
                 }}
                 transition={{
