@@ -20,7 +20,6 @@ export default function Scene2Cake({ config, onNext }: Props) {
   const audioContextRef = useRef<AudioContext | null>(null);
   const micStreamRef = useRef<MediaStream | null>(null);
 
-  // Bắn pháo hoa rực rỡ khi vừa vào màn hình
   const fireConfetti = () => {
     const count = 200;
     const defaults = {
@@ -47,7 +46,6 @@ export default function Scene2Cake({ config, onNext }: Props) {
     fireConfetti();
     soundManager.playBirthdayMelody();
 
-    // Tự động xoay vòng các lời chúc mặc định
     const wishInterval = setInterval(() => {
       setCurrentWishIndex((prev) => (prev + 1) % config.defaultWishes.length);
     }, 4500);
@@ -58,20 +56,17 @@ export default function Scene2Cake({ config, onNext }: Props) {
     };
   }, [config.defaultWishes.length]);
 
-  // Xử lý nến tắt (bằng chạm hoặc thổi mic)
   const handleExtinguishCandle = () => {
     if (isCandleBlown) return;
     setIsCandleBlown(true);
     soundManager.playBlowSound();
     stopMic();
 
-    // Bắn thêm đợt pháo hoa ăn mừng
     setTimeout(() => {
       fireConfetti();
     }, 200);
   };
 
-  // Khởi động microphone để nhận diện tiếng thổi hơi
   const startMic = async () => {
     try {
       setMicError('');
@@ -95,14 +90,12 @@ export default function Scene2Cake({ config, onNext }: Props) {
         if (!micStreamRef.current) return;
         analyser.getByteFrequencyData(dataArray);
 
-        // Tính toán âm lượng trung bình
         let sum = 0;
         for (let i = 0; i < bufferLength; i++) {
           sum += dataArray[i];
         }
         const average = sum / bufferLength;
 
-        // Nếu nhận thấy tiếng gió/thổi mạnh (threshold > 65)
         if (average > 65) {
           handleExtinguishCandle();
           return;
@@ -142,24 +135,24 @@ export default function Scene2Cake({ config, onNext }: Props) {
         initial={{ y: -30, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.2 }}
-        className="mt-2"
+        className="mt-1"
       >
         <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-pink-100 text-pink-700 text-xs font-semibold mb-2 shadow-sm border border-pink-200">
           <Sparkles className="w-3.5 h-3.5 text-pink-500" />
           Happy Birthday {config.birthDateDisplay}
           <Sparkles className="w-3.5 h-3.5 text-pink-500" />
         </span>
-        <h1 className="text-3xl sm:text-4xl font-extrabold bg-gradient-to-r from-pink-600 via-rose-500 to-pink-500 bg-clip-text text-transparent leading-tight">
+        <h1 className="font-dancing text-4xl sm:text-5xl font-bold bg-gradient-to-r from-pink-600 via-rose-500 to-pink-500 bg-clip-text text-transparent leading-tight py-1">
           Chúc Mừng Sinh Nhật
         </h1>
-        <h2 className="text-xl sm:text-2xl font-bold text-rose-600 mt-1 flex items-center justify-center gap-2">
+        <h2 className="font-dancing text-2xl sm:text-3xl font-bold text-rose-600 mt-0.5 flex items-center justify-center gap-2">
           {config.recipientName}
           <Heart className="w-5 h-5 text-pink-500 fill-pink-500 inline animate-bounce" />
         </h2>
       </motion.div>
 
       {/* Lời chúc mặc định luân chuyển (Ticker) */}
-      <div className="w-full my-4 min-h-[70px] flex items-center justify-center px-2">
+      <div className="w-full my-3 min-h-[70px] flex items-center justify-center px-2">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentWishIndex}
@@ -167,7 +160,7 @@ export default function Scene2Cake({ config, onNext }: Props) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -15 }}
             transition={{ duration: 0.5 }}
-            className="p-3.5 rounded-2xl bg-white/80 backdrop-blur-md border border-pink-200/90 shadow-md shadow-pink-100/50 text-stone-700 text-sm sm:text-base font-medium"
+            className="p-3.5 rounded-2xl bg-white/85 backdrop-blur-md border border-pink-200/90 shadow-md shadow-pink-100/50 text-stone-700 text-sm sm:text-base font-semibold leading-relaxed"
           >
             {config.defaultWishes[currentWishIndex]}
           </motion.div>
@@ -175,14 +168,13 @@ export default function Scene2Cake({ config, onNext }: Props) {
       </div>
 
       {/* Khu vực Bánh Kem & Thổi Nến */}
-      <div className="relative flex flex-col items-center my-2">
+      <div className="relative flex flex-col items-center my-1">
         {/* Ngọn nến với ánh lửa bập bùng */}
         <div
           onClick={handleExtinguishCandle}
           className="relative cursor-pointer group flex flex-col items-center"
           title="Chạm vào để thổi tắt nến!"
         >
-          {/* Ngọn lửa */}
           {!isCandleBlown ? (
             <motion.div
               animate={{
@@ -192,12 +184,10 @@ export default function Scene2Cake({ config, onNext }: Props) {
               transition={{ repeat: Infinity, duration: 1.2, ease: 'easeInOut' }}
               className="relative w-6 h-10 mb-[-4px]"
             >
-              {/* Vầng sáng vàng cam */}
               <div className="absolute inset-0 rounded-full bg-gradient-to-t from-orange-500 via-amber-300 to-yellow-100 blur-[2px] shadow-[0_0_15px_#f59e0b]" />
               <div className="absolute top-1 left-1.5 w-3 h-6 rounded-full bg-white/80" />
             </motion.div>
           ) : (
-            /* Làn khói trắng bay lên khi nến tắt */
             <motion.div
               initial={{ opacity: 0, y: 0, scale: 0.8 }}
               animate={{ opacity: [0, 0.8, 0], y: -35, scale: 1.5 }}
@@ -210,7 +200,6 @@ export default function Scene2Cake({ config, onNext }: Props) {
 
           {/* Thân nến sọc hồng trắng */}
           <div className="w-4 h-14 rounded-t-md bg-gradient-to-b from-pink-200 via-white to-pink-300 border border-pink-400/50 shadow-inner relative overflow-hidden">
-            {/* Sọc trang trí nến */}
             <div className="w-full h-2 bg-pink-400/40 my-1 transform -rotate-12" />
             <div className="w-full h-2 bg-pink-400/40 my-1 transform -rotate-12" />
             <div className="w-full h-2 bg-pink-400/40 my-1 transform -rotate-12" />
@@ -221,7 +210,6 @@ export default function Scene2Cake({ config, onNext }: Props) {
         <div className="relative flex flex-col items-center mt-[-2px]">
           {/* Tầng trên của bánh */}
           <div className="w-36 h-16 rounded-t-2xl bg-gradient-to-b from-pink-100 via-pink-200 to-rose-200 border-2 border-pink-300 shadow-md relative overflow-hidden flex items-center justify-center">
-            {/* Lớp kem phủ dâu */}
             <div className="absolute top-0 inset-x-0 h-4 bg-white/90 rounded-b-xl border-b border-pink-200" />
             <div className="flex gap-2 z-10">
               <span className="text-xs">🍓</span>
@@ -232,11 +220,10 @@ export default function Scene2Cake({ config, onNext }: Props) {
 
           {/* Tầng dưới của bánh */}
           <div className="w-52 h-20 rounded-t-3xl rounded-b-xl bg-gradient-to-b from-rose-200 via-pink-100 to-pink-200 border-2 border-pink-300 shadow-xl relative overflow-hidden flex items-center justify-center">
-            {/* Lớp kem dâu viền sóng */}
             <div className="absolute top-0 inset-x-0 h-5 bg-white/90 rounded-b-2xl border-b border-pink-200" />
             <div className="flex gap-4 z-10 mt-2">
               <span className="text-sm">🌸</span>
-              <span className="text-xs font-bold text-pink-600 bg-white/80 px-2 py-0.5 rounded-full border border-pink-200">
+              <span className="font-dancing text-sm font-bold text-pink-600 bg-white/80 px-2 py-0.5 rounded-full border border-pink-200">
                 16.11
               </span>
               <span className="text-sm">🌸</span>
@@ -251,7 +238,7 @@ export default function Scene2Cake({ config, onNext }: Props) {
         <div className="mt-4 flex flex-col items-center">
           {!isCandleBlown ? (
             <>
-              <p className="text-xs font-semibold text-pink-700 bg-pink-100/80 px-3 py-1 rounded-full border border-pink-200 animate-pulse">
+              <p className="text-xs font-semibold text-pink-700 bg-pink-100/80 px-3.5 py-1 rounded-full border border-pink-200 animate-pulse">
                 👉 Chạm vào nến hoặc dùng Micro để thổi tắt nến nhé!
               </p>
 
@@ -259,7 +246,7 @@ export default function Scene2Cake({ config, onNext }: Props) {
                 {!isMicListening ? (
                   <button
                     onClick={startMic}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-pink-50 text-pink-600 text-xs font-medium border border-pink-200 shadow-sm transition-all"
+                    className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white hover:bg-pink-50 text-pink-600 text-xs font-bold border border-pink-200 shadow-sm transition-all"
                   >
                     <Mic className="w-3.5 h-3.5 text-pink-500" />
                     Bật Micro để thổi nến
@@ -267,7 +254,7 @@ export default function Scene2Cake({ config, onNext }: Props) {
                 ) : (
                   <button
                     onClick={stopMic}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-50 text-rose-600 text-xs font-medium border border-rose-200 shadow-sm animate-bounce"
+                    className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-rose-50 text-rose-600 text-xs font-bold border border-rose-200 shadow-sm animate-bounce"
                   >
                     <MicOff className="w-3.5 h-3.5 text-rose-500" />
                     Đang lắng nghe... Thổi vào mic đi nào!
@@ -282,8 +269,8 @@ export default function Scene2Cake({ config, onNext }: Props) {
               animate={{ scale: 1, opacity: 1 }}
               className="text-center"
             >
-              <p className="text-sm font-bold text-pink-600 flex items-center justify-center gap-1">
-                🎉 Nến đã tắt! Tuổi mới mọi điều suôn sẻ! 🎉
+              <p className="font-dancing text-xl font-bold text-pink-600 flex items-center justify-center gap-1">
+                🎉 Nến đã tắt! Tuổi mới vạn điều như ý! 🎉
               </p>
             </motion.div>
           )}

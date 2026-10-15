@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Send, Moon, Stars, ArrowRight, Heart } from 'lucide-react';
+import { Sparkles, Send, Moon, Stars, ArrowRight } from 'lucide-react';
 import { soundManager } from '@/utils/sound';
 import { BirthdayConfig } from '@/types/birthday';
 
@@ -28,7 +28,6 @@ export default function Scene4Wish({ config, onWishSubmitted, onNext }: Props) {
     soundManager.playUnlockSuccess();
     onWishSubmitted(wishText);
 
-    // Lưu vào LocalStorage làm kỷ niệm
     if (typeof window !== 'undefined') {
       localStorage.setItem('birthday_wish_1611', wishText);
     }
@@ -42,16 +41,16 @@ export default function Scene4Wish({ config, onWishSubmitted, onNext }: Props) {
       className="relative z-20 flex flex-col items-center justify-between min-h-screen px-4 py-8 max-w-lg mx-auto text-center"
     >
       {/* Tiêu đề & Bầu trời đêm */}
-      <div className="mt-2">
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-100 text-indigo-700 text-xs font-semibold mb-2 border border-indigo-200">
+      <div className="mt-1">
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-100 text-indigo-700 text-xs font-semibold mb-1 border border-indigo-200">
           <Moon className="w-3.5 h-3.5 text-indigo-500" />
           Điều Ước Tuổi Mới
           <Stars className="w-3.5 h-3.5 text-amber-500" />
         </span>
-        <h1 className="text-2xl sm:text-3xl font-extrabold bg-gradient-to-r from-pink-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
+        <h1 className="font-dancing text-3xl sm:text-4xl font-bold bg-gradient-to-r from-pink-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent py-1">
           Gửi Điều Ước Đến Ngàn Vì Sao
         </h1>
-        <p className="text-xs sm:text-sm text-stone-600 mt-1">
+        <p className="text-xs sm:text-sm text-stone-600 mt-0.5">
           Vũ trụ luôn lắng nghe những điều ước chân thành nhất của bạn
         </p>
       </div>
@@ -87,7 +86,7 @@ export default function Scene4Wish({ config, onWishSubmitted, onNext }: Props) {
                   if (error) setError('');
                 }}
                 placeholder="Ví dụ: Ước cho tuổi mới luôn bình an, gia đình hạnh phúc và đạt được mọi dự định ấp ủ..."
-                className="w-full p-4 rounded-2xl bg-pink-50/50 border border-pink-200 focus:border-pink-500 focus:bg-white text-stone-800 placeholder-stone-400 text-sm focus:outline-none transition-all resize-none"
+                className="w-full p-4 rounded-2xl bg-pink-50/50 border border-pink-200 focus:border-pink-500 focus:bg-white text-stone-800 placeholder-stone-400 text-sm focus:outline-none transition-all resize-none font-medium leading-relaxed"
               />
 
               {error && (
@@ -98,7 +97,7 @@ export default function Scene4Wish({ config, onWishSubmitted, onNext }: Props) {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={handleSendWish}
-                className="mt-4 w-full py-3 rounded-2xl bg-gradient-to-r from-purple-500 via-pink-500 to-rose-500 text-white font-bold text-sm shadow-md shadow-pink-300/40 flex items-center justify-center gap-2 hover:brightness-105 transition-all"
+                className="mt-4 w-full py-3.5 rounded-2xl bg-gradient-to-r from-purple-500 via-pink-500 to-rose-500 text-white font-bold text-sm shadow-md shadow-pink-300/40 flex items-center justify-center gap-2 hover:brightness-105 transition-all"
               >
                 <Send className="w-4 h-4" />
                 Thả Đèn Trời Mang Theo Điều Ước 🏮
@@ -112,7 +111,6 @@ export default function Scene4Wish({ config, onWishSubmitted, onNext }: Props) {
               animate={{ opacity: 1 }}
               className="flex flex-col items-center relative py-6"
             >
-              {/* Chiếc đèn trời phát sáng bay dần lên */}
               <motion.div
                 initial={{ y: 80, scale: 0.8, opacity: 0.7 }}
                 animate={{
@@ -128,23 +126,21 @@ export default function Scene4Wish({ config, onWishSubmitted, onNext }: Props) {
                 }}
                 className="relative flex flex-col items-center"
               >
-                {/* Ánh sáng tỏa ra */}
-                <div className="w-24 h-32 rounded-3xl bg-gradient-to-t from-amber-400 via-orange-300 to-yellow-100 shadow-[0_0_50px_#f59e0b] flex flex-col items-center justify-center p-2 text-center border border-amber-200">
-                  <span className="text-2xl animate-pulse">🏮</span>
-                  <p className="text-[9px] font-bold text-amber-900 mt-1 line-clamp-2 px-1">
+                <div className="w-28 h-36 rounded-3xl bg-gradient-to-t from-amber-400 via-orange-300 to-yellow-100 shadow-[0_0_50px_#f59e0b] flex flex-col items-center justify-center p-2.5 text-center border border-amber-200">
+                  <span className="text-3xl animate-pulse">🏮</span>
+                  <p className="font-dancing text-sm font-bold text-amber-950 mt-1 line-clamp-2 px-1">
                     &ldquo;{wishText}&rdquo;
                   </p>
                 </div>
-                {/* Đốm lửa bên dưới đèn */}
                 <div className="w-4 h-4 rounded-full bg-yellow-300 blur-sm mt-1 animate-ping" />
               </motion.div>
 
               <div className="mt-8 p-5 rounded-2xl bg-white/90 backdrop-blur-md border border-pink-200 shadow-md max-w-xs text-center">
-                <p className="text-sm font-bold text-pink-600 flex items-center justify-center gap-1.5">
-                  <Sparkles className="w-4 h-4 text-amber-500" />
+                <p className="font-dancing text-2xl font-bold text-pink-600 flex items-center justify-center gap-1.5">
+                  <Sparkles className="w-5 h-5 text-amber-500" />
                   Điều ước đã được gửi đi!
                 </p>
-                <p className="text-xs text-stone-600 mt-1.5 leading-relaxed">
+                <p className="text-xs text-stone-600 mt-1 leading-relaxed font-medium">
                   Nguyện ước của bạn đang bay vào dải ngân hà. Tuổi mới nhất định sẽ thật rực rỡ và trọn vẹn!
                 </p>
               </div>

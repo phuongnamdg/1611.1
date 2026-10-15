@@ -43,15 +43,15 @@ export default function Scene3Gifts({ config, onNext }: Props) {
       className="relative z-20 flex flex-col items-center justify-between min-h-screen px-4 py-8 max-w-lg mx-auto text-center"
     >
       {/* Tiêu đề */}
-      <div className="mt-2">
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-pink-100 text-pink-700 text-xs font-semibold mb-2 border border-pink-200">
+      <div className="mt-1">
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-pink-100 text-pink-700 text-xs font-semibold mb-1 border border-pink-200">
           <Sparkles className="w-3.5 h-3.5 text-pink-500" />
           Món Quà Dành Cho Bạn
         </span>
-        <h1 className="text-2xl sm:text-3xl font-extrabold bg-gradient-to-r from-pink-600 via-rose-500 to-pink-500 bg-clip-text text-transparent">
-          Chọn 1 Trong 3 Hộp Quà Bí Mật
+        <h1 className="font-dancing text-3xl sm:text-4xl font-bold bg-gradient-to-r from-pink-600 via-rose-500 to-pink-500 bg-clip-text text-transparent py-1">
+          3 Chiếc Hộp Bí Mật
         </h1>
-        <p className="text-xs sm:text-sm text-stone-600 mt-1">
+        <p className="text-xs sm:text-sm text-stone-600 mt-0.5">
           Chạm vào chiếc hộp bạn muốn mở trước (bạn có thể khám phá cả 3 hộp nhé!)
         </p>
       </div>
@@ -63,10 +63,10 @@ export default function Scene3Gifts({ config, onNext }: Props) {
           whileHover={{ scale: 1.05, y: -5 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => handleOpenGift('FLOWER')}
-          className="cursor-pointer relative p-5 rounded-3xl bg-white/80 backdrop-blur-md border-2 border-pink-200 shadow-lg shadow-pink-100/60 flex flex-col items-center group transition-all"
+          className="cursor-pointer relative p-5 rounded-3xl bg-white/85 backdrop-blur-md border-2 border-pink-200 shadow-lg shadow-pink-100/60 flex flex-col items-center group transition-all"
         >
           {openedGifts['FLOWER'] && (
-            <div className="absolute top-2 right-2 text-emerald-500">
+            <div className="absolute top-2.5 right-2.5 text-emerald-500">
               <CheckCircle2 className="w-5 h-5 fill-emerald-100" />
             </div>
           )}
@@ -76,8 +76,8 @@ export default function Scene3Gifts({ config, onNext }: Props) {
           <span className="text-xs font-bold text-pink-600 uppercase tracking-wider mb-1">
             Hộp Quà 1
           </span>
-          <h3 className="text-sm font-extrabold text-stone-800">Bó Hoa Tươi Thắm</h3>
-          <p className="text-[11px] text-pink-400 mt-1">Rạng ngời & Ngát hương</p>
+          <h3 className="font-dancing text-xl font-bold text-stone-800">Bó Hoa Tươi Thắm</h3>
+          <p className="text-xs text-pink-500 mt-0.5 font-medium">Rạng ngời & Ngát hương</p>
         </motion.div>
 
         {/* Hộp 2: Ô Âm Nhạc */}
@@ -85,10 +85,10 @@ export default function Scene3Gifts({ config, onNext }: Props) {
           whileHover={{ scale: 1.05, y: -5 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => handleOpenGift('MUSIC')}
-          className="cursor-pointer relative p-5 rounded-3xl bg-white/80 backdrop-blur-md border-2 border-pink-200 shadow-lg shadow-pink-100/60 flex flex-col items-center group transition-all"
+          className="cursor-pointer relative p-5 rounded-3xl bg-white/85 backdrop-blur-md border-2 border-pink-200 shadow-lg shadow-pink-100/60 flex flex-col items-center group transition-all"
         >
           {openedGifts['MUSIC'] && (
-            <div className="absolute top-2 right-2 text-emerald-500">
+            <div className="absolute top-2.5 right-2.5 text-emerald-500">
               <CheckCircle2 className="w-5 h-5 fill-emerald-100" />
             </div>
           )}
@@ -98,8 +98,8 @@ export default function Scene3Gifts({ config, onNext }: Props) {
           <span className="text-xs font-bold text-purple-600 uppercase tracking-wider mb-1">
             Hộp Quà 2
           </span>
-          <h3 className="text-sm font-extrabold text-stone-800">Giai Điệu Tuổi Mới</h3>
-          <p className="text-[11px] text-purple-400 mt-1">Âm vang ngọt ngào</p>
+          <h3 className="font-dancing text-xl font-bold text-stone-800">Giai Điệu Tuổi Mới</h3>
+          <p className="text-xs text-purple-500 mt-0.5 font-medium">Âm vang ngọt ngào</p>
         </motion.div>
 
         {/* Hộp 3: Bức Thư Chúc Mừng */}
@@ -107,10 +107,10 @@ export default function Scene3Gifts({ config, onNext }: Props) {
           whileHover={{ scale: 1.05, y: -5 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => handleOpenGift('LETTER')}
-          className="cursor-pointer relative p-5 rounded-3xl bg-white/80 backdrop-blur-md border-2 border-pink-200 shadow-lg shadow-pink-100/60 flex flex-col items-center group transition-all"
+          className="cursor-pointer relative p-5 rounded-3xl bg-white/85 backdrop-blur-md border-2 border-pink-200 shadow-lg shadow-pink-100/60 flex flex-col items-center group transition-all"
         >
           {openedGifts['LETTER'] && (
-            <div className="absolute top-2 right-2 text-emerald-500">
+            <div className="absolute top-2.5 right-2.5 text-emerald-500">
               <CheckCircle2 className="w-5 h-5 fill-emerald-100" />
             </div>
           )}
@@ -120,12 +120,12 @@ export default function Scene3Gifts({ config, onNext }: Props) {
           <span className="text-xs font-bold text-rose-600 uppercase tracking-wider mb-1">
             Hộp Quà 3
           </span>
-          <h3 className="text-sm font-extrabold text-stone-800">Bức Thư Tay Bí Mật</h3>
-          <p className="text-[11px] text-rose-400 mt-1">Gửi gắm chân thành</p>
+          <h3 className="font-dancing text-xl font-bold text-stone-800">Bức Thư Tay Bí Mật</h3>
+          <p className="text-xs text-rose-500 mt-0.5 font-medium">Gửi gắm chân thành</p>
         </motion.div>
       </div>
 
-      <p className="text-xs text-pink-600/80 font-medium">
+      <p className="text-sm text-pink-700 font-semibold">
         Đã khám phá: <span className="font-bold text-pink-600">{totalOpened}/3</span> món quà 🌸
       </p>
 
@@ -146,7 +146,7 @@ export default function Scene3Gifts({ config, onNext }: Props) {
       {/* POPUP MODAL MỞ CHI TIẾT TỪNG MÓN QUÀ */}
       <AnimatePresence>
         {selectedGift && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/45 backdrop-blur-sm">
             <motion.div
               initial={{ scale: 0.8, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
@@ -163,9 +163,9 @@ export default function Scene3Gifts({ config, onNext }: Props) {
                   >
                     💐
                   </motion.div>
-                  <h3 className="text-xl font-bold text-pink-600">Bó Hoa Tươi Thắm Nhất</h3>
-                  <p className="text-xs text-pink-400 mt-1 mb-4">Dành riêng cho {config.recipientName}</p>
-                  <div className="p-4 rounded-2xl bg-pink-50 border border-pink-100 text-stone-700 text-sm leading-relaxed">
+                  <h3 className="font-dancing text-2xl font-bold text-pink-600">Bó Hoa Tươi Thắm Nhất</h3>
+                  <p className="text-xs text-pink-400 mt-1 mb-4 font-medium">Dành riêng cho {config.recipientName}</p>
+                  <div className="p-4 rounded-2xl bg-pink-50 border border-pink-100 text-stone-700 text-sm leading-relaxed font-medium">
                     {config.flowerMessage}
                   </div>
                   <div className="flex gap-2 text-2xl mt-4">
@@ -189,12 +189,12 @@ export default function Scene3Gifts({ config, onNext }: Props) {
                     <Disc3 className="w-14 h-14 text-pink-400" />
                     <div className="w-5 h-5 rounded-full bg-pink-500 absolute" />
                   </motion.div>
-                  <h3 className="text-lg font-bold text-purple-700">{config.songTitle}</h3>
+                  <h3 className="font-dancing text-2xl font-bold text-purple-700">{config.songTitle}</h3>
                   <p className="text-xs text-purple-400 mb-4">{config.songArtist}</p>
 
                   <div className="w-full p-4 rounded-2xl bg-purple-50 border border-purple-100 text-stone-700 text-sm leading-relaxed">
-                    <p className="italic text-purple-800 font-serif">
-                      🎶 &ldquo;Happy Birthday to You,<br />
+                    <p className="font-dancing text-xl text-purple-900 leading-relaxed font-semibold">
+                      &ldquo;Happy Birthday to You,<br />
                       Happy Birthday to You,<br />
                       Happy Birthday dear {config.recipientName},<br />
                       Happy Birthday to You!&rdquo; 🎵
@@ -203,7 +203,7 @@ export default function Scene3Gifts({ config, onNext }: Props) {
 
                   <button
                     onClick={() => soundManager.playBirthdayMelody()}
-                    className="mt-4 px-4 py-2 rounded-xl bg-purple-600 text-white text-xs font-semibold flex items-center gap-2 hover:bg-purple-700 transition-colors"
+                    className="mt-4 px-4 py-2 rounded-xl bg-purple-600 text-white text-xs font-bold flex items-center gap-2 hover:bg-purple-700 transition-colors"
                   >
                     <Music className="w-3.5 h-3.5" />
                     Phát Lại Giai Điệu Hộp Nhạc
@@ -217,15 +217,15 @@ export default function Scene3Gifts({ config, onNext }: Props) {
                   <div className="w-14 h-14 rounded-2xl bg-rose-100 flex items-center justify-center text-3xl mb-2 mx-auto">
                     💌
                   </div>
-                  <h3 className="text-lg font-bold text-rose-600 text-center w-full mb-3">
+                  <h3 className="font-dancing text-2xl font-bold text-rose-600 text-center w-full mb-3">
                     Thư Gửi {config.recipientName}
                   </h3>
 
-                  <div className="w-full p-4 rounded-2xl bg-amber-50/60 border border-amber-200/60 text-stone-700 text-xs sm:text-sm leading-relaxed font-serif space-y-2.5">
+                  <div className="w-full p-5 rounded-2xl bg-amber-50/70 border border-amber-200/80 text-stone-800 text-sm leading-relaxed space-y-3 font-medium">
                     {config.letterContent.map((paragraph, index) => (
                       <p key={index}>{paragraph}</p>
                     ))}
-                    <div className="pt-2 text-right text-xs font-bold text-rose-600 not-italic">
+                    <div className="pt-3 text-right font-dancing text-xl font-bold text-rose-600">
                       — {config.senderName} ❤️
                     </div>
                   </div>

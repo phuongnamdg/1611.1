@@ -37,7 +37,6 @@ export default function Scene1Lock({ config, onUnlock }: Props) {
   };
 
   const verifyPin = (enteredPin: string) => {
-    // Chuẩn hóa mật khẩu: bỏ dấu cách, gạch chéo
     const cleanEntered = enteredPin.replace(/[^0-9]/g, '');
     const cleanPassword = config.birthDatePassword.replace(/[^0-9]/g, '');
 
@@ -68,10 +67,10 @@ export default function Scene1Lock({ config, onUnlock }: Props) {
       <motion.div
         animate={isError ? { x: [-12, 12, -8, 8, -4, 4, 0] } : {}}
         transition={{ duration: 0.4 }}
-        className="w-full max-w-sm p-6 sm:p-8 rounded-3xl bg-white/75 backdrop-blur-xl border border-pink-200/80 shadow-[0_15px_40px_rgba(255,182,193,0.35)]"
+        className="w-full max-w-sm p-6 sm:p-8 rounded-3xl bg-white/80 backdrop-blur-xl border border-pink-200/80 shadow-[0_15px_40px_rgba(255,182,193,0.35)]"
       >
         {/* Biểu tượng ổ khóa hoa */}
-        <div className="relative mx-auto mb-4 w-16 h-16 rounded-2xl bg-gradient-to-tr from-pink-400 to-rose-300 flex items-center justify-center shadow-lg shadow-pink-300/50">
+        <div className="relative mx-auto mb-3 w-16 h-16 rounded-2xl bg-gradient-to-tr from-pink-400 to-rose-300 flex items-center justify-center shadow-lg shadow-pink-300/50">
           <Lock className="w-8 h-8 text-white animate-pulse" />
           <motion.div
             animate={{ rotate: 360 }}
@@ -82,15 +81,15 @@ export default function Scene1Lock({ config, onUnlock }: Props) {
           </motion.div>
         </div>
 
-        <h1 className="text-2xl font-bold bg-gradient-to-r from-pink-600 via-rose-500 to-pink-500 bg-clip-text text-transparent">
+        <h1 className="font-dancing text-3xl sm:text-4xl font-bold bg-gradient-to-r from-pink-600 via-rose-500 to-pink-500 bg-clip-text text-transparent">
           Cổng Mở Quà Bí Mật
         </h1>
-        <p className="mt-1 text-sm text-pink-700/80 flex items-center justify-center gap-1 font-medium">
-          Dành riêng cho <span className="font-bold text-pink-600">{config.recipientName}</span>
+        <p className="mt-1 text-base text-pink-700/80 flex items-center justify-center gap-1.5 font-medium">
+          Dành riêng cho <span className="font-dancing font-bold text-xl text-pink-600">{config.recipientName}</span>
           <Heart className="w-4 h-4 text-pink-500 fill-pink-500 inline" />
         </p>
 
-        <p className="mt-4 text-xs text-stone-500 font-medium flex items-center justify-center gap-1">
+        <p className="mt-4 text-xs text-stone-500 font-medium flex items-center justify-center gap-1.5">
           <KeyRound className="w-3.5 h-3.5 text-pink-400" />
           Nhập ngày tháng sinh của bạn để mở khóa (DDMM)
         </p>
@@ -129,7 +128,7 @@ export default function Scene1Lock({ config, onUnlock }: Props) {
           )}
         </AnimatePresence>
 
-        {/* Bàn phím số Numpad tiện lợi cho cả mobile và desktop */}
+        {/* Bàn phím số Numpad */}
         <div className="grid grid-cols-3 gap-2.5 sm:gap-3 max-w-[260px] mx-auto mt-2">
           {['1', '2', '3', '4', '5', '6', '7', '8', '9'].map((digit) => (
             <motion.button
@@ -137,14 +136,14 @@ export default function Scene1Lock({ config, onUnlock }: Props) {
               whileTap={{ scale: 0.9 }}
               whileHover={{ scale: 1.05 }}
               onClick={() => handleKeyPress(digit)}
-              className="h-12 rounded-2xl bg-white/90 hover:bg-pink-50 text-stone-700 font-semibold text-lg border border-pink-100 shadow-sm shadow-pink-100/50 flex items-center justify-center transition-colors"
+              className="h-12 rounded-2xl bg-white/90 hover:bg-pink-50 text-stone-700 font-bold text-lg border border-pink-100 shadow-sm shadow-pink-100/50 flex items-center justify-center transition-colors"
             >
               {digit}
             </motion.button>
           ))}
 
           {/* Nút gợi ý */}
-          <div className="h-12 flex items-center justify-center text-xs text-pink-400 font-medium">
+          <div className="h-12 flex items-center justify-center text-xs text-pink-400 font-bold font-dancing text-base">
             16.11 🌸
           </div>
 
@@ -152,7 +151,7 @@ export default function Scene1Lock({ config, onUnlock }: Props) {
             whileTap={{ scale: 0.9 }}
             whileHover={{ scale: 1.05 }}
             onClick={() => handleKeyPress('0')}
-            className="h-12 rounded-2xl bg-white/90 hover:bg-pink-50 text-stone-700 font-semibold text-lg border border-pink-100 shadow-sm shadow-pink-100/50 flex items-center justify-center transition-colors"
+            className="h-12 rounded-2xl bg-white/90 hover:bg-pink-50 text-stone-700 font-bold text-lg border border-pink-100 shadow-sm shadow-pink-100/50 flex items-center justify-center transition-colors"
           >
             0
           </motion.button>
@@ -168,7 +167,7 @@ export default function Scene1Lock({ config, onUnlock }: Props) {
           </motion.button>
         </div>
 
-        <div className="mt-6 pt-4 border-t border-pink-100/70 text-[11px] text-pink-400">
+        <div className="mt-6 pt-4 border-t border-pink-100/70 text-xs text-pink-400">
           Chạm vào các phím số hoặc dùng bàn phím để mở quà ✨
         </div>
       </motion.div>
