@@ -6,14 +6,14 @@
 }
 
 body {
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-family: var(--font-quicksand), Verdana, Geneva, sans-serif;
   background: var(--background);
   color: var(--foreground);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Đảm bảo toàn bộ tiêu đề, nút bấm, input đều kế thừa font Verdana */
-h1, h2, h3, h4, h5, h6, p, span, button, input, textarea {
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
+/* Lớp font chữ viết tay uốn lượn lãng mạn */
+.font-dancing {
+  font-family: var(--font-dancing), "Dancing Script", cursive, sans-serif;
 }

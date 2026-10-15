@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import { Sparkles, Mic, MicOff, Gift, Heart, ArrowRight } from 'lucide-react';
 import { soundManager } from '@/utils/sound';
@@ -14,53 +14,50 @@ interface Props {
 
 export default function Scene2Cake({ config, onNext }: Props) {
   // =========================================================================
-  // 👇 3 DÒNG CHỮ CHẠY ĐÁNH CHỮ (TYPEWRITER) SAU KHI ĐĂNG NHẬP 👇
+  // 👇 3 DÒNG CHỮ CHẠY CHỮ UỐN LƯỢN (KHÔNG CÓ KHUNG) BẠN CÓ THỂ SỬA Ở ĐÂY 👇
   // =========================================================================
   const introSentences = [
-    "Hôm nay là một ngày thật đặc biệt, ngày công chúa nhỏ ra đời... 🌸",
-    "Chúc em tuổi mới luôn ngập tràn nụ cười, bình an và hạnh phúc... 💖",
-    "Và bây giờ, hãy nhắm mắt lại, cùng thổi nến và ước một điều ước nhé! 🎂✨",
+    "Hôm nay là một ngày thật đặc biệt, ngày công chúa nhỏ ra đời...",
+    "Chúc em tuổi mới luôn ngập tràn nụ cười, bình an và hạnh phúc...",
+    "Và bây giờ, hãy nhắm mắt lại, cùng thổi nến và ước một điều ước nhé! ✨",
   ];
 
-  // Trạng thái chạy chữ:
-  // stage: 'TYPING' -> 'CAKE_DROPPING' -> 'READY_TO_BLOW'
+  // Trạng thái: 'TYPING' -> 'CAKE_DROPPING' -> 'READY_TO_BLOW'
   const [stage, setStage] = useState<'TYPING' | 'CAKE_DROPPING' | 'READY_TO_BLOW'>('TYPING');
   const [sentenceIdx, setSentenceIdx] = useState<number>(0);
   const [charIdx, setCharIdx] = useState<number>(0);
 
-  // Hiệu ứng rơi từng tầng bánh kem mềm mại (Bouncy Spring)
-  const [cakeStep, setCakeStep] = useState<number>(0); // 0: chưa có, 1: đĩa, 2: tầng 1, 3: tầng 2, 4: dâu tây, 5: nến, 6: lửa thắp sáng
+  // Các bước rơi bánh kem mềm mại từng tầng
+  const [cakeStep, setCakeStep] = useState<number>(0);
   const [isCandleBlown, setIsCandleBlown] = useState<boolean>(false);
 
-  // Microphone
+  // Micro
   const [isMicListening, setIsMicListening] = useState<boolean>(false);
   const [micError, setMicError] = useState<string>('');
   const audioContextRef = useRef<AudioContext | null>(null);
   const micStreamRef = useRef<MediaStream | null>(null);
 
-  // 1. HIỆU ỨNG ĐÁNH CHỮ TỪNG KÝ TỰ (TYPEWRITER EFFECT)
+  // 1. HIỆU ỨNG GÕ CHỮ UỐN LƯỢN TỪNG KÝ TỰ (KHÔNG KHUNG)
   useEffect(() => {
     if (stage !== 'TYPING') return;
 
     const currentSentence = introSentences[sentenceIdx];
 
     if (charIdx < currentSentence.length) {
-      // Đang gõ từng chữ
       const timer = setTimeout(() => {
         setCharIdx((prev) => prev + 1);
-        if (charIdx % 3 === 0) {
-          soundManager.playKeypress(600 + Math.random() * 100);
+        if (charIdx % 4 === 0) {
+          soundManager.playKeypress(580 + Math.random() * 80);
         }
-      }, 50); // Tốc độ gõ 50ms/ký tự
+      }, 55); // Tốc độ gõ mềm mại 55ms/chữ
       return () => clearTimeout(timer);
     } else {
-      // Đã gõ xong 1 câu -> Chờ 1.8 giây để người đọc ngẫm
+      // Gõ xong 1 câu -> Dừng 1.8s để đọc
       const waitTimer = setTimeout(() => {
         if (sentenceIdx < introSentences.length - 1) {
           setSentenceIdx((prev) => prev + 1);
           setCharIdx(0);
         } else {
-          // Gõ xong cả 3 câu -> Bắt đầu thả rơi bánh kem từng tầng!
           startCakeDrop();
         }
       }, 1800);
@@ -68,47 +65,47 @@ export default function Scene2Cake({ config, onNext }: Props) {
     }
   }, [stage, sentenceIdx, charIdx]);
 
-  // Bắt đầu chuỗi rơi từng tầng bánh kem mềm mại
+  // 2. BẮT ĐẦU CHUỖI RƠI BÁNH KEM TỪNG TẦNG CỰC KỲ MỀM MẠI (SQUASH & STRETCH)
   const startCakeDrop = () => {
     setStage('CAKE_DROPPING');
 
-    // 0.2s: Đĩa bánh xuất hiện
+    // 0.2s: Đĩa sứ mềm mại xuất hiện
     setTimeout(() => {
       setCakeStep(1);
       soundManager.playKeypress(350);
     }, 200);
 
-    // 0.7s: Tầng bánh dưới rơi từ trên trời xuống (Spring bounce)
+    // 0.8s: Tầng bánh dưới rơi xuống và nhún nảy như thạch (Jelly bounce)
     setTimeout(() => {
       setCakeStep(2);
       soundManager.playKeypress(440);
-    }, 700);
+    }, 800);
 
-    // 1.3s: Tầng bánh trên rơi xuống nhún nhảy
+    // 1.5s: Tầng bánh trên rơi xuống nhún đàn hồi
     setTimeout(() => {
       setCakeStep(3);
       soundManager.playKeypress(523);
-    }, 1300);
+    }, 1500);
 
-    // 1.8s: Dâu tây & hoa nở rộ nảy lên
+    // 2.1s: Kem xốp, dâu tây & hoa nở nảy bồng bềnh
     setTimeout(() => {
       setCakeStep(4);
       soundManager.playKeypress(659);
-    }, 1800);
+    }, 2100);
 
-    // 2.3s: Cây nến rơi cắm phập vào giữa bánh
+    // 2.7s: Cây nến mềm mại cắm vào bánh
     setTimeout(() => {
       setCakeStep(5);
       soundManager.playKeypress(784);
-    }, 2300);
+    }, 2700);
 
-    // 2.8s: Ngọn lửa bừng sáng + Nổ pháo hoa + Bật nhạc sinh nhật
+    // 3.2s: Ngọn lửa bừng sáng + Nổ pháo hoa + Bật nhạc
     setTimeout(() => {
       setCakeStep(6);
       setStage('READY_TO_BLOW');
       fireConfetti();
       soundManager.playBirthdayMelody();
-    }, 2800);
+    }, 3200);
   };
 
   const fireConfetti = () => {
@@ -187,60 +184,53 @@ export default function Scene2Cake({ config, onNext }: Props) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="relative z-20 flex flex-col items-center justify-center min-h-screen px-4 py-8 max-w-lg mx-auto text-center w-full font-sans"
+      className="relative z-20 flex flex-col items-center justify-center min-h-screen px-4 py-8 max-w-lg mx-auto text-center w-full"
     >
       {/* ===================================================================== */}
-      {/* 📜 GIAI ĐOẠN 1: DÒNG CHỮ CHẠY ĐÁNH CHỮ TỪNG KÝ TỰ (TYPEWRITER STYLE) */}
+      {/* 📜 GIAI ĐOẠN 1: CHỮ UỐN LƯỢN BAY BỔNG - HOÀN TOÀN KHÔNG CÓ KHUNG       */}
       {/* ===================================================================== */}
       {stage === 'TYPING' && (
         <motion.div
           key="typing-container"
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 1.05 }}
-          className="w-full flex flex-col items-center justify-center px-3"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0, scale: 0.95 }}
+          className="w-full flex flex-col items-center justify-center min-h-[50vh] px-4 my-auto"
         >
-          <div className="w-full p-7 sm:p-9 rounded-[32px] bg-white/90 backdrop-blur-xl border border-pink-200 shadow-[0_20px_50px_rgba(255,182,193,0.35)] min-h-[220px] flex flex-col items-center justify-center relative">
-            <span className="text-xs font-bold text-pink-500 uppercase tracking-widest mb-3">
-              Lời nhắn gửi {sentenceIdx + 1}/3 ✨
-            </span>
-
-            {/* Dòng chữ đang gõ ra từng ký tự */}
-            <p className="text-lg sm:text-xl font-bold text-[#b04a5a] leading-relaxed tracking-wide min-h-[64px] flex items-center justify-center">
-              <span>{introSentences[sentenceIdx].slice(0, charIdx)}</span>
-              <span className="w-0.5 h-6 bg-pink-500 inline-block ml-1 animate-pulse" />
+          {/* Dòng chữ uốn lượn mềm mại bay bổng tự do trên nền hoa */}
+          <div className="w-full max-w-md my-auto py-6">
+            <p className="font-dancing text-3xl sm:text-4xl text-[#b84358] font-bold leading-relaxed tracking-wide drop-shadow-[0_4px_16px_rgba(255,182,193,0.5)]">
+              {introSentences[sentenceIdx].slice(0, charIdx)}
+              <span className="w-1 h-7 bg-pink-500/80 inline-block ml-1 animate-pulse rounded-full" />
             </p>
 
-            {/* Chấm tròn biểu thị tiến trình 3 câu */}
-            <div className="flex gap-2 mt-6">
+            {/* Chấm tròn dịu dàng báo tiến trình */}
+            <div className="flex justify-center items-center gap-2.5 mt-8">
               {[0, 1, 2].map((i) => (
                 <div
                   key={i}
-                  className={`h-2 rounded-full transition-all duration-300 ${
+                  className={`h-1.5 rounded-full transition-all duration-500 ${
                     i === sentenceIdx
-                      ? 'w-6 bg-pink-500'
-                      : i < sentenceIdx
-                      ? 'w-2 bg-pink-300'
-                      : 'w-2 bg-pink-100'
+                      ? 'w-6 bg-pink-400 shadow-[0_0_8px_#f472b6]'
+                      : 'w-2 bg-pink-200/70'
                   }`}
                 />
               ))}
             </div>
           </div>
 
-          {/* Nút bấm bỏ qua gõ chữ để xem bánh kem ngay */}
+          {/* Nút xem bánh kem nhanh */}
           <button
             onClick={startCakeDrop}
-            className="mt-6 px-5 py-2 rounded-full bg-white/80 hover:bg-white text-pink-600 border border-pink-200 text-xs font-bold shadow-sm transition-all hover:scale-105 active:scale-95 flex items-center gap-1.5"
+            className="mt-6 px-4 py-1.5 rounded-full bg-white/60 hover:bg-white text-pink-500/80 hover:text-pink-600 text-xs font-semibold backdrop-blur-sm transition-all hover:scale-105 active:scale-95 flex items-center gap-1 shadow-sm"
           >
-            <span>Bỏ qua & Xem bánh kem ngay 🎂</span>
-            <ArrowRight className="w-3.5 h-3.5" />
+            <span>Bỏ qua ➔</span>
           </button>
         </motion.div>
       )}
 
       {/* ===================================================================== */}
-      {/* 🎂 GIAI ĐOẠN 2: BÁNH KEM RƠI XUỐNG TỪNG TẦNG MỀM MẠI (SPRING BOUNCE)   */}
+      {/* 🎂 GIAI ĐOẠN 2: BÁNH KEM RƠI XUỐNG TỪNG TẦNG CỰC KỲ MỀM MẠI          */}
       {/* ===================================================================== */}
       {stage !== 'TYPING' && (
         <motion.div
@@ -249,130 +239,159 @@ export default function Scene2Cake({ config, onNext }: Props) {
           animate={{ opacity: 1 }}
           className="w-full flex flex-col items-center justify-between min-h-[85vh]"
         >
-          {/* Tiêu đề chúc mừng */}
+          {/* Tiêu đề uốn lượn ngọt ngào */}
           <div className="mt-1">
-            <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-pink-100 text-pink-700 text-xs font-semibold mb-2 shadow-sm border border-pink-200">
+            <span className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-pink-100/90 text-pink-600 text-xs font-medium mb-1 shadow-sm border border-pink-200">
               <Sparkles className="w-3.5 h-3.5 text-pink-500" />
               Happy Birthday {config.birthDateDisplay}
               <Sparkles className="w-3.5 h-3.5 text-pink-500" />
             </span>
-            <h1 className="text-3xl sm:text-4xl font-extrabold bg-gradient-to-r from-pink-600 via-rose-500 to-pink-500 bg-clip-text text-transparent leading-tight py-1">
+            <h1 className="font-dancing text-4xl sm:text-5xl font-bold text-[#b83b52] leading-tight py-1 drop-shadow-[0_2px_12px_rgba(255,182,193,0.4)]">
               Chúc Mừng Sinh Nhật
             </h1>
-            <h2 className="text-2xl sm:text-3xl font-bold text-rose-600 mt-1 flex items-center justify-center gap-2">
+            <h2 className="font-dancing text-3xl sm:text-4xl font-bold text-rose-500 mt-0.5 flex items-center justify-center gap-2">
               {config.recipientName}
               <Heart className="w-5 h-5 text-pink-500 fill-pink-500 inline animate-bounce" />
             </h2>
           </div>
 
-          {/* KHU VỰC BÁNH KEM RƠI TỪNG TẦNG VỚI HIỆU ỨNG LÒ XO (SPRING PHYSICS) */}
-          <div className="relative flex flex-col items-center justify-center my-auto py-6 min-h-[260px]">
-            {/* 1. NGỌN NẾN & ÁNH LỬA RƠI XUỐNG */}
+          {/* KHU VỰC BÁNH KEM SIÊU MỀM MẠI (SQUASH & STRETCH BOUNCE) */}
+          <div className="relative flex flex-col items-center justify-center my-auto py-8 min-h-[290px]">
+            {/* 1. NGỌN NẾN MỀM MẠI RƠI CẮM VÀO BÁNH */}
             {cakeStep >= 5 && (
               <motion.div
-                initial={{ y: -250, opacity: 0, scaleY: 1.4 }}
-                animate={{ y: 0, opacity: 1, scaleY: 1 }}
+                initial={{ y: -260, opacity: 0, scaleY: 1.5, scaleX: 0.7 }}
+                animate={{
+                  y: [null, 0, -8, 0],
+                  opacity: 1,
+                  scaleY: [1.5, 0.85, 1.05, 1],
+                  scaleX: [0.7, 1.15, 0.95, 1],
+                }}
                 transition={{
-                  type: 'spring',
-                  stiffness: 220,
-                  damping: 14,
-                  mass: 0.6,
+                  duration: 0.7,
+                  ease: [0.34, 1.56, 0.64, 1], // Spring bounce curve
                 }}
                 onClick={handleExtinguishCandle}
                 className="relative cursor-pointer group flex flex-col items-center z-30"
                 title="Chạm vào để thổi tắt nến!"
               >
-                {/* Ánh lửa bừng sáng */}
+                {/* Ánh lửa bập bùng lung linh */}
                 {cakeStep >= 6 && !isCandleBlown && (
                   <motion.div
                     initial={{ scale: 0, opacity: 0 }}
                     animate={{
-                      scale: [1, 1.15, 0.95, 1.1, 1],
-                      rotate: [-2, 3, -1, 2, -2],
+                      scale: [1, 1.2, 0.95, 1.15, 1],
+                      rotate: [-3, 3, -2, 2, -3],
                       opacity: 1,
                     }}
                     transition={{
-                      scale: { repeat: Infinity, duration: 1.2, ease: 'easeInOut' },
-                      rotate: { repeat: Infinity, duration: 1.2, ease: 'easeInOut' },
-                      default: { duration: 0.3 },
+                      scale: { repeat: Infinity, duration: 1.4, ease: 'easeInOut' },
+                      rotate: { repeat: Infinity, duration: 1.4, ease: 'easeInOut' },
+                      default: { duration: 0.4 },
                     }}
-                    className="relative w-6 h-10 mb-[-4px]"
+                    className="relative w-7 h-11 mb-[-4px]"
                   >
-                    <div className="absolute inset-0 rounded-full bg-gradient-to-t from-orange-500 via-amber-300 to-yellow-100 blur-[2px] shadow-[0_0_20px_#f59e0b]" />
-                    <div className="absolute top-1 left-1.5 w-3 h-6 rounded-full bg-white/90" />
+                    <div className="absolute inset-0 rounded-full bg-gradient-to-t from-orange-400 via-amber-300 to-yellow-100 blur-[3px] shadow-[0_0_25px_#f59e0b]" />
+                    <div className="absolute top-1.5 left-2 w-3 h-7 rounded-full bg-white/90" />
                   </motion.div>
                 )}
 
-                {/* Khói bay lên khi nến tắt */}
+                {/* Khói bay mềm mại khi tắt nến */}
                 {isCandleBlown && (
                   <motion.div
                     initial={{ opacity: 0, y: 0 }}
-                    animate={{ opacity: [0, 0.8, 0], y: -30 }}
-                    transition={{ duration: 1.8, repeat: Infinity }}
+                    animate={{ opacity: [0, 0.7, 0], y: -35, x: [0, 4, -4, 0] }}
+                    transition={{ duration: 2, repeat: Infinity }}
                     className="w-4 h-8 flex items-center justify-center text-stone-400 text-sm select-none"
                   >
                     ☁️
                   </motion.div>
                 )}
 
-                {/* Thân nến sọc đỏ trắng mềm mại */}
-                <div className="w-3.5 h-12 rounded-t-md bg-gradient-to-b from-rose-200 via-white to-pink-300 border border-pink-400/50 shadow-md relative overflow-hidden" />
+                {/* Thân nến mềm mại bo tròn */}
+                <div className="w-4 h-14 rounded-full bg-gradient-to-b from-rose-200 via-white to-pink-200 shadow-md relative overflow-hidden border border-pink-300/40">
+                  <div className="w-full h-2.5 bg-pink-400/30 transform -rotate-12 mt-1.5" />
+                  <div className="w-full h-2.5 bg-pink-400/30 transform -rotate-12 mt-2" />
+                </div>
               </motion.div>
             )}
 
-            {/* 2. TẦNG BÁNH TRÊN (RƠI TỪ TRÊN TRỜI XUỐNG VỚI LỰC NHÚN NHẢY) */}
+            {/* 2. TẦNG BÁNH TRÊN: MỀM NHƯ BÔNG LAN, NHÚN NẢY ĐÀN HỒI KHI TIẾP ĐẤT */}
             {cakeStep >= 3 && (
               <motion.div
-                initial={{ y: -300, opacity: 0, scaleY: 1.3, scaleX: 0.8 }}
-                animate={{ y: 0, opacity: 1, scaleY: 1, scaleX: 1 }}
-                transition={{
-                  type: 'spring',
-                  stiffness: 160,
-                  damping: 11,
-                  mass: 0.9,
+                initial={{ y: -320, opacity: 0, scaleY: 1.6, scaleX: 0.7 }}
+                animate={{
+                  y: [null, 0, -14, 0],
+                  opacity: 1,
+                  scaleY: [1.6, 0.78, 1.12, 0.96, 1], // Nhún nảy mềm mại
+                  scaleX: [0.7, 1.25, 0.92, 1.04, 1],
                 }}
-                className="w-36 h-16 rounded-t-2xl bg-gradient-to-b from-pink-100 via-pink-200 to-rose-200 border-2 border-pink-300 shadow-md relative overflow-hidden flex items-center justify-center z-20 mt-[-2px]"
+                transition={{
+                  duration: 0.85,
+                  ease: [0.34, 1.56, 0.64, 1],
+                }}
+                className="w-36 h-18 rounded-[36px] bg-gradient-to-b from-pink-100 via-[#ffd5de] to-[#fca5b9] shadow-[0_12px_30px_rgba(255,182,193,0.45)] relative overflow-visible flex items-center justify-center z-20 mt-[-4px]"
               >
-                {/* Lớp kem dâu viền sóng */}
-                <div className="absolute top-0 inset-x-0 h-4 bg-white/95 rounded-b-xl border-b border-pink-200" />
+                {/* Lớp kem dâu mềm chảy viền bồng bềnh */}
+                <div className="absolute top-0 inset-x-0 h-6 bg-white/95 rounded-t-[36px] rounded-b-2xl shadow-sm flex justify-around items-center px-1">
+                  <span className="w-3 h-3 rounded-full bg-white shadow-sm inline-block -mb-2" />
+                  <span className="w-3.5 h-3.5 rounded-full bg-white shadow-sm inline-block -mb-3" />
+                  <span className="w-3 h-3 rounded-full bg-white shadow-sm inline-block -mb-2" />
+                  <span className="w-3.5 h-3.5 rounded-full bg-white shadow-sm inline-block -mb-3" />
+                  <span className="w-3 h-3 rounded-full bg-white shadow-sm inline-block -mb-2" />
+                </div>
 
-                {/* 3. DÂU TÂY & HOA NỞ RỘ NẢY LÊN */}
+                {/* 3. DÂU TÂY & HOA ANH ĐÀO BỒNG BỀNH NẢY LÊN */}
                 {cakeStep >= 4 && (
                   <motion.div
-                    initial={{ scale: 0, rotate: -20 }}
-                    animate={{ scale: 1, rotate: 0 }}
-                    transition={{
-                      type: 'spring',
-                      stiffness: 260,
-                      damping: 12,
+                    initial={{ scale: 0, y: 15 }}
+                    animate={{
+                      scale: [0, 1.25, 0.95, 1],
+                      y: [15, -4, 2, 0],
                     }}
-                    className="flex gap-2 z-10 text-xs"
+                    transition={{
+                      duration: 0.6,
+                      ease: 'backOut',
+                    }}
+                    className="flex gap-2.5 z-10 text-sm mt-1"
                   >
-                    <span className="animate-bounce">🍓</span>
-                    <span>🌸</span>
-                    <span className="animate-bounce">🍓</span>
+                    <span className="animate-bounce drop-shadow-sm">🍓</span>
+                    <span className="drop-shadow-sm">🌸</span>
+                    <span className="animate-bounce drop-shadow-sm">🍓</span>
                   </motion.div>
                 )}
               </motion.div>
             )}
 
-            {/* 4. TẦNG BÁNH DƯỚI (RƠI TỪ TRÊN TRỜI XUỐNG ĐẦU TIÊN VỚI LỰC NHÚN NẢY) */}
+            {/* 4. TẦNG BÁNH DƯỚI: NẢY LÚN ĐÀN HỒI NHƯ THẠCH KHI CHẠM ĐĨA */}
             {cakeStep >= 2 && (
               <motion.div
-                initial={{ y: -350, opacity: 0, scaleY: 1.4, scaleX: 0.8 }}
-                animate={{ y: 0, opacity: 1, scaleY: 1, scaleX: 1 }}
-                transition={{
-                  type: 'spring',
-                  stiffness: 150,
-                  damping: 11,
-                  mass: 1.1,
+                initial={{ y: -380, opacity: 0, scaleY: 1.6, scaleX: 0.7 }}
+                animate={{
+                  y: [null, 0, -16, 0],
+                  opacity: 1,
+                  scaleY: [1.6, 0.75, 1.15, 0.95, 1], // Nhún nảy sâu mềm mại
+                  scaleX: [0.7, 1.28, 0.9, 1.05, 1],
                 }}
-                className="w-52 h-20 rounded-t-3xl rounded-b-xl bg-gradient-to-b from-rose-200 via-pink-100 to-pink-200 border-2 border-pink-300 shadow-xl relative overflow-hidden flex items-center justify-center z-10 mt-[-4px]"
+                transition={{
+                  duration: 0.9,
+                  ease: [0.34, 1.56, 0.64, 1],
+                }}
+                className="w-56 h-22 rounded-[42px] bg-gradient-to-b from-[#ffd3dc] via-[#fba2b7] to-[#f47290] shadow-[0_15px_40px_rgba(255,160,180,0.5)] relative overflow-visible flex items-center justify-center z-10 mt-[-8px]"
               >
-                <div className="absolute top-0 inset-x-0 h-5 bg-white/95 rounded-b-2xl border-b border-pink-200" />
-                <div className="flex gap-4 z-10 mt-2">
+                {/* Lớp kem bồng bềnh viền bánh */}
+                <div className="absolute top-0 inset-x-0 h-6 bg-white/95 rounded-t-[42px] rounded-b-2xl shadow-sm flex justify-around items-center px-2">
+                  <span className="w-3.5 h-3.5 rounded-full bg-white shadow-sm inline-block -mb-2" />
+                  <span className="w-4 h-4 rounded-full bg-white shadow-sm inline-block -mb-3" />
+                  <span className="w-3.5 h-3.5 rounded-full bg-white shadow-sm inline-block -mb-2" />
+                  <span className="w-4 h-4 rounded-full bg-white shadow-sm inline-block -mb-3" />
+                  <span className="w-3.5 h-3.5 rounded-full bg-white shadow-sm inline-block -mb-2" />
+                  <span className="w-4 h-4 rounded-full bg-white shadow-sm inline-block -mb-3" />
+                </div>
+
+                <div className="flex gap-4 z-10 mt-2.5">
                   <span className="text-sm">🌸</span>
-                  <span className="text-xs font-bold text-pink-600 bg-white/90 px-2.5 py-0.5 rounded-full border border-pink-200 shadow-sm">
+                  <span className="font-dancing text-base font-bold text-pink-600 bg-white/90 px-3 py-0.5 rounded-full shadow-sm">
                     {config.birthDatePassword === '1611' ? '16.11' : config.birthDateDisplay}
                   </span>
                   <span className="text-sm">🌸</span>
@@ -380,13 +399,13 @@ export default function Scene2Cake({ config, onNext }: Props) {
               </motion.div>
             )}
 
-            {/* 5. ĐĨA ĐỰNG BÁNH XUẤT HIỆN DƯỚI ĐÁY */}
+            {/* 5. ĐĨA SỨ MỀM MẠI DƯỚI ĐÁY */}
             {cakeStep >= 1 && (
               <motion.div
                 initial={{ scaleX: 0, opacity: 0 }}
                 animate={{ scaleX: 1, opacity: 1 }}
-                transition={{ duration: 0.4 }}
-                className="w-64 h-3.5 rounded-full bg-gradient-to-r from-amber-200 via-amber-100 to-amber-300 shadow-lg border border-amber-300 z-0 mt-[-2px]"
+                transition={{ duration: 0.5, ease: 'easeOut' }}
+                className="w-68 h-4 rounded-full bg-gradient-to-r from-amber-100 via-white to-amber-100 shadow-[0_10px_25px_rgba(255,200,210,0.4)] border border-amber-200/60 z-0 mt-[-4px]"
               />
             )}
           </div>
@@ -396,19 +415,19 @@ export default function Scene2Cake({ config, onNext }: Props) {
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mt-2 flex flex-col items-center"
+              className="mt-1 flex flex-col items-center"
             >
               {!isCandleBlown ? (
                 <>
-                  <p className="text-xs font-semibold text-pink-700 bg-pink-100/80 px-3.5 py-1.5 rounded-full border border-pink-200 animate-pulse">
-                    👉 Hãy thổi vào Micro hoặc chạm vào ngọn nến để dập tắt nến nhé!
+                  <p className="font-dancing text-lg text-pink-700 bg-pink-100/70 px-4 py-1 rounded-full border border-pink-200/80 animate-pulse">
+                    ✨ Thổi vào Micro hoặc chạm vào ngọn nến để ước nha! ✨
                   </p>
 
                   <div className="flex items-center gap-2 mt-2">
                     {!isMicListening ? (
                       <button
                         onClick={startMic}
-                        className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white hover:bg-pink-50 text-pink-600 text-xs font-bold border border-pink-200 shadow-sm transition-all"
+                        className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/90 hover:bg-white text-pink-600 text-xs font-bold border border-pink-200 shadow-sm transition-all"
                       >
                         <Mic className="w-3.5 h-3.5 text-pink-500" />
                         Bật Micro để thổi nến
@@ -416,7 +435,7 @@ export default function Scene2Cake({ config, onNext }: Props) {
                     ) : (
                       <button
                         onClick={stopMic}
-                        className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-rose-50 text-rose-600 text-xs font-bold border border-rose-200 shadow-sm animate-bounce"
+                        className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-rose-50 text-rose-600 text-xs font-bold border border-rose-200 shadow-sm animate-bounce"
                       >
                         <MicOff className="w-3.5 h-3.5 text-rose-500" />
                         Đang lắng nghe... Thổi vào mic đi nào!
@@ -426,7 +445,7 @@ export default function Scene2Cake({ config, onNext }: Props) {
                   {micError && <p className="text-[11px] text-rose-500 mt-1">{micError}</p>}
                 </>
               ) : (
-                <p className="text-base font-bold text-pink-600 flex items-center justify-center gap-1">
+                <p className="font-dancing text-2xl font-bold text-pink-600 flex items-center justify-center gap-1">
                   🎉 Nến đã tắt! Tuổi mới vạn điều như ý! 🎉
                 </p>
               )}
