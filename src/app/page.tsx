@@ -332,7 +332,7 @@ export default function BirthdayAllInOnePage() {
       };
       loop();
     } catch {
-      alert('Không thể mở micro. Bạn có thể chạm tay trực tiếp vào ngọn nến nhé!');
+      alert('Em không mở micro sao?. Em chạm tay trực tiếp vào ngọn nến nha!');
       setIsMicListening(false);
     }
   };
@@ -384,121 +384,141 @@ export default function BirthdayAllInOnePage() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 1.05 }}
-            className="relative z-20 flex flex-col items-center justify-center min-h-screen px-4 py-8 text-center w-full"
+            className="relative z-20 flex flex-col items-center justify-center min-h-screen px-4 py-8 w-full"
           >
-            <div className="w-full max-w-sm p-6 sm:p-8 rounded-3xl bg-white/80 backdrop-blur-xl border border-pink-200 shadow-[0_15px_40px_rgba(255,182,193,0.35)]">
-              {/* Biểu tượng ổ khóa */}
-              <div className="relative mx-auto mb-3 w-16 h-16 rounded-2xl bg-gradient-to-tr from-pink-400 to-rose-300 flex items-center justify-center shadow-lg shadow-pink-300/50">
-                <Lock className="w-8 h-8 text-white animate-pulse" />
-                <Sparkles className="w-5 h-5 text-amber-300 absolute -top-1 -right-1" />
+            {/* KHUNG CARD CHÍNH 2 CỘT (GIỐNG HỆT VIDEO TIKTOK MẪU) */}
+            <div className="w-full max-w-lg sm:max-w-xl bg-white/95 backdrop-blur-xl rounded-[32px] p-5 sm:p-7 shadow-[0_20px_50px_rgba(255,182,193,0.35)] border border-pink-100 flex flex-col sm:flex-row items-center gap-5 sm:gap-6">
+              
+              {/* CỘT TRÁI: KHUNG ẢNH CÔNG CHÚA (TỰ ĐỘNG LẤY TỪ public/avatar.jpg) */}
+              <div className="w-44 sm:w-[200px] flex-shrink-0 flex flex-col items-center">
+                <div className="w-full aspect-[4/5] rounded-2xl overflow-hidden shadow-sm border-2 border-pink-100 bg-pink-50 relative group">
+                  {/* 👇 ĐƯỜNG DẪN ẢNH: Bạn có thể đổi ảnh khác bằng cách ghi đè file public/avatar.jpg 👇 */}
+                  <img
+                    src="/avatar.jpg"
+                    alt="Công chúa"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                </div>
               </div>
 
-              {/* 👇 BẠN CÓ THỂ SỬA TIÊU ĐỀ MÀN 1 VÀ TÊN NGƯỜI NHẬN TẠI ĐÂY 👇 */}
-              <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-pink-600 via-rose-500 to-pink-500 bg-clip-text text-transparent">
-                Cổng Mở Quà Bí Mật
-              </h1>
-              <p className="mt-1.5 text-sm text-pink-700/80 flex items-center justify-center gap-1.5 font-semibold">
-                Dành riêng cho <span className="text-pink-600 font-bold">Bé Yêu</span>
-                <Heart className="w-4 h-4 text-pink-500 fill-pink-500 inline" />
-              </p>
-              <p className="mt-4 text-xs text-stone-500 font-medium flex items-center justify-center gap-1.5">
-                <KeyRound className="w-3.5 h-3.5 text-pink-400" />
-                Nhập ngày tháng sinh của bạn để mở khóa (1611)
-              </p>
+              {/* CỘT PHẢI: BÀN PHÍM NHẬP NGÀY SINH CÔNG CHÚA */}
+              <div className="w-full flex flex-col items-center sm:items-start flex-1">
+                {/* 👇 BẠN CÓ THỂ SỬA DÒNG TIÊU ĐỀ NÀY 👇 */}
+                <h2 className="text-[#db6e6e] font-bold text-sm sm:text-base mb-3 text-center sm:text-left w-full tracking-wide">
+                  Hãy nhập ngày sinh của công chúa
+                </h2>
 
-              {/* Ô hiển thị 4 số PIN */}
-              <div className="flex justify-center items-center gap-3 my-6">
-                {[0, 1, 2, 3].map((idx) => {
-                  const hasDigit = idx < pin.length;
-                  return (
-                    <div
-                      key={idx}
-                      className={`w-12 h-14 rounded-2xl border-2 flex items-center justify-center text-xl font-bold transition-all ${
-                        hasDigit
-                          ? 'border-pink-500 bg-pink-50 text-pink-600 shadow-md shadow-pink-200'
-                          : 'border-pink-200 bg-white/60 text-stone-300'
-                      }`}
+                {/* Ô hiển thị số nhập vào (Tone màu cam/đào pastel) */}
+                <div className="w-full h-11 sm:h-12 rounded-xl bg-[#fedfd2] border border-[#faccc0] flex items-center justify-center text-[#c25e5e] font-bold text-xl tracking-[0.25em] px-4 shadow-inner mb-3">
+                  {pin.length > 0 ? (
+                    pin.split('').map((char, i) => (
+                      <span key={i} className="mx-1">
+                        {char}
+                      </span>
+                    ))
+                  ) : (
+                    <span className="text-[#e2a898] tracking-normal text-sm font-semibold">
+                      ••••
+                    </span>
+                  )}
+                </div>
+
+                {/* Thông báo lỗi nếu bấm sai ngày sinh */}
+                {pinError && (
+                  <p className="text-xs text-rose-500 font-semibold mb-2 text-center w-full animate-shake">
+                    {pinError}
+                  </p>
+                )}
+
+                {/* BÀN PHÍM SỐ CẢM ỨNG 3x4 (TONE MÀU BEIGE / CAM ĐÀO) */}
+                <div className="grid grid-cols-3 gap-2 w-full">
+                  {['1', '2', '3', '4', '5', '6', '7', '8', '9'].map((digit) => (
+                    <button
+                      key={digit}
+                      onClick={() => {
+                        sound.playKeypress();
+                        if (pin.length < 4) {
+                          const next = pin + digit;
+                          setPin(next);
+                          setPinError('');
+                          if (next.length === 4) {
+                            // 👇 MẬT KHẨU MẶC ĐỊNH LÀ 1611 (16/11) 👇
+                            if (next === '1611') {
+                              sound.playUnlockSuccess();
+                              setTimeout(() => setScene(2), 600);
+                            } else {
+                              setPinError('Ủa ủa! Ngày sinh của công chúa mà cũng quên sao? 🌸');
+                              sound.playKeypress(200);
+                              setTimeout(() => setPin(''), 800);
+                            }
+                          }
+                        }
+                      }}
+                      className="h-11 rounded-xl bg-[#fff7f2] hover:bg-[#ffede2] text-[#b36363] font-bold text-base border border-[#fae5d9] shadow-sm flex items-center justify-center transition-all active:scale-95"
                     >
-                      {hasDigit ? pin[idx] : '•'}
-                    </div>
-                  );
-                })}
-              </div>
+                      {digit}
+                    </button>
+                  ))}
 
-              {/* Báo lỗi khi sai mật mã */}
-              {pinError && (
-                <p className="text-xs text-rose-500 font-semibold mb-3 px-2 py-1 rounded-lg bg-rose-50 border border-rose-200">
-                  {pinError}
-                </p>
-              )}
-
-              {/* Bàn phím số Numpad cảm ứng */}
-              <div className="grid grid-cols-3 gap-2.5 max-w-[260px] mx-auto">
-                {['1', '2', '3', '4', '5', '6', '7', '8', '9'].map((d) => (
+                  {/* Nút C (Clear / Xóa hết) */}
                   <button
-                    key={d}
+                    onClick={() => {
+                      sound.playKeypress(400);
+                      setPin('');
+                      setPinError('');
+                    }}
+                    className="h-11 rounded-xl bg-[#fff7f2] hover:bg-rose-50 text-[#c25e5e] font-bold text-sm border border-[#fae5d9] shadow-sm flex items-center justify-center transition-all active:scale-95"
+                  >
+                    C
+                  </button>
+
+                  {/* Phím 0 */}
+                  <button
                     onClick={() => {
                       sound.playKeypress();
                       if (pin.length < 4) {
-                        const next = pin + d;
+                        const next = pin + '0';
                         setPin(next);
                         setPinError('');
                         if (next.length === 4) {
-                          // 👇 BẠN CÓ THỂ SỬA MẬT MÃ Ở ĐÂY (MẶC ĐỊNH LÀ 1611) 👇
                           if (next === '1611') {
                             sound.playUnlockSuccess();
                             setTimeout(() => setScene(2), 600);
                           } else {
-                            setPinError('Ủa ủa! Ngày sinh của mình mà cũng bấm nhầm hả? Thử lại nha 🌸');
+                            setPinError('Ủa ủa! Ngày sinh của công chúa mà cũng quên sao? 🌸');
                             sound.playKeypress(200);
                             setTimeout(() => setPin(''), 800);
                           }
                         }
                       }
                     }}
-                    className="h-12 rounded-2xl bg-white hover:bg-pink-50 text-stone-700 font-bold text-lg border border-pink-100 shadow-sm flex items-center justify-center transition-colors active:scale-95"
+                    className="h-11 rounded-xl bg-[#fff7f2] hover:bg-[#ffede2] text-[#b36363] font-bold text-base border border-[#fae5d9] shadow-sm flex items-center justify-center transition-all active:scale-95"
                   >
-                    {d}
+                    0
                   </button>
-                ))}
 
-                <div className="h-12 flex items-center justify-center text-xs text-pink-400 font-bold">
-                  16.11 🌸
+                  {/* Phím Xóa 1 số (Backspace) */}
+                  <button
+                    onClick={() => {
+                      sound.playKeypress(400);
+                      setPin((prev) => prev.slice(0, -1));
+                      setPinError('');
+                    }}
+                    className="h-11 rounded-xl bg-[#fff7f2] hover:bg-rose-50 text-[#c25e5e] font-bold text-base border border-[#fae5d9] shadow-sm flex items-center justify-center transition-all active:scale-95"
+                    aria-label="Xóa"
+                  >
+                    <Delete className="w-4 h-4" />
+                  </button>
                 </div>
-
-                <button
-                  onClick={() => {
-                    sound.playKeypress();
-                    if (pin.length < 4) {
-                      const next = pin + '0';
-                      setPin(next);
-                      if (next === '1611') {
-                        sound.playUnlockSuccess();
-                        setTimeout(() => setScene(2), 600);
-                      }
-                    }
-                  }}
-                  className="h-12 rounded-2xl bg-white hover:bg-pink-50 text-stone-700 font-bold text-lg border border-pink-100 shadow-sm flex items-center justify-center transition-colors active:scale-95"
-                >
-                  0
-                </button>
-
-                <button
-                  onClick={() => {
-                    sound.playKeypress(400);
-                    setPin((prev) => prev.slice(0, -1));
-                    setPinError('');
-                  }}
-                  className="h-12 rounded-2xl bg-rose-50 hover:bg-rose-100 text-rose-500 font-semibold border border-rose-100 flex items-center justify-center transition-colors active:scale-95"
-                  aria-label="Xóa"
-                >
-                  <Delete className="w-5 h-5" />
-                </button>
               </div>
+            </div>
 
-              <div className="mt-6 pt-4 border-t border-pink-100/70 text-xs text-pink-400 font-medium">
-                Chạm vào các phím số hoặc dùng bàn phím máy tính để mở quà ✨
-              </div>
+            {/* 👇 DÒNG CHỮ QUOTE LÃNG MẠN PHÍA DƯỚI (GIỐNG ẢNH MẪU) 👇 */}
+            <div className="mt-8 text-center tracking-[0.25em] text-xs sm:text-sm font-semibold uppercase text-stone-700/80">
+              <p className="text-stone-400 text-lg mb-0.5">&ldquo;</p>
+              <p className="leading-relaxed">VẠN CÁI</p>
+              <p className="leading-relaxed">NẮM ĐÔI BÀN TAY</p>
+              <p className="text-stone-400 text-lg mt-0.5">&rdquo;</p>
             </div>
           </motion.div>
         )}
