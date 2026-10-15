@@ -44,18 +44,7 @@ export default function BirthdayPage() {
         </button>
       </div>
 
-      {/* 🧭 Dải tiến trình nhỏ hiển thị các bước */}
-      {scene !== 'LOCK' && (
-        <div className="fixed top-4 left-4 z-40 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/80 backdrop-blur-md border border-pink-200/80 shadow-sm text-xs font-bold text-pink-700">
-          <span className="w-2 h-2 rounded-full bg-pink-500 animate-ping" />
-          <span>
-            {scene === 'CELEBRATION' && '1. Chúc Mừng & Thổi Nến'}
-            {scene === 'GIFTS' && '2. Mở Hộp Quà'}
-            {scene === 'WISH' && '3. Thả Đèn Ước'}
-            {scene === 'FINALE' && '4. Kỷ Niệm'}
-          </span>
-        </div>
-      )}
+
 
       {/* 🎬 ĐIỀU PHỐI 5 MÀN HÌNH TỪNG FILE RIÊNG BIỆT */}
       <div className="w-full h-full flex items-center justify-center">
