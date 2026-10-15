@@ -32,7 +32,7 @@ export default function Scene1Lock({ config, onUnlock }: Props) {
             onUnlock();
           }, 600);
         } else {
-          setPinError('Ủa ủa! Ngày sinh của công chúa mà cũng quên sao? 🌸');
+          setPinError('Sai mật khẩu nha cưng? 😠😠');
           soundManager.playKeypress(200);
           setTimeout(() => setPin(''), 800);
         }
@@ -61,7 +61,7 @@ export default function Scene1Lock({ config, onUnlock }: Props) {
       className="relative z-20 flex flex-col items-center justify-center min-h-screen px-4 py-8 w-full font-sans"
     >
       {/* ===================================================================== */}
-      {/* KHUNG CARD CHÍNH 2 CỘT (GIỐNG HỆT VIDEO TIKTOK MẪU)                   */}
+      {/* KHUNG CARD CHÍNH 2 CỘT                 */}
       {/* ===================================================================== */}
       <div className="w-full max-w-lg sm:max-w-xl bg-white/95 backdrop-blur-xl rounded-[32px] p-5 sm:p-7 shadow-[0_20px_50px_rgba(255,182,193,0.35)] border border-pink-100 flex flex-col sm:flex-row items-center gap-5 sm:gap-6">
         
@@ -70,7 +70,7 @@ export default function Scene1Lock({ config, onUnlock }: Props) {
           <div className="w-full aspect-[4/5] rounded-2xl overflow-hidden shadow-sm border-2 border-pink-100 bg-pink-50 relative group">
             {/* 👇 THAY ẢNH BẰNG CÁCH THẢ FILE VÀO public/avatar.jpg HOẶC SỬA LINK DƯỚI 👇 */}
             <img
-              src="/avatar.jpg"
+              src="/avt.jpg"
               alt="Công chúa"
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
@@ -149,8 +149,8 @@ export default function Scene1Lock({ config, onUnlock }: Props) {
       {/* 👇 DÒNG CHỮ QUOTE LÃNG MẠN PHÍA DƯỚI (GIỐNG HỆT ẢNH MẪU) 👇 */}
       <div className="mt-8 text-center tracking-[0.25em] text-xs sm:text-sm font-semibold uppercase text-stone-700/80">
         <p className="text-stone-400 text-lg mb-0.5">&ldquo;</p>
-        <p className="leading-relaxed">VẠN CÁI</p>
-        <p className="leading-relaxed">NẮM ĐÔI BÀN TAY</p>
+        <p className="leading-relaxed">Happy Birthday</p>
+        <p className="leading-relaxed"></p>
         <p className="text-stone-400 text-lg mt-0.5">&rdquo;</p>
       </div>
     </motion.div>

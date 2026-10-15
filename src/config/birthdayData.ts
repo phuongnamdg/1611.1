@@ -12,7 +12,7 @@ export const birthdayData: BirthdayConfig = {
   // ==========================================
   // 2. CÁC TIÊU ĐỀ LỚN TRÊN CÁC TRANG
   // ==========================================
-  scene1Title: "Cổng Mở Quà Bí Mật",
+  scene1Title: "Mở để nhận quà !!!!!",
   scene2Title: "Chúc Mừng Sinh Nhật",
   scene3Title: "3 Chiếc Hộp Bí Mật",
   scene4Title: "Gửi Điều Ước Đến Ngàn Vì Sao",
