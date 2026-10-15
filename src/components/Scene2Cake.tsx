@@ -51,50 +51,50 @@ export default function Scene2Cake({ config, onNext }: Props) {
           clearInterval(timer);
           setTimeout(() => {
             startCakeDrop();
-          }, 800);
+          }, 600);
           return prev;
         }
       });
-    }, 3800);
+    }, 3600);
 
     return () => clearInterval(timer);
   }, [stage]);
 
-  // 2. CHUỖI RƠI BÁNH KEM 3 TẦNG SIÊU MỀM MẠI (RƠI THẲNG ĐỨNG, KHÔNG LUNG LAY QUAY LẮC)
+  // 2. CHUỖI RƠI BÁNH KEM 3 TẦNG MỀM MẠI, LIỀN MẠCH, KHÔNG BỊ TRỐNG HÌNH
   const startCakeDrop = () => {
     setStage('CAKE_DROPPING');
 
-    // 0.2s: Tầng 1 (đáy) rơi xuống êm dịu, không lắc lư
+    // 0.1s: Tầng 1 (đáy) rơi xuống êm dịu
     setTimeout(() => {
       setCakeStep(1);
       soundManager.playKeypress(400);
-    }, 200);
+    }, 100);
 
-    // 0.8s: Tầng 2 (giữa) rơi xuống nhẹ nhàng đáp lên tầng 1
+    // 0.35s: Tầng 2 (giữa) rơi xuống nhẹ nhàng đáp lên tầng 1
     setTimeout(() => {
       setCakeStep(2);
       soundManager.playKeypress(480);
-    }, 800);
+    }, 350);
 
-    // 1.4s: Tầng 3 (trên cùng kèm kem chảy) rơi xuống êm ái đáp lên tầng 2
+    // 0.6s: Tầng 3 (trên cùng kèm lớp kem) rơi xuống êm ái đáp lên tầng 2
     setTimeout(() => {
       setCakeStep(3);
       soundManager.playKeypress(560);
-    }, 1400);
+    }, 600);
 
-    // 2.0s: Cây nến cắm thẳng đứng vào giữa bánh (vững vàng)
+    // 0.85s: Cây nến cắm thẳng đứng vào giữa bánh
     setTimeout(() => {
       setCakeStep(4);
       soundManager.playKeypress(680);
-    }, 2000);
+    }, 850);
 
-    // 2.5s: Ngọn nến bừng sáng lung linh (đứng yên vững chãi, không di chuyển linh tinh)
+    // 1.1s: Ngọn nến bừng sáng lung linh + Bật nhạc + Sẵn sàng ước
     setTimeout(() => {
       setCakeStep(5);
       setStage('READY_TO_BLOW');
       fireConfetti();
       soundManager.playBirthdayMelody();
-    }, 2500);
+    }, 1100);
   };
 
   const fireConfetti = () => {
@@ -229,15 +229,10 @@ export default function Scene2Cake({ config, onNext }: Props) {
       )}
 
       {/* ===================================================================== */}
-      {/* 🎂 GIAI ĐOẠN 2: BÁNH KEM 3 TẦNG CHUẨN XÁC, MỀM MẠI, NẾN ĐỨNG YÊN VỮNG  */}
+      {/* 🎂 GIAI ĐOẠN 2: BÁNH KEM 3 TẦNG CHUẨN XÁC, MỀM MẠI, NẾN VỮNG VÀNG    */}
       {/* ===================================================================== */}
       {stage !== 'TYPING' && (
-        <motion.div
-          key="cake-stage"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="w-full flex flex-col items-center justify-between min-h-[85vh] py-2 z-10"
-        >
+        <div className="w-full flex flex-col items-center justify-between min-h-[85vh] py-2 z-10">
           {/* ✨ TIÊU ĐỀ UỐN LƯỢN MỀM MẠI ✨ */}
           <motion.div
             initial={{ opacity: 0, y: -14 }}
@@ -256,7 +251,7 @@ export default function Scene2Cake({ config, onNext }: Props) {
             </div>
           </motion.div>
 
-          {/* 🍰 BÁNH KEM 3 TẦNG PASTEL: RƠI MỀM MẠI THẲNG ĐỨNG, NẾN VỮNG VÀNG LUNG LINH */}
+          {/* 🍰 BÁNH KEM 3 TẦNG: RƠI MỀM MẠI THẲNG ĐỨNG, NẾN LUNG LINH KHÔNG MẤT HÌNH */}
           <div className="relative flex flex-col items-center justify-center my-auto py-2">
             <svg
               viewBox="0 0 320 270"
@@ -266,25 +261,25 @@ export default function Scene2Cake({ config, onNext }: Props) {
                 {/* Vầng hào quang ngọn nến lung linh ấm áp */}
                 <radialGradient id="cakeFlameAura3Tier" cx="50%" cy="50%" r="50%">
                   <stop offset="0%" stopColor="#ffb703" stopOpacity="0.95" />
-                  <stop offset="35%" stopColor="#ff8a00" stopOpacity="0.7" />
-                  <stop offset="65%" stopColor="#ff5d8f" stopOpacity="0.35" />
+                  <stop offset="35%" stopColor="#ff8a00" stopOpacity="0.75" />
+                  <stop offset="65%" stopColor="#ff5d8f" stopOpacity="0.4" />
                   <stop offset="100%" stopColor="#ff758c" stopOpacity="0" />
                 </radialGradient>
               </defs>
 
               {/* BÓNG ĐỔ MỀM DƯỚI ĐÁY BÁNH */}
-              <ellipse cx="160" cy="235" rx="120" ry="8" fill="rgba(244, 114, 182, 0.25)" filter="blur(5px)" />
+              <ellipse cx="160" cy="235" rx="120" ry="8" fill="rgba(244, 114, 182, 0.25)" style={{ filter: 'blur(5px)' }} />
 
               {/* ============================================================= */}
-              {/* BƯỚC 1: TẦNG 1 (ĐÁY - RỘNG NHẤT) RƠI THẲNG ĐỨNG SIÊU MỀM MẠI  */}
+              {/* BƯỚC 1: TẦNG 1 (ĐÁY - RỘNG NHẤT 230px) RƠI THẲNG ĐỨNG         */}
               {/* ============================================================= */}
               {cakeStep >= 1 && (
                 <motion.g
-                  initial={{ y: -140, opacity: 0 }}
+                  initial={{ y: -120, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{
-                    duration: 0.65,
-                    ease: [0.22, 1, 0.36, 1], // Giảm tốc cực êm dịu (cushioned landing)
+                    duration: 0.55,
+                    ease: [0.22, 1, 0.36, 1],
                   }}
                 >
                   {/* Đế viền trắng ngà mỏng ở đáy */}
@@ -299,14 +294,14 @@ export default function Scene2Cake({ config, onNext }: Props) {
               )}
 
               {/* ============================================================= */}
-              {/* BƯỚC 2: TẦNG 2 (GIỮA - VỪA PHẢI) RƠI THẲNG ĐỨNG ÊM DỊU        */}
+              {/* BƯỚC 2: TẦNG 2 (GIỮA - RỘNG 164px) RƠI THẲNG ĐỨNG             */}
               {/* ============================================================= */}
               {cakeStep >= 2 && (
                 <motion.g
-                  initial={{ y: -140, opacity: 0 }}
+                  initial={{ y: -120, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{
-                    duration: 0.65,
+                    duration: 0.55,
                     ease: [0.22, 1, 0.36, 1],
                   }}
                 >
@@ -323,10 +318,10 @@ export default function Scene2Cake({ config, onNext }: Props) {
               {/* ============================================================= */}
               {cakeStep >= 3 && (
                 <motion.g
-                  initial={{ y: -140, opacity: 0 }}
+                  initial={{ y: -120, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{
-                    duration: 0.65,
+                    duration: 0.55,
                     ease: [0.22, 1, 0.36, 1],
                   }}
                 >
@@ -359,21 +354,20 @@ export default function Scene2Cake({ config, onNext }: Props) {
                        L 110 140
                        C 109 135 106 137 106 130 Z"
                     fill="#ffffff"
-                    filter="drop-shadow(0 2px 4px rgba(220, 100, 130, 0.22))"
+                    style={{ filter: 'drop-shadow(0 2px 4px rgba(220, 100, 130, 0.22))' }}
                   />
                 </motion.g>
               )}
 
               {/* ============================================================= */}
               {/* BƯỚC 4: CÂY NẾN ĐỨNG YÊN VỮNG VÀNG Ở GIỮA BÁNH               */}
-              {/* (HOÀN TOÀN KHÔNG DI CHUYỂN LINH TINH, KHÔNG NGHIÊNG LẮC)      */}
               {/* ============================================================= */}
               {cakeStep >= 4 && (
                 <motion.g
                   initial={{ y: -80, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{
-                    duration: 0.5,
+                    duration: 0.45,
                     ease: [0.22, 1, 0.36, 1],
                   }}
                   onClick={handleExtinguishCandle}
@@ -382,7 +376,7 @@ export default function Scene2Cake({ config, onNext }: Props) {
                   {/* Bấc nến */}
                   <line x1="160" y1="96" x2="160" y2="88" stroke="#2b2b2b" strokeWidth="2" strokeLinecap="round" />
 
-                  {/* Thân nến mảnh màu trắng có sọc hồng (đứng yên vững chãi) */}
+                  {/* Thân nến mảnh màu trắng có sọc hồng */}
                   <rect
                     x="157"
                     y="96"
@@ -392,83 +386,60 @@ export default function Scene2Cake({ config, onNext }: Props) {
                     fill="#ffffff"
                     stroke="#f472b6"
                     strokeWidth="0.8"
-                    filter="drop-shadow(0 1px 3px rgba(255, 150, 170, 0.4))"
+                    style={{ filter: 'drop-shadow(0 1px 3px rgba(255, 150, 170, 0.4))' }}
                   />
                   {/* Sọc trang trí nến */}
                   <line x1="157.5" y1="104" x2="162.5" y2="108" stroke="#f06292" strokeWidth="2" strokeLinecap="round" />
                   <line x1="157.5" y1="114" x2="162.5" y2="118" stroke="#f06292" strokeWidth="2" strokeLinecap="round" />
 
                   {/* ========================================================= */}
-                  {/* BƯỚC 5: NGỌN LỬA LUNG LINH ẤM ÁP (ĐỨNG YÊN TẠI CHỖ, KHÔNG LẮC) */}
+                  {/* BƯỚC 5: NGỌN LỬA LUNG LINH ẤM ÁP (HIỂN THỊ CHUẨN XÁC 100%) */}
                   {/* ========================================================= */}
                   {cakeStep >= 5 && !isCandleBlown && (
                     <g>
-                      {/* 🌟 1. VẦNG HÀO QUANG TO TRÒN ẤM ÁP (ĐỨNG YÊN, CHỈ TOẢ SÁNG ÊM DỊU) */}
-                      <motion.circle
+                      {/* 🌟 1. VẦNG HÀO QUANG TO TRÒN ẤM ÁP (TỎA SÁNG TỰ NHIÊN) */}
+                      <circle
                         cx="160"
-                        cy="70"
+                        cy="74"
                         r="42"
                         fill="url(#cakeFlameAura3Tier)"
-                        filter="blur(8px)"
-                        animate={{
-                          opacity: [0.85, 1, 0.85],
-                          scale: [0.98, 1.05, 0.98],
-                        }}
-                        transition={{
-                          repeat: Infinity,
-                          duration: 2.2,
-                          ease: 'easeInOut',
-                        }}
-                        style={{ originX: '160px', originY: '70px' }}
+                        style={{ filter: 'blur(8px)' }}
+                        className="animate-pulse"
                       />
 
-                      {/* 🌟 2. NGỌN LỬA VÀNG ẤM ÁP (ĐỨNG YÊN CỐ ĐỊNH, KHÔNG QUAY LẮC) */}
+                      {/* 🌟 2. NGỌN LỬA VÀNG ẤM ÁP (ĐỨNG YÊN CỐ ĐỊNH TRÊN ĐẦU BẤC NẾN Y=88) */}
                       <g>
                         {/* Ngọn lửa vàng ngoài */}
                         <path
-                          d="M 160 50 C 166 60 170 67 164 75 C 158 81 150 77 153 70 C 156 63 152 58 160 50 Z"
+                          d="M 160 58 C 168 68 172 76 166 84 C 160 90 152 86 154 79 C 156 71 152 66 160 58 Z"
                           fill="#ffbe0b"
-                          filter="drop-shadow(0 0 5px #ffb703)"
+                          style={{ filter: 'drop-shadow(0 0 6px #ffb703)' }}
                         />
 
                         {/* Lõi lửa trắng sáng bên trong */}
                         <path
-                          d="M 160 58 C 163 64 165 68 162 72 C 159 75 156 73 157 69 C 159 65 157 62 160 58 Z"
+                          d="M 160 66 C 164 72 166 77 163 81 C 160 84 157 82 158 78 C 160 74 158 70 160 66 Z"
                           fill="#ffffff"
                         />
 
-                        {/* Đốm lửa xanh lam chân nến chân thực */}
-                        <ellipse cx="160" cy="83" rx="2.2" ry="1.2" fill="#3a86ff" opacity="0.8" />
+                        {/* Đốm lửa xanh lam chân thực tại bấc nến */}
+                        <ellipse cx="160" cy="87" rx="2.5" ry="1.5" fill="#3a86ff" opacity="0.85" />
                       </g>
 
                       {/* 🌟 3. CÁC ĐỐM SAO LẤP LÁNH CHỚP TẮT ÊM DỊU TẠI CHỖ */}
                       <motion.g
-                        transform="translate(182, 52)"
-                        animate={{
-                          opacity: [0, 1, 0],
-                        }}
-                        transition={{
-                          repeat: Infinity,
-                          duration: 2.4,
-                          ease: 'easeInOut',
-                          delay: 0.3,
-                        }}
+                        transform="translate(184, 60)"
+                        animate={{ opacity: [0, 1, 0] }}
+                        transition={{ repeat: Infinity, duration: 2.2, ease: 'easeInOut', delay: 0.3 }}
                       >
                         <path d="M 0 -5 Q 1 -1 5 0 Q 1 1 0 5 Q -1 1 -5 0 Q -1 -1 0 -5 Z" fill="#ffffff" />
                         <circle cx="0" cy="0" r="1.2" fill="#ffd166" />
                       </motion.g>
 
                       <motion.g
-                        transform="translate(138, 56)"
-                        animate={{
-                          opacity: [0, 1, 0],
-                        }}
-                        transition={{
-                          repeat: Infinity,
-                          duration: 2.6,
-                          ease: 'easeInOut',
-                          delay: 1.1,
-                        }}
+                        transform="translate(136, 64)"
+                        animate={{ opacity: [0, 1, 0] }}
+                        transition={{ repeat: Infinity, duration: 2.5, ease: 'easeInOut', delay: 1.1 }}
                       >
                         <path d="M 0 -4 Q 1 -1 4 0 Q 1 1 0 4 Q -1 1 -4 0 Q -1 -1 0 -4 Z" fill="#ffffff" />
                         <circle cx="0" cy="0" r="1" fill="#ffd166" />
@@ -479,7 +450,7 @@ export default function Scene2Cake({ config, onNext }: Props) {
                   {/* Làn khói mềm mại khi nến tắt */}
                   {isCandleBlown && (
                     <motion.path
-                      d="M 160 82 Q 152 66 162 50 T 156 30"
+                      d="M 160 88 Q 152 70 162 52 T 156 30"
                       fill="none"
                       stroke="#a8a29e"
                       strokeWidth="2.5"
@@ -499,7 +470,7 @@ export default function Scene2Cake({ config, onNext }: Props) {
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
+              transition={{ delay: 0.2 }}
               className="flex flex-col items-center mt-1 mb-3"
             >
               {!isCandleBlown ? (
@@ -548,7 +519,7 @@ export default function Scene2Cake({ config, onNext }: Props) {
               <ArrowRight className="w-5 h-5" />
             </button>
           </div>
-        </motion.div>
+        </div>
       )}
     </motion.div>
   );
