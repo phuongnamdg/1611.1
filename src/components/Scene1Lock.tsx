@@ -1,176 +1,158 @@
 'use client';
 
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Lock, Heart, Sparkles, Delete, KeyRound } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Delete } from 'lucide-react';
 import { soundManager } from '@/utils/sound';
 import { BirthdayConfig } from '@/types/birthday';
 
 interface Props {
-  config: BirthdayConfig;
+  config?: BirthdayConfig;
   onUnlock: () => void;
 }
 
 export default function Scene1Lock({ config, onUnlock }: Props) {
   const [pin, setPin] = useState<string>('');
-  const [isError, setIsError] = useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = useState<string>('');
-  const maxDigits = 4;
+  const [pinError, setPinError] = useState<string>('');
+
+  const targetPassword = config?.birthDatePassword || '1611';
 
   const handleKeyPress = (num: string) => {
     soundManager.playKeypress();
-    if (pin.length < maxDigits) {
-      const newPin = pin + num;
-      setPin(newPin);
-      setIsError(false);
+    if (pin.length < 4) {
+      const nextPin = pin + num;
+      setPin(nextPin);
+      setPinError('');
 
-      if (newPin.length === maxDigits) {
-        verifyPin(newPin);
+      if (nextPin.length === 4) {
+        // 👇 MẬT KHẨU MẶC ĐỊNH LÀ 1611 (16/11) 👇
+        if (nextPin === targetPassword.replace(/[^0-9]/g, '')) {
+          soundManager.playUnlockSuccess();
+          setTimeout(() => {
+            onUnlock();
+          }, 600);
+        } else {
+          setPinError('Ủa ủa! Ngày sinh của công chúa mà cũng quên sao? 🌸');
+          soundManager.playKeypress(200);
+          setTimeout(() => setPin(''), 800);
+        }
       }
     }
+  };
+
+  const handleClear = () => {
+    soundManager.playKeypress(400);
+    setPin('');
+    setPinError('');
   };
 
   const handleDelete = () => {
     soundManager.playKeypress(400);
     setPin((prev) => prev.slice(0, -1));
-    setIsError(false);
-  };
-
-  const verifyPin = (enteredPin: string) => {
-    const cleanEntered = enteredPin.replace(/[^0-9]/g, '');
-    const cleanPassword = config.birthDatePassword.replace(/[^0-9]/g, '');
-
-    if (cleanEntered === cleanPassword) {
-      soundManager.playUnlockSuccess();
-      setTimeout(() => {
-        onUnlock();
-      }, 600);
-    } else {
-      setIsError(true);
-      setErrorMessage('Ủa ủa! Ngày sinh nhật của mình mà cũng bấm nhầm hả? Thử lại nha 🌸');
-      soundManager.playKeypress(200);
-      setTimeout(() => {
-        setPin('');
-      }, 800);
-    }
+    setPinError('');
   };
 
   return (
     <motion.div
+      key="scene-1"
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 1.05 }}
-      transition={{ duration: 0.8 }}
-      className="relative z-20 flex flex-col items-center justify-center min-h-screen px-4 py-8 text-center"
+      className="relative z-20 flex flex-col items-center justify-center min-h-screen px-4 py-8 w-full font-sans"
     >
-      {/* Khung kính mờ Glassmorphism */}
-      <motion.div
-        animate={isError ? { x: [-12, 12, -8, 8, -4, 4, 0] } : {}}
-        transition={{ duration: 0.4 }}
-        className="w-full max-w-sm p-6 sm:p-8 rounded-3xl bg-white/80 backdrop-blur-xl border border-pink-200/80 shadow-[0_15px_40px_rgba(255,182,193,0.35)]"
-      >
-        {/* Biểu tượng ổ khóa hoa */}
-        <div className="relative mx-auto mb-3 w-16 h-16 rounded-2xl bg-gradient-to-tr from-pink-400 to-rose-300 flex items-center justify-center shadow-lg shadow-pink-300/50">
-          <Lock className="w-8 h-8 text-white animate-pulse" />
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ repeat: Infinity, duration: 10, ease: 'linear' }}
-            className="absolute -top-1 -right-1 text-pink-500"
-          >
-            <Sparkles className="w-5 h-5 text-amber-300" />
-          </motion.div>
+      {/* ===================================================================== */}
+      {/* KHUNG CARD CHÍNH 2 CỘT (GIỐNG HỆT VIDEO TIKTOK MẪU)                   */}
+      {/* ===================================================================== */}
+      <div className="w-full max-w-lg sm:max-w-xl bg-white/95 backdrop-blur-xl rounded-[32px] p-5 sm:p-7 shadow-[0_20px_50px_rgba(255,182,193,0.35)] border border-pink-100 flex flex-col sm:flex-row items-center gap-5 sm:gap-6">
+        
+        {/* CỘT TRÁI: KHUNG ẢNH CÔNG CHÚA (TỰ ĐỘNG LẤY TỪ public/avatar.jpg) */}
+        <div className="w-44 sm:w-[200px] flex-shrink-0 flex flex-col items-center">
+          <div className="w-full aspect-[4/5] rounded-2xl overflow-hidden shadow-sm border-2 border-pink-100 bg-pink-50 relative group">
+            {/* 👇 THAY ẢNH BẰNG CÁCH THẢ FILE VÀO public/avatar.jpg HOẶC SỬA LINK DƯỚI 👇 */}
+            <img
+              src="/avatar.jpg"
+              alt="Công chúa"
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+          </div>
         </div>
 
-        {/* Tiêu đề tự sửa trong birthdayData.ts */}
-        <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-pink-600 via-rose-500 to-pink-500 bg-clip-text text-transparent tracking-tight">
-          {config.scene1Title}
-        </h1>
-        <p className="mt-1.5 text-sm text-pink-700/80 flex items-center justify-center gap-1.5 font-semibold">
-          Dành riêng cho <span className="text-pink-600 font-bold">{config.recipientName}</span>
-          <Heart className="w-4 h-4 text-pink-500 fill-pink-500 inline" />
-        </p>
+        {/* CỘT PHẢI: BÀN PHÍM NHẬP NGÀY SINH CÔNG CHÚA */}
+        <div className="w-full flex flex-col items-center sm:items-start flex-1">
+          {/* 👇 BẠN CÓ THỂ SỬA DÒNG TIÊU ĐỀ NÀY 👇 */}
+          <h2 className="text-[#db6e6e] font-bold text-sm sm:text-base mb-3 text-center sm:text-left w-full tracking-wide">
+            {config?.scene1Title || 'Hãy nhập ngày sinh của công chúa'}
+          </h2>
 
-        <p className="mt-4 text-xs text-stone-500 font-medium flex items-center justify-center gap-1.5">
-          <KeyRound className="w-3.5 h-3.5 text-pink-400" />
-          Nhập ngày tháng sinh của bạn để mở khóa (DDMM)
-        </p>
-
-        {/* Ô hiển thị mã PIN */}
-        <div className="flex justify-center items-center gap-3 my-6">
-          {Array.from({ length: maxDigits }).map((_, index) => {
-            const hasDigit = index < pin.length;
-            return (
-              <motion.div
-                key={index}
-                animate={hasDigit ? { scale: [1, 1.2, 1] } : { scale: 1 }}
-                className={`w-12 h-14 rounded-2xl border-2 flex items-center justify-center text-xl font-bold transition-all duration-200 ${
-                  hasDigit
-                    ? 'border-pink-500 bg-pink-50 text-pink-600 shadow-md shadow-pink-200'
-                    : 'border-pink-200 bg-white/60 text-stone-300'
-                }`}
-              >
-                {hasDigit ? pin[index] : '•'}
-              </motion.div>
-            );
-          })}
-        </div>
-
-        {/* Thông báo lỗi */}
-        <AnimatePresence>
-          {isError && (
-            <motion.p
-              initial={{ opacity: 0, y: -6 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              className="text-xs text-rose-500 font-semibold mb-3 px-2 py-1 rounded-lg bg-rose-50 border border-rose-200"
-            >
-              {errorMessage}
-            </motion.p>
-          )}
-        </AnimatePresence>
-
-        {/* Bàn phím số Numpad */}
-        <div className="grid grid-cols-3 gap-2.5 sm:gap-3 max-w-[260px] mx-auto mt-2">
-          {['1', '2', '3', '4', '5', '6', '7', '8', '9'].map((digit) => (
-            <motion.button
-              key={digit}
-              whileTap={{ scale: 0.9 }}
-              whileHover={{ scale: 1.05 }}
-              onClick={() => handleKeyPress(digit)}
-              className="h-12 rounded-2xl bg-white/90 hover:bg-pink-50 text-stone-700 font-bold text-lg border border-pink-100 shadow-sm shadow-pink-100/50 flex items-center justify-center transition-colors"
-            >
-              {digit}
-            </motion.button>
-          ))}
-
-          <div className="h-12 flex items-center justify-center text-xs text-pink-400 font-bold">
-            16.11 🌸
+          {/* Ô hiển thị số nhập vào (Tone màu cam/đào pastel) */}
+          <div className="w-full h-11 sm:h-12 rounded-xl bg-[#fedfd2] border border-[#faccc0] flex items-center justify-center text-[#c25e5e] font-bold text-xl tracking-[0.25em] px-4 shadow-inner mb-3">
+            {pin.length > 0 ? (
+              pin.split('').map((char, i) => (
+                <span key={i} className="mx-1">
+                  {char}
+                </span>
+              ))
+            ) : (
+              <span className="text-[#e2a898] tracking-normal text-sm font-semibold">
+                ••••
+              </span>
+            )}
           </div>
 
-          <motion.button
-            whileTap={{ scale: 0.9 }}
-            whileHover={{ scale: 1.05 }}
-            onClick={() => handleKeyPress('0')}
-            className="h-12 rounded-2xl bg-white/90 hover:bg-pink-50 text-stone-700 font-bold text-lg border border-pink-100 shadow-sm shadow-pink-100/50 flex items-center justify-center transition-colors"
-          >
-            0
-          </motion.button>
+          {/* Thông báo lỗi nếu bấm sai ngày sinh */}
+          {pinError && (
+            <p className="text-xs text-rose-500 font-semibold mb-2 text-center w-full">
+              {pinError}
+            </p>
+          )}
 
-          <motion.button
-            whileTap={{ scale: 0.9 }}
-            whileHover={{ scale: 1.05 }}
-            onClick={handleDelete}
-            aria-label="Xóa số"
-            className="h-12 rounded-2xl bg-rose-50 hover:bg-rose-100 text-rose-500 font-semibold border border-rose-100 flex items-center justify-center transition-colors"
-          >
-            <Delete className="w-5 h-5" />
-          </motion.button>
-        </div>
+          {/* BÀN PHÍM SỐ CẢM ỨNG 3x4 (TONE MÀU BEIGE / CAM ĐÀO) */}
+          <div className="grid grid-cols-3 gap-2 w-full">
+            {['1', '2', '3', '4', '5', '6', '7', '8', '9'].map((digit) => (
+              <button
+                key={digit}
+                onClick={() => handleKeyPress(digit)}
+                className="h-11 rounded-xl bg-[#fff7f2] hover:bg-[#ffede2] text-[#b36363] font-bold text-base border border-[#fae5d9] shadow-sm flex items-center justify-center transition-all active:scale-95"
+              >
+                {digit}
+              </button>
+            ))}
 
-        <div className="mt-6 pt-4 border-t border-pink-100/70 text-xs text-pink-400">
-          Chạm vào các phím số hoặc dùng bàn phím để mở quà ✨
+            {/* Nút C (Clear / Xóa hết) */}
+            <button
+              onClick={handleClear}
+              className="h-11 rounded-xl bg-[#fff7f2] hover:bg-rose-50 text-[#c25e5e] font-bold text-sm border border-[#fae5d9] shadow-sm flex items-center justify-center transition-all active:scale-95"
+            >
+              C
+            </button>
+
+            {/* Phím 0 */}
+            <button
+              onClick={() => handleKeyPress('0')}
+              className="h-11 rounded-xl bg-[#fff7f2] hover:bg-[#ffede2] text-[#b36363] font-bold text-base border border-[#fae5d9] shadow-sm flex items-center justify-center transition-all active:scale-95"
+            >
+              0
+            </button>
+
+            {/* Phím Xóa 1 số (Backspace) */}
+            <button
+              onClick={handleDelete}
+              className="h-11 rounded-xl bg-[#fff7f2] hover:bg-rose-50 text-[#c25e5e] font-bold text-base border border-[#fae5d9] shadow-sm flex items-center justify-center transition-all active:scale-95"
+              aria-label="Xóa"
+            >
+              <Delete className="w-5 h-5" />
+            </button>
+          </div>
         </div>
-      </motion.div>
+      </div>
+
+      {/* 👇 DÒNG CHỮ QUOTE LÃNG MẠN PHÍA DƯỚI (GIỐNG HỆT ẢNH MẪU) 👇 */}
+      <div className="mt-8 text-center tracking-[0.25em] text-xs sm:text-sm font-semibold uppercase text-stone-700/80">
+        <p className="text-stone-400 text-lg mb-0.5">&ldquo;</p>
+        <p className="leading-relaxed">VẠN CÁI</p>
+        <p className="leading-relaxed">NẮM ĐÔI BÀN TAY</p>
+        <p className="text-stone-400 text-lg mt-0.5">&rdquo;</p>
+      </div>
     </motion.div>
   );
 }
