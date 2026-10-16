@@ -59,11 +59,16 @@ export default function Scene2Cake({ config, onNext }: Props) {
     return () => clearInterval(timer);
   }, [stage]);
 
-  // 2. HIỂN THỊ BÁNH KEM 3D XIN XẮN + BẬT NHẠC & BẮN PHÁO BÔNG
+  // 2. HIỂN THỊ BÁNH KEM 3D XINH XẮN + BẬT NHẠC & BẮN PHÁO BÔNG
   const startCakeDrop = () => {
     setStage("READY_TO_BLOW");
     fireConfetti();
     soundManager.playBirthdayMelody();
+    startMic();
+    // Sau 4 giây nếu người dùng không thể thổi mic, tự động cho phép chạm nến để tắt
+    setTimeout(() => {
+      setCanClickToExtinguish(true);
+    }, 4000);
   };
 
   const fireConfetti = () => {
@@ -211,27 +216,9 @@ export default function Scene2Cake({ config, onNext }: Props) {
       {/* 🎂 GIAI ĐOẠN 2: BÁNH KEM 3 TẦNG CHUẨN XÁC, MỀM MẠI, NẾN VỮNG VÀNG    */}
       {/* ===================================================================== */}
       {stage !== "TYPING" && (
-        <div className="w-full flex flex-col items-center justify-between min-h-[85vh] py-2 z-10">
-          {/* ✨ TIÊU ĐỀ UỐN LƯỢN MỀM MẠI ✨ */}
-          <motion.div
-            initial={{ opacity: 0, y: -14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="mt-1 flex flex-col items-center justify-center select-none"
-          >
-            <h1 className="font-dancing text-4xl sm:text-5xl text-[#942948] font-bold leading-tight tracking-wide drop-shadow-[0_2px_12px_rgba(255,182,193,0.45)]">
-              Chúc Mừng Sinh
-            </h1>
-            <div className="flex items-center justify-center gap-2 mt-0.5">
-              <span className="font-dancing text-4xl sm:text-5xl text-[#942948] font-bold leading-tight tracking-wide drop-shadow-[0_2px_12px_rgba(255,182,193,0.45)]">
-                Nhật {config.recipientName ? config.recipientName : ""}
-              </span>
-              <span className="text-3xl sm:text-4xl animate-pulse">🌸</span>
-            </div>
-          </motion.div>
-
-          {/* 🍰 BÁNH KEM 3D PHONG CÁCH HÀN QUỐC (XOAY 360 ĐỘ LUNG LINH) */}
-          <div className="w-full max-w-md my-auto py-1 z-10 flex flex-col items-center">
+        <div className="w-full flex flex-col items-center justify-center min-h-[85vh] py-2 z-10">
+          {/* 🍰 BÁNH KEM 3D PHONG CÁCH HÀN QUỐC (ĐỨNG TRỌN VẸN TRUNG TÂM, 100% KHÔNG CÓ CHỮ) */}
+          <div className="w-full max-w-lg my-auto py-2 z-10 flex flex-col items-center justify-center">
             <ThreeCake3D
               isCandleBlown={isCandleBlown}
               canClickToExtinguish={canClickToExtinguish}
@@ -239,71 +226,23 @@ export default function Scene2Cake({ config, onNext }: Props) {
             />
           </div>
 
-          {/* KHU VỰC THỔI NẾN (GỌN GÀNG, SẠCH SẼ, KHÔNG RƯỜM RÀ) */}
-          {stage === "READY_TO_BLOW" && (
+          {/* CHỈ KHI NẾN TẮT MỚI XUẤT HIỆN NÚT CHUYỂN TIẾP */}
+          {isCandleBlown && (
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="flex flex-col items-center mt-1 mb-3"
+              className="w-full pb-4 max-w-xs mt-2"
             >
-              {!isCandleBlown ? (
-                <div className="flex flex-col items-center gap-1.5 mt-1">
-                  {!isMicListening ? (
-                    <button
-                      onClick={startMic}
-                      className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white text-xs sm:text-sm font-bold shadow-md shadow-pink-200 transition-all hover:scale-105 active:scale-95 cursor-pointer"
-                    >
-                      <Mic className="w-4 h-4 text-white animate-pulse" />
-                      Thổi nến bằng Micro
-                    </button>
-                  ) : (
-                    <button
-                      onClick={stopMic}
-                      className="flex items-center gap-2 px-5 py-2 rounded-full bg-rose-50 text-rose-600 text-xs sm:text-sm font-bold border border-rose-200 shadow-xs animate-bounce cursor-pointer"
-                    >
-                      <MicOff className="w-4 h-4 text-rose-500" />
-                      Đang mở mic... Hãy thổi vào mic đi nào!
-                    </button>
-                  )}
-
-                  {/* Chỉ khi không thể thổi được mới chuyển sang tắt nến bằng click */}
-                  {!canClickToExtinguish ? (
-                    <button
-                      onClick={() => setCanClickToExtinguish(true)}
-                      className="text-[11px] text-stone-600 hover:text-pink-600 underline font-medium transition-colors cursor-pointer mt-0.5"
-                    >
-                      Không thể thổi micro? Chuyển sang chạm nến để tắt
-                    </button>
-                  ) : (
-                    <p className="text-[11px] text-pink-700 font-semibold animate-pulse mt-0.5">
-                      💡 Đã bật: Giờ bạn có thể chạm thẳng vào nến để tắt nhé!
-                    </p>
-                  )}
-
-                  {micError && (
-                    <p className="text-[11px] text-rose-500 mt-0.5">{micError}</p>
-                  )}
-                </div>
-              ) : (
-                <p className="font-dancing text-2xl sm:text-3xl font-bold text-[#942948] flex items-center justify-center gap-1 drop-shadow-sm my-2">
-                  🎉 Nến đã tắt rồi! Tuổi mới vạn điều như ý! 🎉
-                </p>
-              )}
+              <button
+                onClick={onNext}
+                className="w-full py-3.5 px-6 rounded-full bg-gradient-to-r from-pink-500 via-rose-500 to-pink-500 text-white font-bold text-base shadow-lg shadow-pink-300/40 flex items-center justify-center gap-2 hover:brightness-105 active:scale-95 transition-all cursor-pointer"
+              >
+                <Gift className="w-5 h-5 text-amber-200 animate-spin" />
+                Mở 3 Chiếc Hộp Bí Mật
+                <ArrowRight className="w-5 h-5" />
+              </button>
             </motion.div>
           )}
-
-          {/* NÚT CHUYỂN TIẾP SANG MÀN 3 MỞ HỘP QUÀ BÍ MẬT */}
-          <div className="w-full pb-2">
-            <button
-              onClick={onNext}
-              className="w-full py-3.5 px-6 rounded-full bg-gradient-to-r from-pink-500 via-rose-500 to-pink-500 text-white font-bold text-base shadow-lg shadow-pink-300/40 flex items-center justify-center gap-2 hover:brightness-105 active:scale-95 transition-all"
-            >
-              <Gift className="w-5 h-5 text-amber-200 animate-spin" />
-              Mở 3 Chiếc Hộp Bí Mật
-              <ArrowRight className="w-5 h-5" />
-            </button>
-          </div>
         </div>
       )}
     </motion.div>

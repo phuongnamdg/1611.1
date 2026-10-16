@@ -644,23 +644,11 @@ export default function ThreeCake3D({
 
   return (
     <div className="relative w-full flex flex-col items-center select-none">
-      {/* VÙNG KHÔNG GIAN 3D BÁNH KEM BẦU BĨNH - HOÀN TOÀN KHÔNG CÓ CHỮ RƯỜM RÀ */}
+      {/* VÙNG KHÔNG GIAN 3D BÁNH KEM BẦU BĨNH - 100% KHÔNG CÓ CHỮ */}
       <div
         ref={mountRef}
-        className="w-full h-[330px] sm:h-[370px] rounded-3xl flex items-center justify-center cursor-grab active:cursor-grabbing relative overflow-hidden"
+        className="w-full h-[360px] sm:h-[420px] rounded-3xl flex items-center justify-center cursor-grab active:cursor-grabbing relative overflow-hidden"
       />
-
-      {/* THÔNG BÁO KHI NẾN TẮT */}
-      {isCandleBlown && (
-        <motion.div
-          initial={{ opacity: 0, y: 10, scale: 0.9 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          className="absolute top-2 left-1/2 -translate-x-1/2 z-20 px-4 py-1.5 rounded-full bg-gradient-to-r from-pink-500 to-rose-500 text-white text-xs font-bold shadow-lg backdrop-blur-xs flex items-center gap-1.5"
-        >
-          <Sparkles className="w-4 h-4 text-amber-200" />
-          Nến đã tắt! Tuổi mới vạn sự hanh thông!
-        </motion.div>
-      )}
     </div>
   );
 }
