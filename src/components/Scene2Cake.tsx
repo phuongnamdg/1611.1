@@ -29,6 +29,7 @@ export default function Scene2Cake({ config, onNext }: Props) {
   const [isCandleBlown, setIsCandleBlown] = useState<boolean>(false);
 
   // Micro để thổi nến
+  const [canClickToExtinguish, setCanClickToExtinguish] = useState<boolean>(false);
   const [isMicListening, setIsMicListening] = useState<boolean>(false);
   const [micError, setMicError] = useState<string>("");
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -123,8 +124,9 @@ export default function Scene2Cake({ config, onNext }: Props) {
       };
       checkAudioLevel();
     } catch {
-      setMicError("Không thể mở micro. Bạn có thể chạm trực tiếp vào nến nha!");
+      setMicError("Microphone không khả dụng. Đã bật chế độ chạm vào nến để tắt!");
       setIsMicListening(false);
+      setCanClickToExtinguish(true);
     }
   };
 
@@ -232,11 +234,12 @@ export default function Scene2Cake({ config, onNext }: Props) {
           <div className="w-full max-w-md my-auto py-1 z-10 flex flex-col items-center">
             <ThreeCake3D
               isCandleBlown={isCandleBlown}
+              canClickToExtinguish={canClickToExtinguish}
               onExtinguishCandle={handleExtinguishCandle}
             />
           </div>
 
-          {/* DÒNG NHẮC NHẸ NHÀNG (PHÔNG CHỮ UỐN LƯỢN MỀM MẠI) */}
+          {/* KHU VỰC THỔI NẾN (GỌN GÀNG, SẠCH SẼ, KHÔNG RƯỜM RÀ) */}
           {stage === "READY_TO_BLOW" && (
             <motion.div
               initial={{ opacity: 0, y: 15 }}
@@ -245,36 +248,45 @@ export default function Scene2Cake({ config, onNext }: Props) {
               className="flex flex-col items-center mt-1 mb-3"
             >
               {!isCandleBlown ? (
-                <>
-                  <p className="font-dancing text-2xl sm:text-3xl text-[#942948] font-semibold drop-shadow-sm animate-pulse tracking-wide">
-                    ✨ Thổi vào micro hoặc chạm vào nến để ước nha ✨
-                  </p>
-
-                  <div className="flex items-center gap-2 mt-2.5">
-                    {!isMicListening ? (
-                      <button
-                        onClick={startMic}
-                        className="flex items-center gap-2 px-5 py-2 rounded-full bg-white/95 hover:bg-white text-pink-600 text-xs sm:text-sm font-bold border border-pink-200 shadow-md shadow-pink-100 transition-all hover:scale-105 active:scale-95"
-                      >
-                        <Mic className="w-4 h-4 text-pink-500" />
-                        Bật Micro để thổi nến
-                      </button>
-                    ) : (
-                      <button
-                        onClick={stopMic}
-                        className="flex items-center gap-2 px-5 py-2 rounded-full bg-rose-50 text-rose-600 text-xs sm:text-sm font-bold border border-rose-200 shadow-md animate-bounce"
-                      >
-                        <MicOff className="w-4 h-4 text-rose-500" />
-                        Đang lắng nghe... Thổi vào mic đi nào!
-                      </button>
-                    )}
-                  </div>
-                  {micError && (
-                    <p className="text-[11px] text-rose-500 mt-1">{micError}</p>
+                <div className="flex flex-col items-center gap-1.5 mt-1">
+                  {!isMicListening ? (
+                    <button
+                      onClick={startMic}
+                      className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white text-xs sm:text-sm font-bold shadow-md shadow-pink-200 transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                    >
+                      <Mic className="w-4 h-4 text-white animate-pulse" />
+                      Thổi nến bằng Micro
+                    </button>
+                  ) : (
+                    <button
+                      onClick={stopMic}
+                      className="flex items-center gap-2 px-5 py-2 rounded-full bg-rose-50 text-rose-600 text-xs sm:text-sm font-bold border border-rose-200 shadow-xs animate-bounce cursor-pointer"
+                    >
+                      <MicOff className="w-4 h-4 text-rose-500" />
+                      Đang mở mic... Hãy thổi vào mic đi nào!
+                    </button>
                   )}
-                </>
+
+                  {/* Chỉ khi không thể thổi được mới chuyển sang tắt nến bằng click */}
+                  {!canClickToExtinguish ? (
+                    <button
+                      onClick={() => setCanClickToExtinguish(true)}
+                      className="text-[11px] text-stone-600 hover:text-pink-600 underline font-medium transition-colors cursor-pointer mt-0.5"
+                    >
+                      Không thể thổi micro? Chuyển sang chạm nến để tắt
+                    </button>
+                  ) : (
+                    <p className="text-[11px] text-pink-700 font-semibold animate-pulse mt-0.5">
+                      💡 Đã bật: Giờ bạn có thể chạm thẳng vào nến để tắt nhé!
+                    </p>
+                  )}
+
+                  {micError && (
+                    <p className="text-[11px] text-rose-500 mt-0.5">{micError}</p>
+                  )}
+                </div>
               ) : (
-                <p className="font-dancing text-2xl sm:text-3xl font-bold text-[#942948] flex items-center justify-center gap-1 drop-shadow-sm">
+                <p className="font-dancing text-2xl sm:text-3xl font-bold text-[#942948] flex items-center justify-center gap-1 drop-shadow-sm my-2">
                   🎉 Nến đã tắt rồi! Tuổi mới vạn điều như ý! 🎉
                 </p>
               )}

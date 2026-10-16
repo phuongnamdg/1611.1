@@ -7,6 +7,7 @@ import { Sparkles, RotateCw, Heart } from "lucide-react";
 
 interface Props {
   isCandleBlown: boolean;
+  canClickToExtinguish: boolean;
   onExtinguishCandle: () => void;
 }
 
@@ -72,7 +73,11 @@ function createStrawberryGeo() {
   return new THREE.LatheGeometry(points, 24);
 }
 
-export default function ThreeCake3D({ isCandleBlown, onExtinguishCandle }: Props) {
+export default function ThreeCake3D({
+  isCandleBlown,
+  canClickToExtinguish,
+  onExtinguishCandle,
+}: Props) {
   const mountRef = useRef<HTMLDivElement | null>(null);
   const [isInteracting, setIsInteracting] = useState(false);
 
@@ -563,9 +568,9 @@ export default function ThreeCake3D({ isCandleBlown, onExtinguishCandle }: Props
     domEl.addEventListener("touchmove", onPointerMove, { passive: true });
     window.addEventListener("touchend", onPointerUp);
 
-    // Chạm vào bánh để thổi tắt nến
+    // Chạm vào bánh để thổi tắt nến (chỉ khi canClickToExtinguish là true)
     domEl.addEventListener("click", () => {
-      if (!isCandleBlown) {
+      if (!isCandleBlown && canClickToExtinguish) {
         onExtinguishCandle();
       }
     });
@@ -635,26 +640,15 @@ export default function ThreeCake3D({ isCandleBlown, onExtinguishCandle }: Props
       domEl.removeEventListener("touchmove", onPointerMove);
       renderer.dispose();
     };
-  }, [isCandleBlown, onExtinguishCandle]);
+  }, [isCandleBlown, canClickToExtinguish, onExtinguishCandle]);
 
   return (
     <div className="relative w-full flex flex-col items-center select-none">
-      {/* VÙNG KHÔNG GIAN 3D BÁNH KEM BẦU BĨNH */}
+      {/* VÙNG KHÔNG GIAN 3D BÁNH KEM BẦU BĨNH - HOÀN TOÀN KHÔNG CÓ CHỮ RƯỜM RÀ */}
       <div
         ref={mountRef}
-        className="w-full h-[320px] sm:h-[360px] rounded-3xl flex items-center justify-center cursor-grab active:cursor-grabbing relative overflow-hidden"
+        className="w-full h-[330px] sm:h-[370px] rounded-3xl flex items-center justify-center cursor-grab active:cursor-grabbing relative overflow-hidden"
       />
-
-      {/* DÒNG HƯỚNG DẪN DỄ THƯƠNG */}
-      <div className="flex items-center justify-between w-full max-w-xs px-3.5 py-1 bg-white/80 backdrop-blur-xs rounded-full border border-pink-200/80 shadow-xs text-[11px] text-[#942948] font-medium mt-1">
-        <span className="flex items-center gap-1.5 font-bold">
-          <RotateCw className="w-3.5 h-3.5 text-pink-500 animate-spin" />
-          Kéo xoay 360° ngắm bánh nha
-        </span>
-        <span className="text-[10px] text-pink-500">
-          {isInteracting ? "Đang xoay tự do ✨" : "Tự động xoay nhẹ 🌸"}
-        </span>
-      </div>
 
       {/* THÔNG BÁO KHI NẾN TẮT */}
       {isCandleBlown && (
