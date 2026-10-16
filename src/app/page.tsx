@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Volume2, VolumeX } from 'lucide-react';
 import SakuraPetals from '@/components/SakuraPetals';
+import HeartCursorTrail from '@/components/HeartCursorTrail';
 import Scene1Lock from '@/components/Scene1Lock';
 import Scene2Cake from '@/components/Scene2Cake';
 import Scene3Gifts from '@/components/Scene3Gifts';
@@ -28,6 +29,9 @@ export default function BirthdayPage() {
     <main className="relative min-h-screen w-full flex flex-col justify-center items-center overflow-hidden font-sans">
       {/* 🌸 Hiệu ứng cánh hoa anh đào rơi liên tục 60fps */}
       <SakuraPetals />
+
+      {/* 💖 Hiệu ứng vệt trái tim bay theo con trỏ chuột */}
+      <HeartCursorTrail />
 
       {/* 🔊 Nút điều khiển âm thanh ở góc trên bên phải */}
       <div className="fixed top-4 right-4 z-40">
