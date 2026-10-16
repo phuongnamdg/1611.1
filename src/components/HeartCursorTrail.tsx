@@ -14,7 +14,14 @@ interface Particle {
   color: string;
 }
 
-const HEART_COLORS = ['#ff4d6d', '#ff758f', '#f72585', '#ff85a1', '#ffb3c6', '#ffd166'];
+// 🌸 BẢNG MÀU HỒNG PHẤN PASTEL DỊU DÀNG & NHẸ NHÀNG
+const PASTEL_PINK_COLORS = [
+  '#f472b6', // Hồng phấn tươi
+  '#fbcfe8', // Hồng phấn nhạt
+  '#ffccd5', // Hồng dâu sữa
+  '#ffb3c6', // Hồng hoa đào
+  '#f8bbd0', // Hồng phấn baby
+];
 
 export default function HeartCursorTrail() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -39,18 +46,36 @@ export default function HeartCursorTrail() {
     handleResize();
     window.addEventListener('resize', handleResize);
 
-    const drawHeart = (c: CanvasRenderingContext2D, x: number, y: number, size: number, color: string, opacity: number, rot: number) => {
+    // Vẽ hình trái tim viền thanh mảnh nhẹ nhàng
+    const drawSoftHeart = (
+      c: CanvasRenderingContext2D,
+      x: number,
+      y: number,
+      size: number,
+      color: string,
+      opacity: number,
+      rot: number
+    ) => {
       c.save();
       c.translate(x, y);
       c.rotate(rot);
       c.scale(size, size);
       c.globalAlpha = opacity;
-      c.fillStyle = color;
+
       c.beginPath();
       c.moveTo(0, 0);
       c.bezierCurveTo(-5, -5, -10, 2, 0, 9);
       c.bezierCurveTo(10, 2, 5, -5, 0, 0);
+
+      // Nền trong suốt phớt hồng nhẹ
+      c.fillStyle = color;
       c.fill();
+
+      // Viền hồng phấn thanh thoát
+      c.strokeStyle = '#ffffff';
+      c.lineWidth = 0.8;
+      c.stroke();
+
       c.restore();
     };
 
@@ -61,14 +86,14 @@ export default function HeartCursorTrail() {
         const p = particles[i];
         p.x += p.vx;
         p.y += p.vy;
-        p.vy += 0.03; // Trọng lực nhẹ rơi xuống hoặc lơ lửng
+        p.vy -= 0.015; // Bay nhẹ bồng bềnh lên trên
         p.rotation += p.rotSpeed;
-        p.opacity -= 0.022;
+        p.opacity -= 0.018; // Tan biến êm dịu
 
         if (p.opacity <= 0) {
           particles.splice(i, 1);
         } else {
-          drawHeart(ctx, p.x, p.y, p.size, p.color, p.opacity, p.rotation);
+          drawSoftHeart(ctx, p.x, p.y, p.size, p.color, p.opacity, p.rotation);
         }
       }
 
@@ -82,24 +107,26 @@ export default function HeartCursorTrail() {
     const spawnParticles = (x: number, y: number) => {
       const dist = Math.hypot(x - lastX, y - lastY);
       const now = performance.now();
-      // Chỉ tạo đốm tim khi di chuyển đủ xa hoặc sau một khoảng thời gian ngắn
-      if (dist > 12 || now - lastTime > 60) {
+
+      // Chỉ tạo khi chuột di chuyển mượt mà
+      if (dist > 10 || now - lastTime > 50) {
         lastX = x;
         lastY = y;
         lastTime = now;
 
-        const count = Math.random() > 0.5 ? 2 : 1;
+        // Sinh 1-2 đốm tim hồng phấn li ti
+        const count = Math.random() > 0.4 ? 2 : 1;
         for (let i = 0; i < count; i++) {
           particles.push({
-            x: x + (Math.random() - 0.5) * 8,
-            y: y + (Math.random() - 0.5) * 8,
-            vx: (Math.random() - 0.5) * 1.2,
-            vy: -0.8 - Math.random() * 1.2, // Bay nhẹ lên trên
-            size: 0.55 + Math.random() * 0.45,
-            opacity: 0.9,
-            rotation: (Math.random() - 0.5) * 0.6,
-            rotSpeed: (Math.random() - 0.5) * 0.05,
-            color: HEART_COLORS[Math.floor(Math.random() * HEART_COLORS.length)],
+            x: x + (Math.random() - 0.5) * 6,
+            y: y + (Math.random() - 0.5) * 6,
+            vx: (Math.random() - 0.5) * 0.8,
+            vy: -0.6 - Math.random() * 0.8, // Bay lượn nhẹ lên trên
+            size: 0.4 + Math.random() * 0.35, // Kích cỡ nhỏ xinh li ti
+            opacity: 0.75,
+            rotation: (Math.random() - 0.5) * 0.5,
+            rotSpeed: (Math.random() - 0.5) * 0.04,
+            color: PASTEL_PINK_COLORS[Math.floor(Math.random() * PASTEL_PINK_COLORS.length)],
           });
         }
 
