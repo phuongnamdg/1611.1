@@ -6,7 +6,7 @@ import confetti from "canvas-confetti";
 import { Mic, MicOff, Gift, ArrowRight, Sparkles } from "lucide-react";
 import { soundManager } from "@/utils/sound";
 import { BirthdayConfig } from "@/types/birthday";
-import SplineCake3D from "./SplineCake3D";
+import ThreeCake3D from "./ThreeCake3D";
 
 interface Props {
   config: BirthdayConfig;
@@ -29,8 +29,8 @@ export default function Scene2Cake({ config, onNext }: Props) {
   >("TYPING");
   const [sentenceIdx, setSentenceIdx] = useState<number>(0);
 
-  // Chế độ hiển thị bánh: 2D Pastel (mặc định nhẹ êm) hoặc 3D Spline
-  const [cakeMode, setCakeMode] = useState<"2D_PASTEL" | "3D_SPLINE">("2D_PASTEL");
+  // Chế độ hiển thị bánh: 2D Pastel (mặc định nhẹ êm) hoặc 3D Thực thụ (Three.js WebGL)
+  const [cakeMode, setCakeMode] = useState<"2D_PASTEL" | "3D_CAKE">("3D_CAKE");
 
   // Từng bước rơi bánh kem 3 tầng mềm mại
   const [cakeStep, setCakeStep] = useState<number>(0);
@@ -284,23 +284,23 @@ export default function Scene2Cake({ config, onNext }: Props) {
                 🌸 Bánh 3 Tầng Pastel
               </button>
               <button
-                onClick={() => setCakeMode("3D_SPLINE")}
+                onClick={() => setCakeMode("3D_CAKE")}
                 className={`px-3.5 py-1.5 rounded-full text-xs font-bold flex items-center gap-1.5 transition-all shadow-xs cursor-pointer ${
-                  cakeMode === "3D_SPLINE"
+                  cakeMode === "3D_CAKE"
                     ? "bg-gradient-to-r from-purple-500 via-pink-500 to-rose-500 text-white shadow-pink-200 scale-105"
                     : "bg-white/85 text-pink-600 hover:bg-white border border-pink-200"
                 }`}
               >
                 <Sparkles className="w-3.5 h-3.5 text-amber-300 animate-spin" />
-                ✨ Bánh 3D Spline (Xoay 360°)
+                ✨ Bánh 3D Xoay 360°
               </button>
             </motion.div>
           )}
 
-          {/* 🍰 VÙNG HIỂN THỊ BÁNH: HOẶC 3D SPLINE HOẶC 3 TẦNG PASTEL */}
-          {cakeMode === "3D_SPLINE" ? (
+          {/* 🍰 VÙNG HIỂN THỊ BÁNH: HOẶC 3D THỰC THỤ HOẶC 3 TẦNG PASTEL */}
+          {cakeMode === "3D_CAKE" ? (
             <div className="w-full max-w-md my-auto py-2 z-10">
-              <SplineCake3D
+              <ThreeCake3D
                 isCandleBlown={isCandleBlown}
                 onExtinguishCandle={handleExtinguishCandle}
               />
