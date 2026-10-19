@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Delete } from 'lucide-react';
+import { Delete, Sparkles } from 'lucide-react';
 import { soundManager } from '@/utils/sound';
 import { BirthdayConfig } from '@/types/birthday';
 
@@ -14,6 +14,7 @@ interface Props {
 export default function Scene1Lock({ config, onUnlock }: Props) {
   const [pin, setPin] = useState<string>('');
   const [pinError, setPinError] = useState<string>('');
+  const [isShaking, setIsShaking] = useState<boolean>(false);
 
   const targetPassword = config?.birthDatePassword || '1611';
 
@@ -34,7 +35,11 @@ export default function Scene1Lock({ config, onUnlock }: Props) {
         } else {
           setPinError('Sai mật khẩu nha cưng? 😠😠');
           soundManager.playKeypress(200);
-          setTimeout(() => setPin(''), 800);
+          setIsShaking(true);
+          setTimeout(() => {
+            setPin('');
+            setIsShaking(false);
+          }, 750);
         }
       }
     }
@@ -65,9 +70,32 @@ export default function Scene1Lock({ config, onUnlock }: Props) {
       {/* ===================================================================== */}
       <div className="w-full max-w-lg sm:max-w-xl bg-white/95 backdrop-blur-xl rounded-[32px] p-5 sm:p-7 shadow-[0_20px_50px_rgba(255,182,193,0.35)] border border-pink-100 flex flex-col sm:flex-row items-center gap-5 sm:gap-6">
         
-        {/* CỘT TRÁI: KHUNG ẢNH CÔNG CHÚA (TỰ ĐỘNG LẤY TỪ public/avatar.jpg) */}
-        <div className="w-44 sm:w-[200px] flex-shrink-0 flex flex-col items-center">
+        {/* CỘT TRÁI: KHUNG ẢNH CÔNG CHÚA VỚI WASHI TAPE & NGÔI SAO LẤP LÁNH */}
+        <div className="w-44 sm:w-[200px] flex-shrink-0 flex flex-col items-center relative">
+          {/* Băng dính Washi Tape dễ thương dán mép trên khung ảnh */}
+          <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20 w-24 h-5 bg-[#fed7aa]/90 backdrop-blur-xs border-y border-dashed border-[#fb923c]/50 shadow-xs -rotate-2 rounded-[2px] pointer-events-none flex items-center justify-center">
+            <span className="text-[10px] tracking-widest text-[#ea580c]/70 font-mono select-none">♥ ♥ ♥</span>
+          </div>
+
           <div className="w-full aspect-[4/5] rounded-2xl overflow-hidden shadow-sm border-2 border-pink-100 bg-pink-50 relative group">
+            {/* ✨ Ngôi sao lấp lánh góc trên phải */}
+            <motion.div
+              animate={{ opacity: [0.4, 1, 0.4], scale: [0.85, 1.15, 0.85], rotate: [0, 15, 0] }}
+              transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
+              className="absolute top-2.5 right-2.5 z-10 text-amber-300 drop-shadow-[0_0_6px_rgba(252,211,77,0.8)] pointer-events-none"
+            >
+              <Sparkles className="w-4 h-4 fill-amber-300" />
+            </motion.div>
+
+            {/* ✨ Ngôi sao lấp lánh góc dưới trái */}
+            <motion.div
+              animate={{ opacity: [0.3, 0.9, 0.3], scale: [0.8, 1.1, 0.8], rotate: [0, -15, 0] }}
+              transition={{ duration: 2.6, repeat: Infinity, ease: 'easeInOut', delay: 1.1 }}
+              className="absolute bottom-2.5 left-2.5 z-10 text-pink-300 drop-shadow-[0_0_6px_rgba(244,114,182,0.8)] pointer-events-none"
+            >
+              <Sparkles className="w-3.5 h-3.5 fill-pink-300" />
+            </motion.div>
+
             {/* 👇 THAY ẢNH BẰNG CÁCH THẢ FILE VÀO public/avatar.jpg HOẶC SỬA LINK DƯỚI 👇 */}
             <img
               src="/avt.jpg"
@@ -84,20 +112,30 @@ export default function Scene1Lock({ config, onUnlock }: Props) {
             {config?.scene1Title || 'Hãy nhập ngày sinh của công chúa'}
           </h2>
 
-          {/* Ô hiển thị số nhập vào (Tone màu cam/đào pastel) */}
-          <div className="w-full h-11 sm:h-12 rounded-xl bg-[#fedfd2] border border-[#faccc0] flex items-center justify-center text-[#c25e5e] font-bold text-xl tracking-[0.25em] px-4 shadow-inner mb-3">
+          {/* Ô hiển thị số nhập vào (Tone màu cam/đào pastel) với hiệu ứng rung lắc khi sai */}
+          <motion.div
+            animate={isShaking ? { x: [-8, 8, -6, 6, -3, 3, 0] } : { x: 0 }}
+            transition={{ duration: 0.4, ease: 'easeInOut' }}
+            className="w-full h-11 sm:h-12 rounded-xl bg-[#fedfd2] border border-[#faccc0] flex items-center justify-center text-[#c25e5e] font-bold text-xl tracking-[0.25em] px-4 shadow-inner mb-3"
+          >
             {pin.length > 0 ? (
               pin.split('').map((char, i) => (
-                <span key={i} className="mx-1">
+                <motion.span
+                  key={i}
+                  initial={{ scale: 0.4, y: -4, opacity: 0 }}
+                  animate={{ scale: [1.3, 1], y: 0, opacity: 1 }}
+                  transition={{ type: 'spring', stiffness: 500, damping: 20 }}
+                  className="mx-1 inline-block"
+                >
                   {char}
-                </span>
+                </motion.span>
               ))
             ) : (
               <span className="text-[#e2a898] tracking-normal text-sm font-semibold">
                 ••••
               </span>
             )}
-          </div>
+          </motion.div>
 
           {/* Thông báo lỗi nếu bấm sai ngày sinh */}
           {pinError && (
