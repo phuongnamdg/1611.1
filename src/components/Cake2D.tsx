@@ -12,6 +12,7 @@ interface Props {
 
 export default function Cake2D({
   isCandleBlown,
+  canClickToExtinguish = false,
   onExtinguishCandle,
   blowStrength = 0,
 }: Props) {
@@ -19,6 +20,12 @@ export default function Cake2D({
   const [holdProgress, setHoldProgress] = useState<number>(0);
   const [isPressing, setIsPressing] = useState<boolean>(false);
   const holdIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleClick = () => {
+    if (canClickToExtinguish && !isCandleBlown) {
+      onExtinguishCandle();
+    }
+  };
 
   // 1. Tự động tăng tiến trình khi có hơi thổi vào micro
   useEffect(() => {
@@ -118,8 +125,8 @@ export default function Cake2D({
       {/* =================================================================== */}
       <div className="relative w-full flex flex-col items-center justify-center">
         
-        {/* 1. BĂNG RÔN DÂY CỜ PASTEL (GARLAND BUNTING) VẮNG NGANG PHÍA TRÊN */}
-        <div className="relative w-[110%] sm:w-[116%] -mb-10 sm:-mb-12 z-10 pointer-events-none select-none">
+        {/* 1. BĂNG RÔN DÂY CỜ PASTEL (GARLAND BUNTING) VẮT NGANG PHÍA TRÊN */}
+        <div className="relative w-[110%] sm:w-[116%] -mb-3 sm:-mb-4 z-10 pointer-events-none select-none">
           <img
             src="/garland-bunting.webp"
             alt="Băng rôn trang trí"
@@ -191,34 +198,34 @@ export default function Cake2D({
         {/* 2. KHUNG CHỨA BÁNH VÀ NẾN */}
         <div className="relative w-full aspect-[494/686] max-w-[280px] sm:max-w-[310px] flex items-center justify-center">
           
-          {/* Ảnh bánh kem màu nước 2 tầng (Lật ngang để hoa khớp y hệt ảnh mẫu TikTok) */}
+          {/* Ảnh bánh kem màu nước 2 tầng với chân đế gỗ uốn lượn tinh xảo */}
           <img
             src="/cake-lovegift.webp"
             alt="Bánh kem sinh nhật"
-            className="w-full h-full object-contain pointer-events-none -scale-x-100 drop-shadow-[0_16px_35px_rgba(0,0,0,0.6)]"
+            className="w-full h-full object-contain pointer-events-none drop-shadow-[0_16px_35px_rgba(0,0,0,0.6)]"
           />
 
-          {/* 3. ĐẾ LÓT CHÂN BÁNH BO TRÒN TỰ NHIÊN (KHẮC PHỤC ĐẾ BÁNH BỊ CẮT PHẲNG) */}
-          <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-28 h-3.5 rounded-full bg-[#c4a683] shadow-inner opacity-90 pointer-events-none -z-10" />
-          <div className="absolute -bottom-2.5 left-1/2 -translate-x-1/2 w-36 h-4 rounded-full bg-black/60 blur-[3px] pointer-events-none -z-20" />
+          {/* 3. BÓNG ĐỔ TỰ NHIÊN DƯỚI ĐẾ GỖ CỦA BÁNH */}
+          <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-36 sm:w-44 h-4.5 rounded-full bg-black/50 blur-[4px] pointer-events-none -z-10" />
 
           {/* =============================================================== */}
-          {/* 4. CÂY NẾN THANH MẢNH & NGỌN LỬA TINH TẾ (KHÔNG CÒN BỊ THÔ)      */}
+          {/* 4. CÂY NẾN THANH MẢNH & NGỌN LỬA TINH TẾ CẮM VÀNG MẶT KEM TẦNG TRÊN */}
           {/* =============================================================== */}
           <div
             className="absolute z-20 flex flex-col items-center cursor-pointer"
             style={{
-              top: '-3.5%',
+              top: '7%',
               left: '50%',
-              transform: 'translateX(-50%)',
+              transform: 'translate(-50%, -100%)',
             }}
             onPointerDown={handlePointerDown}
             onPointerUp={handlePointerUp}
             onPointerLeave={handlePointerUp}
             onPointerCancel={handlePointerUp}
+            onClick={handleClick}
           >
             {/* Vùng cảm ứng nhấn mở rộng cho ngón tay */}
-            <div className="absolute -inset-6 z-30 rounded-full cursor-pointer" />
+            <div className="absolute -inset-8 z-30 rounded-full cursor-pointer" />
 
             {/* A. NGỌN LỬA VÀ QUẦNG HÀO QUANG ÁNH SÁNG */}
             <div className="relative flex items-center justify-center mb-0.5">
@@ -304,17 +311,30 @@ export default function Cake2D({
             </div>
 
             {/* C. TIM NẾN MẢNH MAI (WICK) */}
-            <div className="w-[1.5px] h-[6px] bg-[#27272a] rounded-t-xs -mb-[1px]" />
+            <div className="w-[1.5px] h-[5px] bg-[#27272a] rounded-t-xs -mb-[1px]" />
 
-            {/* D. THÂN NẾN THON GỌN, VUỐT NHẸ ĐẸP MẮT (TAPERED CANDLE) */}
+            {/* D. THÂN NẾN THON GỌN, VÂN XOẮN PASTEL HÀN QUỐC (SLENDER SPIRAL CANDLE) */}
             <div
-              className="w-[7px] sm:w-[8px] h-[40px] sm:h-[44px] rounded-t-[3px] rounded-b-[4px] shadow-sm"
+              className="w-[6px] sm:w-[7px] h-[36px] sm:h-[40px] rounded-t-[2px] rounded-b-[2px] shadow-sm relative overflow-hidden"
               style={{
                 background:
-                  'linear-gradient(to right, #fbf7ee 0%, #ffffff 45%, #eadeca 100%)',
-                boxShadow: '0 2px 6px rgba(0,0,0,0.25)',
+                  'linear-gradient(135deg, #fffdf8 0%, #fff1f2 40%, #ffedd5 70%, #fce7f3 100%)',
+                boxShadow:
+                  '0 2px 5px rgba(0,0,0,0.22), inset 0 1px 1px rgba(255,255,255,0.9)',
               }}
-            />
+            >
+              {/* Vân sọc xoắn ánh hồng pastel tinh tế */}
+              <div
+                className="absolute inset-0 opacity-40 pointer-events-none"
+                style={{
+                  background:
+                    'repeating-linear-gradient(-45deg, transparent, transparent 3px, rgba(244,114,182,0.6) 3px, rgba(244,114,182,0.6) 6px)',
+                }}
+              />
+            </div>
+
+            {/* E. CHÂN NẾN CẮM VÀO KEM (ĐẢM BẢO KHÔNG BỊ TRÔI LƠ LỬNG) */}
+            <div className="w-[11px] h-[3.5px] rounded-full bg-white/90 shadow-xs -mt-[1.5px] border border-pink-100/80 pointer-events-none" />
           </div>
         </div>
       </div>

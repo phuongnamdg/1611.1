@@ -13,16 +13,13 @@ interface Props {
   onNext: () => void;
 }
 
-export default function Scene2Cake({ onNext }: Props) {
-  // =========================================================================
-  // 📜 3 DÒNG CHỮ UỐN LƯỢN CHẠY MỜ DẦN ĐÈ LÊN NHAU (HOÀN TOÀN KHÔNG CÓ KHUNG)
-  // =========================================================================
-  const introSentences = [
-    "Hôm nay là một ngày thật đặc biệt, ngày công chúa nhỏ ra đời...",
-    "Chúc em tuổi mới luôn ngập tràn nụ cười, bình an và hạnh phúc...",
-    "Và bây giờ, hãy nhắm mắt lại, cùng thổi nến và ước một điều ước nhé! ✨",
-  ];
+const INTRO_SENTENCES = [
+  "Hôm nay là một ngày thật đặc biệt, ngày công chúa nhỏ ra đời...",
+  "Chúc em tuổi mới luôn ngập tràn nụ cười, bình an và hạnh phúc...",
+  "Và bây giờ, hãy nhắm mắt lại, cùng thổi nến và ước một điều ước nhé! ✨",
+];
 
+export default function Scene2Cake({ onNext }: Props) {
   // Trạng thái: 'TYPING' -> 'READY_TO_BLOW'
   const [stage, setStage] = useState<"TYPING" | "READY_TO_BLOW">("TYPING");
   const [sentenceIdx, setSentenceIdx] = useState<number>(0);
@@ -128,7 +125,7 @@ export default function Scene2Cake({ onNext }: Props) {
 
     const timer = setInterval(() => {
       setSentenceIdx((prev) => {
-        if (prev < introSentences.length - 1) {
+        if (prev < INTRO_SENTENCES.length - 1) {
           soundManager.playKeypress(560 + (prev + 1) * 60);
           return prev + 1;
         } else {
@@ -216,11 +213,26 @@ export default function Scene2Cake({ onNext }: Props) {
         ))}
       </motion.div>
 
+      {/* ⚡ NÚT BỎ QUA LỜI DẪN NHANH Ở GÓC TRÊN BÊN TRÁI KHI ĐANG TYPING */}
+      {stage === "TYPING" && (
+        <div className="fixed top-4 left-4 z-40">
+          <button
+            type="button"
+            onClick={startCakeDrop}
+            className="px-3.5 py-1.5 rounded-full bg-white/85 hover:bg-white text-rose-500 hover:text-rose-600 text-xs font-semibold shadow-xs border border-pink-200 backdrop-blur-md transition-all flex items-center gap-1.5 cursor-pointer hover:scale-105 active:scale-95"
+            title="Bỏ qua lời dẫn để xem bánh kem"
+          >
+            <span>Bỏ qua lời dẫn</span>
+            <span>⏩</span>
+          </button>
+        </div>
+      )}
+
       {/* ===================================================================== */}
       {/* 📜 GIAI ĐOẠN 1: 3 DÒNG CHỮ CHẠY MỜ DẦN ĐÈ LÊN NHAU                    */}
       {/* ===================================================================== */}
       {stage === "TYPING" && (
-        <div className="w-full flex items-center justify-center min-h-[60vh] px-4 my-auto relative z-10">
+        <div className="w-full flex flex-col items-center justify-center min-h-[60vh] px-4 my-auto relative z-10">
           <AnimatePresence mode="wait">
             <motion.p
               key={sentenceIdx}
@@ -230,9 +242,26 @@ export default function Scene2Cake({ onNext }: Props) {
               transition={{ duration: 0.9, ease: "easeInOut" }}
               className="font-dancing text-3xl sm:text-4xl md:text-5xl text-[#942948] font-semibold leading-relaxed tracking-wide drop-shadow-[0_4px_24px_rgba(255,182,193,0.55)] max-w-md mx-auto"
             >
-              {introSentences[sentenceIdx]}
+              {INTRO_SENTENCES[sentenceIdx]}
             </motion.p>
           </AnimatePresence>
+
+          {/* ⚡ NÚT BỎ QUA LỜI DẪN ĐỂ XEM BÁNH KEM NGAY */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.5 }}
+            className="mt-8"
+          >
+            <button
+              type="button"
+              onClick={startCakeDrop}
+              className="px-4 py-2 rounded-full bg-white/85 hover:bg-white text-rose-500 hover:text-rose-600 text-xs font-semibold shadow-md shadow-pink-200/50 border border-pink-200 backdrop-blur-md transition-all flex items-center gap-1.5 cursor-pointer hover:scale-105 active:scale-95"
+            >
+              <span>Bỏ qua lời dẫn</span>
+              <span>🎂 ⏩</span>
+            </button>
+          </motion.div>
         </div>
       )}
 

@@ -65,6 +65,19 @@ export default function Scene1Lock({ config, onUnlock }: Props) {
       exit={{ opacity: 0, scale: 1.05 }}
       className="relative z-20 flex flex-col items-center justify-center min-h-screen px-4 py-8 w-full font-sans"
     >
+      {/* ⚡ NÚT SKIP NHANH Ở GÓC TRÊN BÊN TRÁI */}
+      <div className="fixed top-4 left-4 z-40">
+        <button
+          type="button"
+          onClick={onUnlock}
+          className="px-3.5 py-1.5 rounded-full bg-white/85 hover:bg-white text-rose-500 hover:text-rose-600 text-xs font-semibold shadow-xs border border-pink-200 backdrop-blur-md transition-all flex items-center gap-1.5 cursor-pointer hover:scale-105 active:scale-95"
+          title="Bỏ qua mật khẩu để xem nhanh"
+        >
+          <span>Bỏ qua</span>
+          <span>⏩</span>
+        </button>
+      </div>
+
       {/* ===================================================================== */}
       {/* KHUNG CARD CHÍNH 2 CỘT                 */}
       {/* ===================================================================== */}
@@ -181,11 +194,23 @@ export default function Scene1Lock({ config, onUnlock }: Props) {
               <Delete className="w-5 h-5" />
             </button>
           </div>
+
+          {/* ⚡ NÚT BỎ QUA MẬT KHẨU (TIỆN LỢI ĐỂ TEST / XEM BÁNH KEM NGAY) */}
+          <div className="mt-3.5 w-full flex justify-center">
+            <button
+              type="button"
+              onClick={onUnlock}
+              className="px-4 py-1.5 rounded-full bg-white/80 hover:bg-white text-rose-500 hover:text-rose-600 text-xs font-semibold shadow-xs border border-pink-200/80 transition-all flex items-center gap-1.5 cursor-pointer hover:scale-105 active:scale-95"
+            >
+              <span>Bỏ qua mật khẩu</span>
+              <span className="text-[10px]">⏩</span>
+            </button>
+          </div>
         </div>
       </div>
 
       {/* 👇 DÒNG CHỮ QUOTE LÃNG MẠN PHÍA DƯỚI (GIỐNG HỆT ẢNH MẪU) 👇 */}
-      <div className="mt-8 text-center tracking-[0.25em] text-xs sm:text-sm font-semibold uppercase text-stone-700/80">
+      <div className="mt-6 text-center tracking-[0.25em] text-xs sm:text-sm font-semibold uppercase text-stone-700/80">
         <p className="text-stone-400 text-lg mb-0.5">&ldquo;</p>
         <p className="leading-relaxed">Happy Birthday</p>
         <p className="leading-relaxed"></p>
