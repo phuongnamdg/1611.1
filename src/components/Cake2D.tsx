@@ -44,54 +44,69 @@ export default function Cake2D({
   const [isPressing, setIsPressing] = useState<boolean>(false);
   const holdIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const handleClick = () => {
-    if (!isCandleBlown) {
-      onExtinguishCandle();
-    }
-  };
-
-  // 1. Tự động tăng tiến trình khi có hơi thổi vào micro
+  // 1. Tự động tăng tiến trình khi có hơi thổi vào micro (hoặc giảm dần khi ngừng thổi)
   useEffect(() => {
     if (isCandleBlown) return;
 
-    if (blowStrength > 0.08) {
-      const frameId = requestAnimationFrame(() => {
-        setHoldProgress((prev) => Math.min(100, prev + blowStrength * 28));
-      });
-      return () => cancelAnimationFrame(frameId);
-    } else if (!isPressing && holdProgress > 0) {
-      const frameId = requestAnimationFrame(() => {
-        setHoldProgress((prev) => Math.max(0, prev - 5));
-      });
-      return () => cancelAnimationFrame(frameId);
-    }
-  }, [blowStrength, isCandleBlown, isPressing, holdProgress]);
+    const frameId = requestAnimationFrame(() => {
+      if (blowStrength > 0.12) {
+        setHoldProgress((prev) => Math.min(100, prev + blowStrength * 20));
+      } else if (!isPressing) {
+        setHoldProgress((prev) => (prev > 0 ? Math.max(0, prev - 4) : 0));
+      }
+    });
+    return () => cancelAnimationFrame(frameId);
+  }, [blowStrength, isCandleBlown, isPressing]);
 
-  // 2. Kích hoạt dập nến khi tiến trình đạt 100% trong effect riêng (tránh update parent lúc render)
+  // 2. Kích hoạt dập nến khi tiến trình đạt 100% (tránh hoàn toàn bad setState during render & cascading renders)
   useEffect(() => {
     if (holdProgress >= 100 && !isCandleBlown) {
       if (holdIntervalRef.current) {
         clearInterval(holdIntervalRef.current);
         holdIntervalRef.current = null;
       }
-      onExtinguishCandle();
+      const timer = setTimeout(() => {
+        setIsPressing(false);
+        onExtinguishCandle();
+      }, 0);
+      return () => clearTimeout(timer);
     }
   }, [holdProgress, isCandleBlown, onExtinguishCandle]);
 
   // 3. Bắt đầu nhấn giữ ngọn nến
-  const handlePointerDown = () => {
+  const handlePointerDown = (e: React.PointerEvent) => {
+    e.stopPropagation();
     if (isCandleBlown) return;
+    try {
+      e.currentTarget.setPointerCapture(e.pointerId);
+    } catch {}
     setIsPressing(true);
 
     if (holdIntervalRef.current) clearInterval(holdIntervalRef.current);
 
     holdIntervalRef.current = setInterval(() => {
-      setHoldProgress((prev) => Math.min(100, prev + 5)); // Cần giữ khoảng 1.2s
-    }, 60);
+      setHoldProgress((prev) => {
+        const next = prev + 5; // Cần giữ khoảng 1.1s - 1.2s là thổi tắt
+        if (next >= 100) {
+          if (holdIntervalRef.current) {
+            clearInterval(holdIntervalRef.current);
+            holdIntervalRef.current = null;
+          }
+          setIsPressing(false);
+          return 100;
+        }
+        return next;
+      });
+    }, 55);
   };
 
   // 4. Thả tay ra khi chưa đủ thời gian
-  const handlePointerUp = () => {
+  const handlePointerUp = (e?: React.PointerEvent) => {
+    if (e) {
+      try {
+        e.currentTarget.releasePointerCapture(e.pointerId);
+      } catch {}
+    }
     setIsPressing(false);
     if (holdIntervalRef.current) {
       clearInterval(holdIntervalRef.current);
@@ -117,22 +132,26 @@ export default function Cake2D({
       <div className="min-h-[38px] flex items-center justify-center mb-1 text-center z-30">
         {!isCandleBlown ? (
           <motion.div
-            key={isPressing || blowStrength > 0.08 ? 'holding' : 'idle'}
+            key={isPressing || blowStrength > 0.12 ? 'holding' : 'idle'}
             initial={{ opacity: 0, y: -4 }}
             animate={{ opacity: 1, y: 0 }}
-            onClick={handleClick}
-            className={`px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all cursor-pointer active:scale-95 ${
-              isPressing || blowStrength > 0.08
+            onClick={() => {
+              if (!isCandleBlown) {
+                setHoldProgress(100);
+              }
+            }}
+            className={`px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all cursor-pointer select-none active:scale-95 ${
+              isPressing || blowStrength > 0.12
                 ? 'bg-amber-500 text-stone-900 shadow-lg shadow-amber-500/40 animate-pulse font-bold'
                 : 'bg-black/60 backdrop-blur-md text-[#fde68a] border border-amber-400/30 shadow-[0_0_15px_rgba(251,191,36,0.15)] hover:bg-black/80'
             }`}
-            title="Bấm để thổi tắt nến ngay lập tức"
+            title="Nhấn giữ ngọn nến hoặc thổi vào mic để thổi tắt"
           >
-            {isPressing || blowStrength > 0.08
-              ? holdProgress > 50
-                ? 'sắp tắt rồi… phù mạnh lên nào! 💨'
-                : 'đang nhận hơi thổi… 💨'
-              : '🎤 Thổi vào mic hoặc chạm ngọn nến để thổi tắt 💨'}
+            {isPressing || blowStrength > 0.12
+              ? holdProgress > 60
+                ? 'giữ nữa… sắp tắt rồi! 💨'
+                : 'giữ tiếp… đang thổi nến… 💨'
+              : '👆 Nhấn & giữ ngọn nến để thổi (hoặc thổi vào mic)'}
           </motion.div>
         ) : (
           <motion.div
@@ -304,23 +323,22 @@ export default function Cake2D({
           />
 
           {/* =============================================================== */}
-          {/* 3. CÂY NẾN THANH MẢNH & NGỌN LỬA TINH TẾ CẮM VÀNG MẶT KEM TẦNG TRÊN */}
+          {/* 3. CÂY NẾN THANH MẢNH & NGỌN LỬA TINH TẾ CẮM VÀO MẶT KEM TẦNG TRÊN */}
           {/* =============================================================== */}
           <div
-            className="absolute z-40 flex flex-col items-center cursor-pointer select-none"
+            className="absolute z-40 flex flex-col items-center cursor-pointer select-none touch-none p-4 -m-4"
             style={{
               top: '4.5%',
               left: '50%',
               transform: 'translate(-50%, -100%)',
+              touchAction: 'none',
             }}
             onPointerDown={handlePointerDown}
             onPointerUp={handlePointerUp}
-            onPointerLeave={handlePointerUp}
             onPointerCancel={handlePointerUp}
-            onClick={handleClick}
           >
             {/* Vùng cảm ứng nhấn mở rộng cho ngón tay */}
-            <div className="absolute -inset-10 z-40 rounded-full cursor-pointer" />
+            <div className="absolute inset-0 z-10 rounded-full pointer-events-none" />
 
             {/* A. NGỌN LỬA VÀ QUẦNG HÀO QUANG ÁNH SÁNG */}
             <div className="relative flex items-center justify-center mb-0.5">

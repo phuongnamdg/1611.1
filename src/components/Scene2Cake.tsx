@@ -64,7 +64,10 @@ export default function Scene2Cake({ onNext }: Props) {
   // Micro thổi nến (Nhận diện chính xác hơi thổi / tiếng phù vào mic)
   const startMic = useCallback(async () => {
     try {
-      if (!navigator.mediaDevices?.getUserMedia) return;
+      if (!navigator.mediaDevices?.getUserMedia) {
+        setCanClickToExtinguish(true);
+        return;
+      }
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       micStreamRef.current = stream;
 
@@ -79,7 +82,7 @@ export default function Scene2Cake({ onNext }: Props) {
       audioContextRef.current = audioCtx;
 
       const analyser = audioCtx.createAnalyser();
-      analyser.fftSize = 256;
+      analyser.fftSize = 512;
       analyser.smoothingTimeConstant = 0.2;
       audioCtx.createMediaStreamSource(stream).connect(analyser);
 
@@ -91,35 +94,38 @@ export default function Scene2Cake({ onNext }: Props) {
         analyser.getByteFrequencyData(freqData);
         analyser.getByteTimeDomainData(timeData);
 
-        // 1. Năng lượng dải tần số thấp (tiếng gió / hơi thở: 20Hz - 400Hz nằm ở bin 1 đến 8)
-        let lowFreqSum = 0;
-        const lowBins = Math.min(8, analyser.frequencyBinCount);
-        for (let i = 1; i <= lowBins; i++) {
-          lowFreqSum += freqData[i];
+        // 1. Âm lượng trung bình toàn dải (như ở bản e7b1d33)
+        let sum = 0;
+        for (let i = 0; i < analyser.frequencyBinCount; i++) {
+          sum += freqData[i];
         }
-        const lowFreqLevel = lowFreqSum / lowBins;
+        const avg = sum / analyser.frequencyBinCount;
 
-        // 2. Biên độ sóng âm tức thời (tiếng phù vào màng mic làm biến thiên biên độ lớn quanh mốc 128)
-        let maxWaveformDev = 0;
+        // 2. Dải tần số thấp (tiếng gió / hơi thở 20Hz - 400Hz)
+        let lowSum = 0;
+        const lowBins = Math.min(10, analyser.frequencyBinCount);
+        for (let i = 1; i <= lowBins; i++) {
+          lowSum += freqData[i];
+        }
+        const lowAvg = lowSum / lowBins;
+
+        // 3. Biên độ sóng âm tức thời (tiếng phù luồng khí vào mic)
+        let maxDev = 0;
         for (let i = 0; i < timeData.length; i++) {
           const dev = Math.abs(timeData[i] - 128);
-          if (dev > maxWaveformDev) maxWaveformDev = dev;
+          if (dev > maxDev) maxDev = dev;
         }
 
-        // Điểm đánh giá hơi thổi từ 0 đến 1
-        const blowScore = Math.max(
-          Math.min(1, (lowFreqLevel - 15) / 45),
-          Math.min(1, (maxWaveformDev - 12) / 30)
-        );
+        // Chuẩn hóa độ mạnh hơi thở từ 0 đến 1
+        const normAvg = (avg - 16) / 36;
+        const normLow = (lowAvg - 18) / 36;
+        const normDev = (maxDev - 14) / 24;
+        const strength = Math.max(0, Math.min(1, Math.max(normAvg, normLow, normDev)));
 
-        if (blowScore > 0.08) {
-          setBlowStrength(blowScore);
-        } else {
-          setBlowStrength(0);
-        }
+        setBlowStrength(strength);
 
-        // Hơi thổi vào mic: chỉ cần phù nhẹ (lowFreqLevel > 35 hoặc maxWaveformDev > 25 hoặc blowScore > 0.35)
-        if (lowFreqLevel > 35 || maxWaveformDev > 25 || blowScore > 0.35) {
+        // Nếu thổi rất mạnh -> dập tắt nến ngay lập tức!
+        if (avg > 58 || lowAvg > 58 || maxDev > 36) {
           handleExtinguishCandle();
           return;
         }
@@ -215,11 +221,15 @@ export default function Scene2Cake({ onNext }: Props) {
         startMic();
       }
     };
+    window.addEventListener("pointerdown", handleUserInteraction);
     window.addEventListener("click", handleUserInteraction);
     window.addEventListener("touchstart", handleUserInteraction);
+    window.addEventListener("keydown", handleUserInteraction);
     return () => {
+      window.removeEventListener("pointerdown", handleUserInteraction);
       window.removeEventListener("click", handleUserInteraction);
       window.removeEventListener("touchstart", handleUserInteraction);
+      window.removeEventListener("keydown", handleUserInteraction);
     };
   }, [stage, isCandleBlown, startMic]);
 
