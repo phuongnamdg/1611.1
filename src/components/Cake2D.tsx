@@ -125,91 +125,121 @@ export default function Cake2D({
       {/* =================================================================== */}
       <div className="relative w-full flex flex-col items-center justify-center">
         
-        {/* 1. BĂNG RÔN DÂY CỜ PASTEL (GARLAND BUNTING) VẮT NGANG PHÍA TRÊN */}
-        <div className="relative w-[110%] sm:w-[116%] -mb-3 sm:-mb-4 z-10 pointer-events-none select-none">
-          <img
-            src="/garland-bunting.webp"
-            alt="Băng rôn trang trí"
-            className="w-full h-auto object-contain drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)]"
-          />
+        {/* 1. BĂNG RÔN DÂY CỜ PASTEL (MỞ BUNG TỪ TÂM RA 2 BÊN KHI VÀO TIẾT MỤC) */}
+        <div className="relative w-[110%] sm:w-[116%] mb-2 sm:mb-3 z-10 select-none">
+          <motion.div
+            initial={{ clipPath: 'inset(0% 50% 0% 50%)', opacity: 0, scale: 0.95 }}
+            animate={{ clipPath: 'inset(0% 0% 0% 0%)', opacity: 1, scale: 1 }}
+            transition={{
+              duration: 1.25,
+              ease: [0.16, 1, 0.3, 1],
+              delay: 0.15,
+            }}
+            className="relative w-full overflow-hidden"
+          >
+            <img
+              src="/garland-bunting.webp"
+              alt="Băng rôn trang trí"
+              className="w-full h-auto object-contain drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)]"
+            />
 
-          {/* ✨ DÂY ĐÈN FAIRY LIGHTS & ĐÈN LỒNG BỪNG SÁNG KHI THỔI TẮT NẾN */}
-          {isCandleBlown && (
-            <div className="absolute inset-0 pointer-events-none overflow-visible">
-              {[
-                { x: 3, y: 22 },
-                { x: 10, y: 26 },
-                { x: 18, y: 36 },
-                { x: 26, y: 46 },
-                { x: 34, y: 54 },
-                { x: 42, y: 60 },
-                { x: 50, y: 62 },
-                { x: 58, y: 60 },
-                { x: 66, y: 54 },
-                { x: 74, y: 46 },
-                { x: 82, y: 36 },
-                { x: 90, y: 26 },
-                { x: 97, y: 20 },
-              ].map((pt, idx) => (
-                <motion.div
-                  key={`fairy-${idx}`}
-                  initial={{ scale: 0, opacity: 0 }}
-                  animate={{
-                    scale: [0, 1.4, 1],
-                    opacity: [0, 1, 0.95],
-                  }}
-                  transition={{
-                    duration: 0.35,
-                    delay: 0.15 + idx * 0.06,
-                    ease: 'easeOut',
-                  }}
-                  style={{ left: `${pt.x}%`, top: `${pt.y}%` }}
-                  className="absolute -translate-x-1/2 -translate-y-1/2"
-                >
-                  <div className="w-2.5 h-2.5 rounded-full bg-[#fef08a] shadow-[0_0_8px_3px_rgba(250,204,21,0.95),0_0_16px_5px_rgba(245,158,11,0.6)]" />
-                </motion.div>
-              ))}
+            {/* ✨ DÂY ĐÈN FAIRY LIGHTS & ĐÈN LỒNG BỪNG SÁNG KHI THỔI TẮT NẾN */}
+            {isCandleBlown && (
+              <div className="absolute inset-0 pointer-events-none overflow-visible">
+                {[
+                  { x: 3, y: 22 },
+                  { x: 10, y: 26 },
+                  { x: 18, y: 36 },
+                  { x: 26, y: 46 },
+                  { x: 34, y: 54 },
+                  { x: 42, y: 60 },
+                  { x: 50, y: 62 },
+                  { x: 58, y: 60 },
+                  { x: 66, y: 54 },
+                  { x: 74, y: 46 },
+                  { x: 82, y: 36 },
+                  { x: 90, y: 26 },
+                  { x: 97, y: 20 },
+                ].map((pt, idx) => (
+                  <motion.div
+                    key={`fairy-${idx}`}
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{
+                      scale: [0, 1.4, 1],
+                      opacity: [0, 1, 0.95],
+                    }}
+                    transition={{
+                      duration: 0.35,
+                      delay: 0.15 + idx * 0.06,
+                      ease: 'easeOut',
+                    }}
+                    style={{ left: `${pt.x}%`, top: `${pt.y}%` }}
+                    className="absolute -translate-x-1/2 -translate-y-1/2"
+                  >
+                    <div className="w-2.5 h-2.5 rounded-full bg-[#fef08a] shadow-[0_0_8px_3px_rgba(250,204,21,0.95),0_0_16px_5px_rgba(245,158,11,0.6)]" />
+                  </motion.div>
+                ))}
 
-              {/* 2 quả cầu đèn lồng sáng ấm áp */}
-              {[
-                { x: 13.5, y: 76 },
-                { x: 81.5, y: 76 },
-              ].map((lt, idx) => (
-                <motion.div
-                  key={`lantern-${idx}`}
-                  initial={{ scale: 0.6, opacity: 0 }}
-                  animate={{
-                    scale: [0.6, 1.1, 1],
-                    opacity: [0, 0.9, 0.8],
-                  }}
-                  transition={{
-                    duration: 0.6,
-                    delay: 0.3 + idx * 0.25,
-                    ease: 'easeOut',
-                  }}
-                  style={{ left: `${lt.x}%`, top: `${lt.y}%` }}
-                  className="absolute -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-[radial-gradient(circle,_rgba(254,240,138,0.75)_0%,_rgba(245,158,11,0.35)_45%,_transparent_75%)]"
-                />
-              ))}
-            </div>
-          )}
+                {/* 2 quả cầu đèn lồng sáng ấm áp */}
+                {[
+                  { x: 13.5, y: 76 },
+                  { x: 81.5, y: 76 },
+                ].map((lt, idx) => (
+                  <motion.div
+                    key={`lantern-${idx}`}
+                    initial={{ scale: 0.6, opacity: 0 }}
+                    animate={{
+                      scale: [0.6, 1.1, 1],
+                      opacity: [0, 0.9, 0.8],
+                    }}
+                    transition={{
+                      duration: 0.6,
+                      delay: 0.3 + idx * 0.25,
+                      ease: 'easeOut',
+                    }}
+                    style={{ left: `${lt.x}%`, top: `${lt.y}%` }}
+                    className="absolute -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-[radial-gradient(circle,_rgba(254,240,138,0.75)_0%,_rgba(245,158,11,0.35)_45%,_transparent_75%)]"
+                  />
+                ))}
+              </div>
+            )}
+          </motion.div>
+
+          {/* 🌟 2 Điểm sao sáng lướt mở từ tâm sang 2 bên khi dải cờ bung ra */}
+          <motion.div
+            initial={{ left: '50%', opacity: 1, scale: 0.6 }}
+            animate={{ left: '2%', opacity: 0, scale: 1.4 }}
+            transition={{ duration: 1.25, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
+            className="absolute top-1/2 -translate-y-1/2 pointer-events-none text-amber-300 drop-shadow-[0_0_8px_rgba(251,191,36,0.95)] text-sm font-bold z-20"
+          >
+            ✦
+          </motion.div>
+          <motion.div
+            initial={{ left: '50%', opacity: 1, scale: 0.6 }}
+            animate={{ left: '98%', opacity: 0, scale: 1.4 }}
+            transition={{ duration: 1.25, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
+            className="absolute top-1/2 -translate-y-1/2 pointer-events-none text-amber-300 drop-shadow-[0_0_8px_rgba(251,191,36,0.95)] text-sm font-bold z-20"
+          >
+            ✦
+          </motion.div>
         </div>
 
-        {/* 2. KHUNG CHỨA BÁNH VÀ NẾN */}
-        <div className="relative w-full aspect-[494/686] max-w-[280px] sm:max-w-[310px] flex items-center justify-center">
-          
-          {/* Ảnh bánh kem màu nước 2 tầng với chân đế gỗ uốn lượn tinh xảo */}
+        {/* 2. KHUNG CHỨA BÁNH VÀ NẾN (NÂNG BỒNG BỀNH TỪ DƯỚI LÊN KHI VÀO TIẾT MỤC) */}
+        <motion.div
+          initial={{ opacity: 0, y: 32, scale: 0.94 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 1.15, ease: [0.16, 1, 0.3, 1], delay: 0.28 }}
+          className="relative w-full aspect-[494/686] max-w-[280px] sm:max-w-[310px] flex items-center justify-center"
+        >
+          {/* Ảnh bánh kem màu nước 2 tầng với chân đế gỗ uốn lượn tinh xảo (HOÀN TOÀN KHÔNG CÓ BÓNG ĐEN NHÂN TẠO) */}
           <img
             src="/cake-lovegift.webp"
             alt="Bánh kem sinh nhật"
             className="w-full h-full object-contain pointer-events-none drop-shadow-[0_16px_35px_rgba(0,0,0,0.6)]"
           />
 
-          {/* 3. BÓNG ĐỔ TỰ NHIÊN DƯỚI ĐẾ GỖ CỦA BÁNH */}
-          <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-36 sm:w-44 h-4.5 rounded-full bg-black/50 blur-[4px] pointer-events-none -z-10" />
-
           {/* =============================================================== */}
-          {/* 4. CÂY NẾN THANH MẢNH & NGỌN LỬA TINH TẾ CẮM VÀNG MẶT KEM TẦNG TRÊN */}
+          {/* 3. CÂY NẾN THANH MẢNH & NGỌN LỬA TINH TẾ CẮM VÀNG MẶT KEM TẦNG TRÊN */}
           {/* =============================================================== */}
           <div
             className="absolute z-20 flex flex-col items-center cursor-pointer"
@@ -336,7 +366,7 @@ export default function Cake2D({
             {/* E. CHÂN NẾN CẮM VÀO KEM (ĐẢM BẢO KHÔNG BỊ TRÔI LƠ LỬNG) */}
             <div className="w-[11px] h-[3.5px] rounded-full bg-white/90 shadow-xs -mt-[1.5px] border border-pink-100/80 pointer-events-none" />
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

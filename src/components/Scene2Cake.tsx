@@ -105,17 +105,53 @@ export default function Scene2Cake({ onNext }: Props) {
     }
   }, [handleExtinguishCandle]);
 
-  // 2. HIỂN THỊ BÁNH KEM & BẮT ĐẦU CẢNH THỔI NẾN (PHÒNG TỐI ÁNH NẾN LUNG LINH)
+  // 🎆 PHÁO HOA CHÀO MỪNG KHI DÂY BĂNG RÔN MỞ RA & BÁNH KEM XUẤT HIỆN
+  const fireOpeningFireworks = useCallback(() => {
+    // 1. Pháo hoa bắn chéo từ góc dưới bên trái
+    confetti({
+      particleCount: 65,
+      angle: 60,
+      spread: 60,
+      origin: { x: 0.05, y: 0.85 },
+      colors: ["#FFB7C5", "#FF69B4", "#FFD700", "#FFF0F5", "#FF8DA1"],
+      startVelocity: 45,
+      gravity: 0.8,
+    });
+    // 2. Pháo hoa bắn chéo từ góc dưới bên phải
+    confetti({
+      particleCount: 65,
+      angle: 120,
+      spread: 60,
+      origin: { x: 0.95, y: 0.85 },
+      colors: ["#FFB7C5", "#FF69B4", "#FFD700", "#FFF0F5", "#FF8DA1"],
+      startVelocity: 45,
+      gravity: 0.8,
+    });
+    // 3. Pháo hoa bung tỏa giữa trời ngay sau đó 280ms
+    setTimeout(() => {
+      confetti({
+        particleCount: 85,
+        spread: 95,
+        origin: { x: 0.5, y: 0.35 },
+        colors: ["#FFD700", "#FFF9C4", "#FFB6C1", "#FF69B4", "#E0BBE4"],
+        startVelocity: 35,
+        ticks: 200,
+      });
+    }, 280);
+  }, []);
+
+  // 2. HIỂN THỊ BÁNH KEM & BẮT ĐẦU CẢNH THỔI NẾN (PHÒNG TỐI ÁNH NẾN LUNG LINH & PHÁO HOA)
   const startCakeDrop = useCallback(() => {
     setStage("READY_TO_BLOW");
     soundManager.playBirthdayMelody();
     soundManager.startCandleCrackle();
+    fireOpeningFireworks();
     startMic();
     // Sau 7 giây nếu người dùng không thể thổi mic, tự động cho phép chạm nến để tắt
     setTimeout(() => {
       setCanClickToExtinguish(true);
     }, 7000);
-  }, [startMic]);
+  }, [startMic, fireOpeningFireworks]);
 
   // 1. HIỆU ỨNG TỪNG DÒNG CHỮ MỜ DẦN VÀ DÒNG TIẾP THEO ĐÈ LÊN
   useEffect(() => {
