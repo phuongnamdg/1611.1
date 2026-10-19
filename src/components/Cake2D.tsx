@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import confetti from 'canvas-confetti';
 
 interface Props {
   isCandleBlown: boolean;
@@ -16,6 +17,29 @@ export default function Cake2D({
   onExtinguishCandle,
   blowStrength = 0,
 }: Props) {
+  // Key hiệu ứng để xem lại mở băng rôn bất kỳ lúc nào
+  const [bannerKey, setBannerKey] = useState<number>(0);
+
+  const handleReplayBanner = () => {
+    setBannerKey((k) => k + 1);
+    confetti({
+      particleCount: 65,
+      angle: 60,
+      spread: 60,
+      origin: { x: 0.05, y: 0.85 },
+      colors: ["#FFB7C5", "#FF69B4", "#FFD700", "#FFF0F5", "#FF8DA1"],
+      startVelocity: 45,
+    });
+    confetti({
+      particleCount: 65,
+      angle: 120,
+      spread: 60,
+      origin: { x: 0.95, y: 0.85 },
+      colors: ["#FFB7C5", "#FF69B4", "#FFD700", "#FFF0F5", "#FF8DA1"],
+      startVelocity: 45,
+    });
+  };
+
   // Tiến trình nhấn giữ (0 đến 100%)
   const [holdProgress, setHoldProgress] = useState<number>(0);
   const [isPressing, setIsPressing] = useState<boolean>(false);
@@ -125,22 +149,43 @@ export default function Cake2D({
       {/* =================================================================== */}
       <div className="relative w-full flex flex-col items-center justify-center">
         
-        {/* 1. BĂNG RÔN DÂY CỜ PASTEL (MỞ BUNG TỪ TÂM RA 2 BÊN KHI VÀO TIẾT MỤC) */}
+        {/* 1. BĂNG RÔN DÂY CỜ PASTEL (KÉO MỞ TỪ TÂM RA 2 BÊN RÕ NÉT 100%) */}
         <div className="relative w-[110%] sm:w-[116%] mb-2 sm:mb-3 z-10 select-none">
+          {/* Nơ vàng trung tâm mở tung khi khai màn */}
           <motion.div
-            initial={{ clipPath: 'inset(0% 50% 0% 50%)', opacity: 0, scale: 0.95 }}
-            animate={{ clipPath: 'inset(0% 0% 0% 0%)', opacity: 1, scale: 1 }}
-            transition={{
-              duration: 1.25,
-              ease: [0.16, 1, 0.3, 1],
-              delay: 0.15,
+            key={`bow-${bannerKey}`}
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{
+              scale: [0, 1.2, 1.2, 0],
+              opacity: [0, 1, 1, 0],
+              rotate: [0, 0, -8, 12],
             }}
-            className="relative w-full overflow-hidden"
+            transition={{ duration: 0.85, times: [0, 0.25, 0.55, 1], ease: 'easeInOut' }}
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 pointer-events-none flex items-center justify-center"
+          >
+            <div className="px-3 py-1 rounded-full bg-gradient-to-r from-amber-300 via-rose-300 to-amber-300 text-stone-900 text-xs font-bold shadow-lg shadow-amber-300/60 border border-amber-200 flex items-center gap-1.5">
+              <span>🎀</span>
+              <span className="tracking-wide text-[11px] font-semibold text-rose-800">Happy Birthday</span>
+            </div>
+          </motion.div>
+
+          {/* Dải cờ mở bung từ tâm sang 2 bên bằng scaleX (100% rõ nét, mượt mà trên mọi thiết bị) */}
+          <motion.div
+            key={`banner-${bannerKey}`}
+            style={{ transformOrigin: '50% 20%' }}
+            initial={{ scaleX: 0, opacity: 0.9 }}
+            animate={{ scaleX: 1, opacity: 1 }}
+            transition={{
+              duration: 1.4,
+              ease: [0.16, 1, 0.3, 1],
+              delay: 0.25,
+            }}
+            className="relative w-full aspect-[850/171] overflow-visible"
           >
             <img
               src="/garland-bunting.webp"
               alt="Băng rôn trang trí"
-              className="w-full h-auto object-contain drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)]"
+              className="w-full h-full object-contain drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)]"
             />
 
             {/* ✨ DÂY ĐÈN FAIRY LIGHTS & ĐÈN LỒNG BỪNG SÁNG KHI THỔI TẮT NẾN */}
@@ -205,22 +250,41 @@ export default function Cake2D({
             )}
           </motion.div>
 
-          {/* 🌟 2 Điểm sao sáng lướt mở từ tâm sang 2 bên khi dải cờ bung ra */}
+          {/* 🌟 2 Điểm sao sáng lướt mở từ tâm sang 2 bên */}
           <motion.div
-            initial={{ left: '50%', opacity: 1, scale: 0.6 }}
-            animate={{ left: '2%', opacity: 0, scale: 1.4 }}
-            transition={{ duration: 1.25, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
-            className="absolute top-1/2 -translate-y-1/2 pointer-events-none text-amber-300 drop-shadow-[0_0_8px_rgba(251,191,36,0.95)] text-sm font-bold z-20"
+            key={`star-l-${bannerKey}`}
+            initial={{ left: '50%', opacity: 0 }}
+            animate={{
+              left: ['50%', '50%', '0%'],
+              opacity: [0, 1, 0],
+            }}
+            transition={{
+              duration: 1.4,
+              times: [0, 0.18, 1],
+              ease: [0.16, 1, 0.3, 1],
+              delay: 0.2,
+            }}
+            className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 pointer-events-none z-20 flex items-center justify-center"
           >
-            ✦
+            <div className="w-4 h-4 rounded-full bg-amber-200 shadow-[0_0_16px_6px_rgba(251,191,36,0.95)]" />
           </motion.div>
+
           <motion.div
-            initial={{ left: '50%', opacity: 1, scale: 0.6 }}
-            animate={{ left: '98%', opacity: 0, scale: 1.4 }}
-            transition={{ duration: 1.25, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
-            className="absolute top-1/2 -translate-y-1/2 pointer-events-none text-amber-300 drop-shadow-[0_0_8px_rgba(251,191,36,0.95)] text-sm font-bold z-20"
+            key={`star-r-${bannerKey}`}
+            initial={{ left: '50%', opacity: 0 }}
+            animate={{
+              left: ['50%', '50%', '100%'],
+              opacity: [0, 1, 0],
+            }}
+            transition={{
+              duration: 1.4,
+              times: [0, 0.18, 1],
+              ease: [0.16, 1, 0.3, 1],
+              delay: 0.2,
+            }}
+            className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 pointer-events-none z-20 flex items-center justify-center"
           >
-            ✦
+            <div className="w-4 h-4 rounded-full bg-amber-200 shadow-[0_0_16px_6px_rgba(251,191,36,0.95)]" />
           </motion.div>
         </div>
 
@@ -367,6 +431,19 @@ export default function Cake2D({
             <div className="w-[11px] h-[3.5px] rounded-full bg-white/90 shadow-xs -mt-[1.5px] border border-pink-100/80 pointer-events-none" />
           </div>
         </motion.div>
+
+        {/* 🔄 NÚT XEM LẠI MỞ BĂNG RÔN & PHÁO HOA (GIÚP TEST TRỰC QUAN MỌI LÚC) */}
+        <div className="mt-4 flex justify-center z-30">
+          <button
+            type="button"
+            onClick={handleReplayBanner}
+            className="px-3.5 py-1.5 rounded-full bg-white/70 hover:bg-white text-rose-500 hover:text-rose-600 text-xs font-semibold border border-pink-200/80 shadow-xs backdrop-blur-md transition-all flex items-center gap-1.5 cursor-pointer hover:scale-105 active:scale-95"
+            title="Bấm để phát lại hoạt ảnh mở dải cờ từ tâm và bắn pháo hoa"
+          >
+            <span>🔄</span>
+            <span>Xem lại mở băng rôn & pháo hoa</span>
+          </button>
+        </div>
       </div>
     </div>
   );

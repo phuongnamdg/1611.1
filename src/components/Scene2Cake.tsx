@@ -107,37 +107,39 @@ export default function Scene2Cake({ onNext }: Props) {
 
   // 🎆 PHÁO HOA CHÀO MỪNG KHI DÂY BĂNG RÔN MỞ RA & BÁNH KEM XUẤT HIỆN
   const fireOpeningFireworks = useCallback(() => {
-    // 1. Pháo hoa bắn chéo từ góc dưới bên trái
-    confetti({
-      particleCount: 65,
-      angle: 60,
-      spread: 60,
-      origin: { x: 0.05, y: 0.85 },
-      colors: ["#FFB7C5", "#FF69B4", "#FFD700", "#FFF0F5", "#FF8DA1"],
-      startVelocity: 45,
-      gravity: 0.8,
-    });
-    // 2. Pháo hoa bắn chéo từ góc dưới bên phải
-    confetti({
-      particleCount: 65,
-      angle: 120,
-      spread: 60,
-      origin: { x: 0.95, y: 0.85 },
-      colors: ["#FFB7C5", "#FF69B4", "#FFD700", "#FFF0F5", "#FF8DA1"],
-      startVelocity: 45,
-      gravity: 0.8,
-    });
-    // 3. Pháo hoa bung tỏa giữa trời ngay sau đó 280ms
+    // 1 & 2. 2 dàn pháo hoa bắn chéo từ 2 góc dưới vút lên trời
     setTimeout(() => {
       confetti({
-        particleCount: 85,
-        spread: 95,
-        origin: { x: 0.5, y: 0.35 },
-        colors: ["#FFD700", "#FFF9C4", "#FFB6C1", "#FF69B4", "#E0BBE4"],
-        startVelocity: 35,
-        ticks: 200,
+        particleCount: 75,
+        angle: 60,
+        spread: 65,
+        origin: { x: 0.05, y: 0.85 },
+        colors: ["#FFB7C5", "#FF69B4", "#FFD700", "#FFF0F5", "#FF8DA1"],
+        startVelocity: 48,
+        gravity: 0.8,
       });
-    }, 280);
+      confetti({
+        particleCount: 75,
+        angle: 120,
+        spread: 65,
+        origin: { x: 0.95, y: 0.85 },
+        colors: ["#FFB7C5", "#FF69B4", "#FFD700", "#FFF0F5", "#FF8DA1"],
+        startVelocity: 48,
+        gravity: 0.8,
+      });
+    }, 200);
+
+    // 3. Pháo hoa bung tỏa giữa vòm trời ngay sau đó
+    setTimeout(() => {
+      confetti({
+        particleCount: 95,
+        spread: 100,
+        origin: { x: 0.5, y: 0.32 },
+        colors: ["#FFD700", "#FFF9C4", "#FFB6C1", "#FF69B4", "#E0BBE4"],
+        startVelocity: 38,
+        ticks: 220,
+      });
+    }, 550);
   }, []);
 
   // 2. HIỂN THỊ BÁNH KEM & BẮT ĐẦU CẢNH THỔI NẾN (PHÒNG TỐI ÁNH NẾN LUNG LINH & PHÁO HOA)
