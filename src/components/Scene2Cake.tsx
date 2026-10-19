@@ -27,6 +27,7 @@ export default function Scene2Cake({ onNext }: Props) {
 
   // Micro để thổi nến
   const [canClickToExtinguish, setCanClickToExtinguish] = useState<boolean>(false);
+  const [isMicListening, setIsMicListening] = useState<boolean>(false);
   const [blowStrength, setBlowStrength] = useState<number>(0);
   const audioContextRef = useRef<AudioContext | null>(null);
   const micStreamRef = useRef<MediaStream | null>(null);
@@ -45,6 +46,11 @@ export default function Scene2Cake({ onNext }: Props) {
       micStreamRef.current.getTracks().forEach((t) => t.stop());
       micStreamRef.current = null;
     }
+    if (audioContextRef.current) {
+      audioContextRef.current.close().catch(() => {});
+      audioContextRef.current = null;
+    }
+    setIsMicListening(false);
   }, []);
 
   // Nến tắt -> Bừng sáng không gian & Bắn pháo hoa ăn mừng
@@ -88,6 +94,7 @@ export default function Scene2Cake({ onNext }: Props) {
 
       const freqData = new Uint8Array(analyser.frequencyBinCount);
       const timeData = new Uint8Array(analyser.fftSize);
+      setIsMicListening(true);
 
       const checkAudioLevel = () => {
         if (!micStreamRef.current) return;
@@ -134,6 +141,7 @@ export default function Scene2Cake({ onNext }: Props) {
       };
       checkAudioLevel();
     } catch {
+      setIsMicListening(false);
       setCanClickToExtinguish(true);
     }
   }, [handleExtinguishCandle]);
@@ -369,6 +377,8 @@ export default function Scene2Cake({ onNext }: Props) {
               canClickToExtinguish={canClickToExtinguish}
               onExtinguishCandle={handleExtinguishCandle}
               blowStrength={blowStrength}
+              isMicListening={isMicListening}
+              onRequestMic={startMic}
             />
           </div>
 

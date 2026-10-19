@@ -3,18 +3,23 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
+import { Mic } from 'lucide-react';
 
 interface Props {
   isCandleBlown: boolean;
   canClickToExtinguish?: boolean;
   onExtinguishCandle: () => void;
   blowStrength?: number; // 0 đến 1 từ micro
+  isMicListening?: boolean;
+  onRequestMic?: () => void;
 }
 
 export default function Cake2D({
   isCandleBlown,
   onExtinguishCandle,
   blowStrength = 0,
+  isMicListening = false,
+  onRequestMic,
 }: Props) {
   // Key hiệu ứng để xem lại mở băng rôn bất kỳ lúc nào
   const [bannerKey, setBannerKey] = useState<number>(0);
@@ -132,17 +137,23 @@ export default function Cake2D({
       <div className="min-h-[38px] flex items-center justify-center mb-1 text-center z-30">
         {!isCandleBlown ? (
           <motion.div
-            key={isPressing || blowStrength > 0.12 ? 'holding' : 'idle'}
+            key={isPressing || blowStrength > 0.12 ? 'holding' : isMicListening ? 'mic-on' : 'idle'}
             initial={{ opacity: 0, y: -4 }}
             animate={{ opacity: 1, y: 0 }}
             onClick={() => {
               if (!isCandleBlown) {
-                setHoldProgress(100);
+                if (!isMicListening && onRequestMic) {
+                  onRequestMic();
+                } else {
+                  setHoldProgress(100);
+                }
               }
             }}
             className={`px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all cursor-pointer select-none active:scale-95 ${
               isPressing || blowStrength > 0.12
                 ? 'bg-amber-500 text-stone-900 shadow-lg shadow-amber-500/40 animate-pulse font-bold'
+                : isMicListening
+                ? 'bg-emerald-500/90 text-white border border-emerald-300/40 shadow-[0_0_15px_rgba(16,185,129,0.35)]'
                 : 'bg-black/60 backdrop-blur-md text-[#fde68a] border border-amber-400/30 shadow-[0_0_15px_rgba(251,191,36,0.15)] hover:bg-black/80'
             }`}
             title="Nhấn giữ ngọn nến hoặc thổi vào mic để thổi tắt"
@@ -151,7 +162,9 @@ export default function Cake2D({
               ? holdProgress > 60
                 ? 'giữ nữa… sắp tắt rồi! 💨'
                 : 'giữ tiếp… đang thổi nến… 💨'
-              : '👆 Nhấn & giữ ngọn nến để thổi (hoặc thổi vào mic)'}
+              : isMicListening
+              ? '🎙️ Đang nghe micro… Hãy thổi phù vào mic nào! 💨'
+              : '👆 Nhấn giữ nến để thổi (hoặc bấm để bật Micro 🎤)'}
           </motion.div>
         ) : (
           <motion.div
@@ -451,8 +464,30 @@ export default function Cake2D({
           </div>
         </motion.div>
 
+        {/* 🎙️ NÚT BẬT / TRẠNG THÁI MICRO ĐỂ THỔI NẾN (BẤM TRỰC TIẾP ĐỂ TRÌNH DUYỆT BẬT HỘP THOẠI CẤP QUYỀN) */}
+        {!isCandleBlown && (
+          <div className="mt-3 flex flex-col items-center gap-1.5 z-30">
+            {!isMicListening ? (
+              <button
+                type="button"
+                onClick={onRequestMic}
+                className="px-4 py-2 rounded-full bg-gradient-to-r from-rose-500 via-pink-500 to-rose-500 hover:from-rose-600 hover:to-pink-600 text-white text-xs font-bold shadow-lg shadow-rose-500/30 flex items-center gap-2 cursor-pointer hover:scale-105 active:scale-95 transition-all border border-pink-300/40"
+                title="Bấm để trình duyệt cấp quyền truy cập Micro"
+              >
+                <Mic className="w-4 h-4 text-amber-200 animate-pulse" />
+                <span>Bật Micro để thổi nến 🎙️</span>
+              </button>
+            ) : (
+              <div className="px-3.5 py-1.5 rounded-full bg-emerald-500/90 text-white text-xs font-bold shadow-md shadow-emerald-500/30 flex items-center gap-2 border border-emerald-300/40 animate-pulse">
+                <span className="w-2 h-2 rounded-full bg-white animate-ping" />
+                <span>Micro đang lắng nghe… Hãy thổi phù vào mic nào! 💨</span>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* 🔄 NÚT XEM LẠI MỞ BĂNG RÔN & PHÁO HOA (GIÚP TEST TRỰC QUAN MỌI LÚC) */}
-        <div className="mt-4 flex justify-center z-30">
+        <div className="mt-3 flex justify-center z-30">
           <button
             type="button"
             onClick={handleReplayBanner}
