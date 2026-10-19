@@ -131,6 +131,15 @@ class SoundManager {
     });
   }
 
+  // 🍰 Tiếng cắt bánh kem ngọt ngào + chuông ma thuật
+  public playCakeSliceSound() {
+    if (this.isMuted) return;
+    const notes = [659.25, 880.00, 1046.50, 1318.51]; // E5, A5, C6, E6
+    notes.forEach((freq, idx) => {
+      setTimeout(() => this.playKeypress(freq), idx * 80);
+    });
+  }
+
   // Tiếng thổi phù / nến tắt
   public playBlowSound() {
     if (this.isMuted) return;
