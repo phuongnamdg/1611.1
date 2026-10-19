@@ -293,9 +293,9 @@ export default function Cake2D({
           initial={{ opacity: 0, y: 32, scale: 0.94 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 1.15, ease: [0.16, 1, 0.3, 1], delay: 0.28 }}
-          className="relative w-full aspect-[494/686] max-w-[280px] sm:max-w-[310px] flex items-center justify-center"
+          className="relative w-full aspect-[458/557] max-w-[280px] sm:max-w-[310px] flex items-center justify-center"
         >
-          {/* Ảnh bánh kem màu nước 2 tầng với chân đế gỗ uốn lượn tinh xảo (HOÀN TOÀN KHÔNG CÓ BÓNG ĐEN NHÂN TẠO) */}
+          {/* Ảnh bánh kem màu nước 2 tầng với chân đế gỗ uốn lượn tinh xảo (ĐẾ TRÒN TỰ NHIÊN, KHÔNG CẮT NGANG) */}
           <img
             src="/cake-lovegift.webp"
             alt="Bánh kem sinh nhật"
@@ -308,7 +308,7 @@ export default function Cake2D({
           <div
             className="absolute z-20 flex flex-col items-center cursor-pointer"
             style={{
-              top: '7%',
+              top: '4.5%',
               left: '50%',
               transform: 'translate(-50%, -100%)',
             }}
