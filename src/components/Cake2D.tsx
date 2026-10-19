@@ -54,9 +54,9 @@ export default function Cake2D({
   useEffect(() => {
     if (isCandleBlown) return;
 
-    if (blowStrength > 0.15) {
+    if (blowStrength > 0.08) {
       const frameId = requestAnimationFrame(() => {
-        setHoldProgress((prev) => Math.min(100, prev + blowStrength * 18));
+        setHoldProgress((prev) => Math.min(100, prev + blowStrength * 28));
       });
       return () => cancelAnimationFrame(frameId);
     } else if (!isPressing && holdProgress > 0) {
@@ -117,22 +117,22 @@ export default function Cake2D({
       <div className="min-h-[38px] flex items-center justify-center mb-1 text-center z-30">
         {!isCandleBlown ? (
           <motion.div
-            key={isPressing || blowStrength > 0.15 ? 'holding' : 'idle'}
+            key={isPressing || blowStrength > 0.08 ? 'holding' : 'idle'}
             initial={{ opacity: 0, y: -4 }}
             animate={{ opacity: 1, y: 0 }}
             onClick={handleClick}
             className={`px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all cursor-pointer active:scale-95 ${
-              isPressing || blowStrength > 0.15
+              isPressing || blowStrength > 0.08
                 ? 'bg-amber-500 text-stone-900 shadow-lg shadow-amber-500/40 animate-pulse font-bold'
                 : 'bg-black/60 backdrop-blur-md text-[#fde68a] border border-amber-400/30 shadow-[0_0_15px_rgba(251,191,36,0.15)] hover:bg-black/80'
             }`}
             title="Bấm để thổi tắt nến ngay lập tức"
           >
-            {isPressing || blowStrength > 0.15
-              ? holdProgress > 60
-                ? 'giữ nữa… sắp tắt rồi! 💨'
-                : 'giữ tiếp… đang thổi nến… 💨'
-              : '👆 Chạm vào nến để thổi (hoặc thổi vào mic 💨)'}
+            {isPressing || blowStrength > 0.08
+              ? holdProgress > 50
+                ? 'sắp tắt rồi… phù mạnh lên nào! 💨'
+                : 'đang nhận hơi thổi… 💨'
+              : '🎤 Thổi vào mic hoặc chạm ngọn nến để thổi tắt 💨'}
           </motion.div>
         ) : (
           <motion.div
