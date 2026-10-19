@@ -55,9 +55,11 @@ export default function Scene2Cake({ onNext }: Props) {
     if (isCandleBlown) return;
     setIsCandleBlown(true);
     setBlowStrength(0);
+    soundManager.stopCandleCrackle();
     soundManager.playBlowSound();
     stopMic();
     setTimeout(() => {
+      soundManager.playCelebrationCheer();
       fireConfetti();
     }, 350);
   }, [isCandleBlown, stopMic, fireConfetti]);
@@ -110,6 +112,7 @@ export default function Scene2Cake({ onNext }: Props) {
   const startCakeDrop = useCallback(() => {
     setStage("READY_TO_BLOW");
     soundManager.playBirthdayMelody();
+    soundManager.startCandleCrackle();
     startMic();
     // Sau 7 giây nếu người dùng không thể thổi mic, tự động cho phép chạm nến để tắt
     setTimeout(() => {
@@ -142,7 +145,10 @@ export default function Scene2Cake({ onNext }: Props) {
   }, [stage, startCakeDrop]);
 
   useEffect(() => {
-    return () => stopMic();
+    return () => {
+      stopMic();
+      soundManager.stopCandleCrackle();
+    };
   }, [stopMic]);
 
   return (

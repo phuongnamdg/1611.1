@@ -7,6 +7,8 @@ class SoundManager {
   private isMelodyPlaying: boolean = false;
   private melodyTimeoutIds: number[] = [];
 
+  private crackleIntervalId: number | null = null;
+
   private getAudioContext(): AudioContext | null {
     if (typeof window === 'undefined') return null;
     if (!this.ctx) {
@@ -25,11 +27,73 @@ class SoundManager {
     this.isMuted = muted;
     if (muted) {
       this.stopMelody();
+      this.stopCandleCrackle();
     }
   }
 
   public getMuted(): boolean {
     return this.isMuted;
+  }
+
+  // 🕯️ Âm thanh ASMR nến cháy lách tách nhẹ nhàng trong phòng tối
+  public startCandleCrackle() {
+    if (this.isMuted) return;
+    this.stopCandleCrackle();
+    const ctx = this.getAudioContext();
+    if (!ctx) return;
+
+    const triggerPop = () => {
+      if (this.isMuted) return;
+      try {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        const filter = ctx.createBiquadFilter();
+
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(1400 + Math.random() * 1600, ctx.currentTime);
+
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(2200, ctx.currentTime);
+        filter.Q.setValueAtTime(3.5, ctx.currentTime);
+
+        const popVol = 0.015 + Math.random() * 0.02;
+        gain.gain.setValueAtTime(popVol, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.035);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start();
+        osc.stop(ctx.currentTime + 0.04);
+      } catch {
+        // Ignore
+      }
+
+      const nextDelay = 140 + Math.random() * 320;
+      this.crackleIntervalId = window.setTimeout(triggerPop, nextDelay);
+    };
+
+    triggerPop();
+  }
+
+  public stopCandleCrackle() {
+    if (this.crackleIntervalId !== null) {
+      clearTimeout(this.crackleIntervalId);
+      this.crackleIntervalId = null;
+    }
+  }
+
+  // 🎉 Chuỗi hợp âm ngân vang ăn mừng khi nến tắt
+  public playCelebrationCheer() {
+    if (this.isMuted) return;
+    const notes = [523.25, 659.25, 783.99, 1046.50, 1318.51]; // C5, E5, G5, C6, E6
+    notes.forEach((freq, idx) => {
+      setTimeout(() => {
+        if (this.isMuted) return;
+        this.playMusicBoxNote(freq, 1.2);
+      }, idx * 75);
+    });
   }
 
   // Tiếng ting ting chuông gió nhẹ nhàng khi bấm phím
