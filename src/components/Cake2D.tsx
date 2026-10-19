@@ -391,8 +391,8 @@ export default function Cake2D({
                     {/* Ngọn lửa hình giọt nước mềm mại tinh tế */}
                     <div
                       style={{
-                        width: '16px',
-                        height: '28px',
+                        width: '14px',
+                        height: '26px',
                         borderRadius: '50% 50% 50% 50% / 62% 62% 40% 40%',
                         background:
                           'radial-gradient(60% 55% at 50% 68%, #ffffff 0%, #fff3c4 22%, #ffb347 52%, #ff7a1a 80%, rgba(255,90,10,0.2) 100%)',
@@ -434,49 +434,40 @@ export default function Cake2D({
               </AnimatePresence>
             </div>
 
-            {/* C. TIM NẾN MỘC TỰ NHIÊN (WICK) */}
-            <div className="w-[2px] h-[6px] bg-[#3f3f46] rounded-t-sm -mb-[1px] relative">
+            {/* C. TIM NẾN MỎNG MẢNH MAI (WICK) */}
+            <div className="w-[1.5px] h-[5px] bg-[#27272a] rounded-t-xs -mb-[1px] relative">
               {!isCandleBlown && (
-                <div className="absolute -top-[1px] left-1/2 -translate-x-1/2 w-[2.5px] h-[2.5px] rounded-full bg-[#f97316] shadow-[0_0_4px_#ef4444]" />
+                <div className="absolute -top-[1px] left-1/2 -translate-x-1/2 w-[2px] h-[2px] rounded-full bg-[#f97316] shadow-[0_0_3px_#ef4444]" />
               )}
             </div>
 
-            {/* D. THÂN NẾN MÀU NƯỚC PASTEL HÀN QUỐC HÀI HÒA VỚI BÁNH */}
+            {/* D. THÂN NẾN TRẮNG TINH, THON DÀI THANH THOÁT (PURE WHITE TALL SLENDER CANDLE) */}
             <div
-              className="w-[10px] sm:w-[12px] h-[40px] sm:h-[46px] rounded-t-[3px] rounded-b-[2px] relative overflow-hidden"
+              className="w-[7px] sm:w-[8px] h-[52px] sm:h-[58px] rounded-t-[2.5px] rounded-b-[1.5px] relative overflow-hidden"
               style={{
                 background:
-                  'linear-gradient(to right, #fbf7ee 0%, #fffcf5 35%, #fbf3e6 70%, #ebdccc 100%)',
+                  'linear-gradient(to right, #ffffff 0%, #ffffff 42%, #f8fafc 78%, #f1f5f9 100%)',
                 boxShadow:
-                  'inset -1.5px 0 2px rgba(180, 140, 110, 0.25), inset 1px 0 1.5px rgba(255, 255, 255, 0.8), 0 2px 4px rgba(0,0,0,0.15)',
+                  'inset -1px 0 1.5px rgba(0, 0, 0, 0.08), inset 1px 0 1px rgba(255, 255, 255, 0.95), 0 2px 5px rgba(0, 0, 0, 0.12)',
               }}
             >
-              {/* Vân xoắn màu nước pastel hồng dịu nhẹ */}
-              <div
-                className="absolute inset-0 pointer-events-none"
-                style={{
-                  background:
-                    'repeating-linear-gradient(-45deg, transparent, transparent 5px, rgba(244, 143, 177, 0.55) 5px, rgba(244, 143, 177, 0.55) 10px, transparent 10px, transparent 12px)',
-                  mixBlendMode: 'multiply',
-                }}
-              />
-              {/* Dải sáng phản quang dọc thân nến */}
-              <div className="absolute top-0 bottom-0 left-[2px] w-[1.5px] bg-white/70 blur-[0.4px] pointer-events-none" />
+              {/* Vệt sáng trắng tinh tế phản quang dọc thân nến */}
+              <div className="absolute top-0 bottom-0 left-[1px] w-[1px] bg-white/95 blur-[0.2px] pointer-events-none" />
             </div>
 
-            {/* E. CHÂN NẾN CẮM CHẶT VÀO LỚP KEM BÁNH VỚI VÒNG KEM & BÓNG ĐỔ */}
+            {/* E. CHÂN NẾN CẮM CHẶT VÀO LỚP KEM BÁNH VỚI VÒNG SÁP TRẮNG & BÓNG ĐỔ */}
             <div className="relative -mt-[2px] flex flex-col items-center pointer-events-none">
-              {/* Vòng kem tròn đùn nhẹ quanh gốc nến */}
+              {/* Vòng kem sáp trắng đùn nhẹ quanh gốc nến */}
               <div
-                className="w-[15px] sm:w-[17px] h-[4px] rounded-full border border-pink-100/80 shadow-xs"
+                className="w-[13px] sm:w-[14px] h-[3.5px] rounded-full border border-slate-100 shadow-xs"
                 style={{
                   background:
-                    'radial-gradient(ellipse at 50% 40%, #ffffff 0%, #fdf2f4 60%, #fae2e6 100%)',
-                  boxShadow: '0 1px 2px rgba(140, 100, 80, 0.25)',
+                    'radial-gradient(ellipse at 50% 40%, #ffffff 0%, #fdfdfd 60%, #f1f5f9 100%)',
+                  boxShadow: '0 1px 2px rgba(0, 0, 0, 0.12)',
                 }}
               />
               {/* Vệt bóng đổ êm của nến lên mặt bánh kem */}
-              <div className="w-[18px] sm:w-[20px] h-[3px] rounded-full bg-[#78350f]/20 blur-[1px] -mt-[1.5px]" />
+              <div className="w-[15px] sm:w-[17px] h-[2.5px] rounded-full bg-[#52525b]/20 blur-[0.8px] -mt-[1px]" />
             </div>
           </div>
         </motion.div>
