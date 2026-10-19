@@ -96,12 +96,17 @@ export default function Scene2Cake({ onNext }: Props) {
       const timeData = new Uint8Array(analyser.fftSize);
       setIsMicListening(true);
 
+      // 🎯 BỘ TỰ ĐỘNG THÍCH ỨNG TIẾNG ỒN PHÒNG & GIÓ QUẠT (ADAPTIVE NOISE FLOOR)
+      let calibrationFrames = 0;
+      let ambientSum = 0;
+      let ambientNoiseFloor = 20;
+
       const checkAudioLevel = () => {
         if (!micStreamRef.current) return;
         analyser.getByteFrequencyData(freqData);
         analyser.getByteTimeDomainData(timeData);
 
-        // 1. Âm lượng trung bình toàn dải (như ở bản e7b1d33)
+        // 1. Âm lượng trung bình toàn dải
         let sum = 0;
         for (let i = 0; i < analyser.frequencyBinCount; i++) {
           sum += freqData[i];
@@ -116,23 +121,42 @@ export default function Scene2Cake({ onNext }: Props) {
         }
         const lowAvg = lowSum / lowBins;
 
-        // 3. Biên độ sóng âm tức thời (tiếng phù luồng khí vào mic)
+        // 3. Biên độ va đập màng mic (Waveform Deviation)
+        // TIẾNG QUẠT: Sóng âm đều đặn dạng sin, maxDev thấp (< 25)
+        // HƠI NGƯỜI THỔI: Luồng khí áp suất cao làm bão hòa màng mic, maxDev vọt lên 45 - 120
         let maxDev = 0;
         for (let i = 0; i < timeData.length; i++) {
           const dev = Math.abs(timeData[i] - 128);
           if (dev > maxDev) maxDev = dev;
         }
 
-        // Chuẩn hóa độ mạnh hơi thở từ 0 đến 1
-        const normAvg = (avg - 16) / 36;
-        const normLow = (lowAvg - 18) / 36;
-        const normDev = (maxDev - 14) / 24;
-        const strength = Math.max(0, Math.min(1, Math.max(normAvg, normLow, normDev)));
+        // Tự động đo độ ồn nền của phòng (tiếng quạt máy, điều hòa) trong 30 frames đầu (~0.5s)
+        if (calibrationFrames < 30) {
+          ambientSum += avg;
+          calibrationFrames++;
+          ambientNoiseFloor = Math.max(16, ambientSum / calibrationFrames);
+          requestAnimationFrame(checkAudioLevel);
+          return;
+        }
+
+        // Độ vượt ngưỡng thực tế so với tiếng ồn của quạt
+        const effectiveAvg = Math.max(0, avg - ambientNoiseFloor);
+        const effectiveLow = Math.max(0, lowAvg - ambientNoiseFloor);
+
+        // Chỉ tính là có hơi thổi khi có luồng khí va đập màng mic (maxDev > 24)
+        // và âm lượng vượt trên tiếng quạt nền (effectiveAvg > 10 hoặc effectiveLow > 12)
+        let strength = 0;
+        if (maxDev > 24 && (effectiveAvg > 10 || effectiveLow > 12)) {
+          const normAvg = effectiveAvg / 32;
+          const normLow = effectiveLow / 32;
+          const normDev = (maxDev - 24) / 36;
+          strength = Math.max(0, Math.min(1, Math.max(normAvg, normLow, normDev)));
+        }
 
         setBlowStrength(strength);
 
-        // Nếu thổi rất mạnh -> dập tắt nến ngay lập tức!
-        if (avg > 58 || lowAvg > 58 || maxDev > 36) {
+        // THỔI MẠNH TẮT NGAY: Cần có luồng khí thổi trực tiếp (maxDev > 48) kèm âm lượng vượt trội
+        if ((maxDev > 48 && (avg > 55 || lowAvg > 55)) || maxDev > 75) {
           handleExtinguishCandle();
           return;
         }
