@@ -20,29 +20,35 @@ export default function Cake2D({
   const [isPressing, setIsPressing] = useState<boolean>(false);
   const holdIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Xử lý khi thổi vào mic: tăng tiến trình tự động
+  // 1. Tự động tăng tiến trình khi có hơi thổi vào micro
   useEffect(() => {
     if (isCandleBlown) return;
 
-    const frameId = requestAnimationFrame(() => {
-      if (blowStrength > 0.15) {
-        setHoldProgress((prev) => {
-          const next = prev + blowStrength * 18;
-          if (next >= 100) {
-            onExtinguishCandle();
-            return 100;
-          }
-          return next;
-        });
-      } else if (!isPressing) {
+    if (blowStrength > 0.15) {
+      const frameId = requestAnimationFrame(() => {
+        setHoldProgress((prev) => Math.min(100, prev + blowStrength * 18));
+      });
+      return () => cancelAnimationFrame(frameId);
+    } else if (!isPressing && holdProgress > 0) {
+      const frameId = requestAnimationFrame(() => {
         setHoldProgress((prev) => Math.max(0, prev - 5));
+      });
+      return () => cancelAnimationFrame(frameId);
+    }
+  }, [blowStrength, isCandleBlown, isPressing, holdProgress]);
+
+  // 2. Kích hoạt dập nến khi tiến trình đạt 100% trong effect riêng (tránh update parent lúc render)
+  useEffect(() => {
+    if (holdProgress >= 100 && !isCandleBlown) {
+      if (holdIntervalRef.current) {
+        clearInterval(holdIntervalRef.current);
+        holdIntervalRef.current = null;
       }
-    });
+      onExtinguishCandle();
+    }
+  }, [holdProgress, isCandleBlown, onExtinguishCandle]);
 
-    return () => cancelAnimationFrame(frameId);
-  }, [blowStrength, isCandleBlown, isPressing, onExtinguishCandle]);
-
-  // Bắt đầu nhấn giữ ngọn nến
+  // 3. Bắt đầu nhấn giữ ngọn nến
   const handlePointerDown = () => {
     if (isCandleBlown) return;
     setIsPressing(true);
@@ -50,20 +56,11 @@ export default function Cake2D({
     if (holdIntervalRef.current) clearInterval(holdIntervalRef.current);
 
     holdIntervalRef.current = setInterval(() => {
-      setHoldProgress((prev) => {
-        const next = prev + 5; // Cần giữ khoảng 1.2s
-        if (next >= 100) {
-          if (holdIntervalRef.current) clearInterval(holdIntervalRef.current);
-          setIsPressing(false);
-          onExtinguishCandle();
-          return 100;
-        }
-        return next;
-      });
+      setHoldProgress((prev) => Math.min(100, prev + 5)); // Cần giữ khoảng 1.2s
     }, 60);
   };
 
-  // Thả tay ra khi chưa đủ thời gian
+  // 4. Thả tay ra khi chưa đủ thời gian
   const handlePointerUp = () => {
     setIsPressing(false);
     if (holdIntervalRef.current) {
