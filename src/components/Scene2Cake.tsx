@@ -1,19 +1,19 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
-import { Mic, MicOff, Gift, ArrowRight, Sparkles } from "lucide-react";
+import { Gift, ArrowRight } from "lucide-react";
 import { soundManager } from "@/utils/sound";
 import { BirthdayConfig } from "@/types/birthday";
 import Cake2D from "./Cake2D";
 
 interface Props {
-  config: BirthdayConfig;
+  config?: BirthdayConfig;
   onNext: () => void;
 }
 
-export default function Scene2Cake({ config, onNext }: Props) {
+export default function Scene2Cake({ onNext }: Props) {
   // =========================================================================
   // 📜 3 DÒNG CHỮ UỐN LƯỢN CHẠY MỜ DẦN ĐÈ LÊN NHAU (HOÀN TOÀN KHÔNG CÓ KHUNG)
   // =========================================================================
@@ -30,11 +30,92 @@ export default function Scene2Cake({ config, onNext }: Props) {
 
   // Micro để thổi nến
   const [canClickToExtinguish, setCanClickToExtinguish] = useState<boolean>(false);
-  const [isMicListening, setIsMicListening] = useState<boolean>(false);
-  const [micError, setMicError] = useState<string>("");
   const [blowStrength, setBlowStrength] = useState<number>(0);
   const audioContextRef = useRef<AudioContext | null>(null);
   const micStreamRef = useRef<MediaStream | null>(null);
+
+  const fireConfetti = useCallback(() => {
+    confetti({
+      particleCount: 160,
+      spread: 80,
+      origin: { y: 0.6 },
+      colors: ["#FFB7C5", "#FF69B4", "#FFD700", "#FFF0F5", "#FF1493"],
+    });
+  }, []);
+
+  const stopMic = useCallback(() => {
+    if (micStreamRef.current) {
+      micStreamRef.current.getTracks().forEach((t) => t.stop());
+      micStreamRef.current = null;
+    }
+  }, []);
+
+  // Nến tắt -> Bừng sáng không gian & Bắn pháo hoa ăn mừng
+  const handleExtinguishCandle = useCallback(() => {
+    if (isCandleBlown) return;
+    setIsCandleBlown(true);
+    setBlowStrength(0);
+    soundManager.playBlowSound();
+    stopMic();
+    setTimeout(() => {
+      fireConfetti();
+    }, 350);
+  }, [isCandleBlown, stopMic, fireConfetti]);
+
+  // Micro thổi nến
+  const startMic = useCallback(async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      micStreamRef.current = stream;
+
+      const AudioCtx =
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext: typeof AudioContext })
+          .webkitAudioContext;
+      const audioCtx = new AudioCtx();
+      audioContextRef.current = audioCtx;
+
+      const analyser = audioCtx.createAnalyser();
+      analyser.fftSize = 512;
+      audioCtx.createMediaStreamSource(stream).connect(analyser);
+
+      const dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+      const checkAudioLevel = () => {
+        if (!micStreamRef.current) return;
+        analyser.getByteFrequencyData(dataArray);
+
+        let sum = 0;
+        for (let i = 0; i < analyser.frequencyBinCount; i++)
+          sum += dataArray[i];
+        const avg = sum / analyser.frequencyBinCount;
+
+        // Chuẩn hóa độ mạnh hơi thở từ 0 đến 1
+        const normalized = Math.max(0, Math.min(1, (avg - 18) / 42));
+        setBlowStrength(normalized);
+
+        if (avg > 60) {
+          handleExtinguishCandle();
+          return;
+        }
+        requestAnimationFrame(checkAudioLevel);
+      };
+      checkAudioLevel();
+    } catch {
+      setCanClickToExtinguish(true);
+    }
+  }, [handleExtinguishCandle]);
+
+  // 2. HIỂN THỊ BÁNH KEM & BẮT ĐẦU CẢNH THỔI NẾN (PHÒNG TỐI ÁNH NẾN LUNG LINH)
+  const startCakeDrop = useCallback(() => {
+    setStage("READY_TO_BLOW");
+    soundManager.playBirthdayMelody();
+    startMic();
+    // Sau 7 giây nếu người dùng không thể thổi mic, tự động cho phép chạm nến để tắt
+    setTimeout(() => {
+      setCanClickToExtinguish(true);
+    }, 7000);
+  }, [startMic]);
 
   // 1. HIỆU ỨNG TỪNG DÒNG CHỮ MỜ DẦN VÀ DÒNG TIẾP THEO ĐÈ LÊN
   useEffect(() => {
@@ -58,99 +139,11 @@ export default function Scene2Cake({ config, onNext }: Props) {
     }, 3600);
 
     return () => clearInterval(timer);
-  }, [stage]);
-
-  // 2. HIỂN THỊ BÁNH KEM & BẮT ĐẦU CẢNH THỔI NẾN (PHÒNG TỐI ÁNH NẾN LUNG LINH)
-  const startCakeDrop = () => {
-    setStage("READY_TO_BLOW");
-    soundManager.playBirthdayMelody();
-    startMic();
-    // Sau 7 giây nếu người dùng không thể thổi mic, tự động cho phép chạm nến để tắt
-    setTimeout(() => {
-      setCanClickToExtinguish(true);
-    }, 7000);
-  };
-
-  const fireConfetti = () => {
-    confetti({
-      particleCount: 160,
-      spread: 80,
-      origin: { y: 0.6 },
-      colors: ["#FFB7C5", "#FF69B4", "#FFD700", "#FFF0F5", "#FF1493"],
-    });
-  };
-
-  // Nến tắt -> Bừng sáng không gian & Bắn pháo hoa ăn mừng
-  const handleExtinguishCandle = () => {
-    if (isCandleBlown) return;
-    setIsCandleBlown(true);
-    setBlowStrength(0);
-    soundManager.playBlowSound();
-    stopMic();
-    setTimeout(() => {
-      fireConfetti();
-    }, 350);
-  };
-
-  // Micro thổi nến
-  const startMic = async () => {
-    try {
-      setMicError("");
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      micStreamRef.current = stream;
-
-      const AudioCtx =
-        window.AudioContext ||
-        (window as unknown as { webkitAudioContext: typeof AudioContext })
-          .webkitAudioContext;
-      const audioCtx = new AudioCtx();
-      audioContextRef.current = audioCtx;
-
-      const analyser = audioCtx.createAnalyser();
-      analyser.fftSize = 512;
-      audioCtx.createMediaStreamSource(stream).connect(analyser);
-
-      const dataArray = new Uint8Array(analyser.frequencyBinCount);
-      setIsMicListening(true);
-
-      const checkAudioLevel = () => {
-        if (!micStreamRef.current) return;
-        analyser.getByteFrequencyData(dataArray);
-
-        let sum = 0;
-        for (let i = 0; i < analyser.frequencyBinCount; i++)
-          sum += dataArray[i];
-        const avg = sum / analyser.frequencyBinCount;
-
-        // Chuẩn hóa độ mạnh hơi thở từ 0 đến 1
-        const normalized = Math.max(0, Math.min(1, (avg - 18) / 42));
-        setBlowStrength(normalized);
-
-        if (avg > 60) {
-          handleExtinguishCandle();
-          return;
-        }
-        requestAnimationFrame(checkAudioLevel);
-      };
-      checkAudioLevel();
-    } catch {
-      setMicError("Microphone không khả dụng. Đã bật chế độ chạm vào nến để tắt!");
-      setIsMicListening(false);
-      setCanClickToExtinguish(true);
-    }
-  };
-
-  const stopMic = () => {
-    if (micStreamRef.current) {
-      micStreamRef.current.getTracks().forEach((t) => t.stop());
-      micStreamRef.current = null;
-    }
-    setIsMicListening(false);
-  };
+  }, [stage, startCakeDrop]);
 
   useEffect(() => {
     return () => stopMic();
-  }, []);
+  }, [stopMic]);
 
   return (
     <motion.div

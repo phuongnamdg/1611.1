@@ -24,19 +24,22 @@ export default function Cake2D({
   useEffect(() => {
     if (isCandleBlown) return;
 
-    if (blowStrength > 0.15) {
-      setHoldProgress((prev) => {
-        const next = prev + blowStrength * 18;
-        if (next >= 100) {
-          onExtinguishCandle();
-          return 100;
-        }
-        return next;
-      });
-    } else if (!isPressing) {
-      // Giảm dần nếu ngừng thổi
-      setHoldProgress((prev) => Math.max(0, prev - 5));
-    }
+    const frameId = requestAnimationFrame(() => {
+      if (blowStrength > 0.15) {
+        setHoldProgress((prev) => {
+          const next = prev + blowStrength * 18;
+          if (next >= 100) {
+            onExtinguishCandle();
+            return 100;
+          }
+          return next;
+        });
+      } else if (!isPressing) {
+        setHoldProgress((prev) => Math.max(0, prev - 5));
+      }
+    });
+
+    return () => cancelAnimationFrame(frameId);
   }, [blowStrength, isCandleBlown, isPressing, onExtinguishCandle]);
 
   // Bắt đầu nhấn giữ ngọn nến
