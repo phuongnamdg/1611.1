@@ -60,10 +60,9 @@ export default function Scene2Cake({ config, onNext }: Props) {
     return () => clearInterval(timer);
   }, [stage]);
 
-  // 2. HIỂN THỊ BÁNH KEM 2D XINH XẮN + BẬT NHẠC & BẮN PHÁO BÔNG
+  // 2. HIỂN THỊ BÁNH KEM & BẮT ĐẦU CẢNH THỔI NẾN (PHÒNG TỐI ÁNH NẾN LUNG LINH)
   const startCakeDrop = () => {
     setStage("READY_TO_BLOW");
-    fireConfetti();
     soundManager.playBirthdayMelody();
     startMic();
     // Sau 7 giây nếu người dùng không thể thổi mic, tự động cho phép chạm nến để tắt
@@ -75,13 +74,13 @@ export default function Scene2Cake({ config, onNext }: Props) {
   const fireConfetti = () => {
     confetti({
       particleCount: 160,
-      spread: 75,
-      origin: { y: 0.65 },
+      spread: 80,
+      origin: { y: 0.6 },
       colors: ["#FFB7C5", "#FF69B4", "#FFD700", "#FFF0F5", "#FF1493"],
     });
   };
 
-  // Nến tắt
+  // Nến tắt -> Bừng sáng không gian & Bắn pháo hoa ăn mừng
   const handleExtinguishCandle = () => {
     if (isCandleBlown) return;
     setIsCandleBlown(true);
@@ -90,7 +89,7 @@ export default function Scene2Cake({ config, onNext }: Props) {
     stopMic();
     setTimeout(() => {
       fireConfetti();
-    }, 200);
+    }, 350);
   };
 
   // Micro thổi nến
@@ -160,8 +159,28 @@ export default function Scene2Cake({ config, onNext }: Props) {
       exit={{ opacity: 0 }}
       className="relative z-20 flex flex-col items-center justify-center min-h-screen px-4 py-4 max-w-lg mx-auto text-center w-full select-none"
     >
-      {/* CÁC ĐỐM TRÁI TIM PASTEL MỜ MỊN TRÔI LƠ LỬNG TRONG KHÔNG GIAN (Y HỆT HÌNH BẠN GỬI) */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+      {/* =================================================================== */}
+      {/* LỚP MÀN ĐÊM TỐI OM BAO TRÙM CĂN PHÒNG (THỔI XONG MỚI SÁNG BỪNG LÊN)  */}
+      {/* =================================================================== */}
+      {stage !== "TYPING" && (
+        <motion.div
+          initial={{ opacity: 1 }}
+          animate={{ opacity: isCandleBlown ? 0 : 1 }}
+          transition={{ duration: 1.4, ease: "easeInOut" }}
+          className="fixed inset-0 z-0 pointer-events-none"
+          style={{
+            background:
+              "radial-gradient(circle at 50% 48%, rgba(24, 18, 28, 0.96) 0%, #06040a 100%)",
+          }}
+        />
+      )}
+
+      {/* CÁC ĐỐM TRÁI TIM PASTEL MỜ MỊN (CHỈ HIỆN KHI PHÒNG BẬT SÁNG HOẶC LÚC TYPING) */}
+      <motion.div
+        animate={{ opacity: stage === "TYPING" || isCandleBlown ? 1 : 0 }}
+        transition={{ duration: 1.2 }}
+        className="absolute inset-0 pointer-events-none overflow-hidden z-0"
+      >
         {[
           { top: "12%", left: "8%", size: "w-5 h-5", delay: 0 },
           { top: "20%", right: "10%", size: "w-6 h-6", delay: 1.2 },
@@ -196,7 +215,7 @@ export default function Scene2Cake({ config, onNext }: Props) {
             </svg>
           </motion.div>
         ))}
-      </div>
+      </motion.div>
 
       {/* ===================================================================== */}
       {/* 📜 GIAI ĐOẠN 1: 3 DÒNG CHỮ CHẠY MỜ DẦN ĐÈ LÊN NHAU                    */}
