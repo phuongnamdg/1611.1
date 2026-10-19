@@ -3,8 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
-import { Mic, Sparkles } from 'lucide-react';
-import { soundManager } from '@/utils/sound';
+import { Mic } from 'lucide-react';
 
 interface Props {
   isCandleBlown: boolean;
@@ -15,44 +14,6 @@ interface Props {
   onRequestMic?: () => void;
 }
 
-const FORTUNE_LIST = [
-  {
-    icon: "🌟",
-    badge: "Tài Lộc & Rực Rỡ",
-    title: "Tiền Đầy Túi - Nụ Cười Luôn Nở",
-    desc: "Tuổi mới chúc bạn tiền đầy túi, tim đầy tình yêu, mỗi bước đi đều thuận buồm xuôi gió và gặt hái thành công vượt mong đợi!",
-    blessing: "✨ Vạn sự hanh thông & Rạng ngời mỗi ngày ✨",
-  },
-  {
-    icon: "✈️",
-    badge: "Khám Phá & Tự Do",
-    title: "Những Chuyến Đi Xinh Đẹp Đang Chờ",
-    desc: "Năm nay vũ trụ sẽ mở ra thật nhiều chuyến đi tuyệt vời, đưa bạn đến những chân trời mới mà bạn hằng mơ ước!",
-    blessing: "✨ Thỏa sức đam mê & Đầy ắp kỷ niệm đẹp ✨",
-  },
-  {
-    icon: "💖",
-    badge: "Ngọt Ngào & Bình An",
-    title: "Luôn Được Yêu Thương Vô Điều Kiện",
-    desc: "Chúc bạn luôn là cô gái hạnh phúc nhất, luôn tìm thấy sự dịu dàng, chở che và ấm áp ở mọi nơi bạn bước qua!",
-    blessing: "✨ Hạnh phúc đong đầy & Bình an ngập tràn ✨",
-  },
-  {
-    icon: "🍀",
-    badge: "May Mắn & Quý Nhân",
-    title: "Vạn Sự Như Ý - Quý Nhân Phù Trợ",
-    desc: "Mọi thử thách đều hóa nhẹ nhàng, mọi ấp ủ đều đơm hoa kết trái. Luôn có những người tuyệt vời sẵn sàng đồng hành cùng bạn!",
-    blessing: "✨ Mọi điều may mắn nhất sẽ đến với bạn ✨",
-  },
-  {
-    icon: "🌸",
-    badge: "Trẻ Trung & Kiêu Hãnh",
-    title: "Tâm Hồn Tự Do & Năng Lượng Rạng Rỡ",
-    desc: "Mỗi sớm mai thức dậy đều tràn ngập hứng khởi, không vướng bận âu lo, sống một đời tự do, kiêu hãnh và ngọt ngào!",
-    blessing: "✨ Mãi xinh đẹp, tự tin & Yêu đời ✨",
-  },
-];
-
 export default function Cake2D({
   isCandleBlown,
   onExtinguishCandle,
@@ -62,33 +23,6 @@ export default function Cake2D({
 }: Props) {
   // Key hiệu ứng để xem lại mở băng rôn bất kỳ lúc nào
   const [bannerKey, setBannerKey] = useState<number>(0);
-
-  // 🍰 Trạng thái cắt bánh & Thông điệp may mắn
-  const [isSliced, setIsSliced] = useState<boolean>(false);
-  const [isSlicingAnim, setIsSlicingAnim] = useState<boolean>(false);
-  const [showFortuneModal, setShowFortuneModal] = useState<boolean>(false);
-  const [fortuneIndex, setFortuneIndex] = useState<number>(0);
-
-  const handleSliceCake = () => {
-    if (isSlicingAnim) return;
-    soundManager.playCakeSliceSound();
-    setIsSlicingAnim(true);
-
-    confetti({
-      particleCount: 60,
-      spread: 70,
-      origin: { y: 0.65 },
-      colors: ["#FFD700", "#FFB6C1", "#FFF0F5", "#FF69B4", "#FFF9C4"],
-    });
-
-    setTimeout(() => {
-      setIsSliced(true);
-      setIsSlicingAnim(false);
-      setTimeout(() => {
-        setShowFortuneModal(true);
-      }, 350);
-    }, 550);
-  };
 
   const handleReplayBanner = () => {
     setBannerKey((k) => k + 1);
@@ -129,7 +63,7 @@ export default function Cake2D({
     return () => cancelAnimationFrame(frameId);
   }, [blowStrength, isCandleBlown, isPressing]);
 
-  // 2. Kích hoạt dập nến khi tiến trình đạt 100% (tránh hoàn toàn bad setState during render & cascading renders)
+  // 2. Kích hoạt dập nến khi tiến trình đạt 100%
   useEffect(() => {
     if (holdProgress >= 100 && !isCandleBlown) {
       if (holdIntervalRef.current) {
@@ -196,7 +130,6 @@ export default function Cake2D({
 
   return (
     <div className="relative w-full max-w-[380px] sm:max-w-[420px] mx-auto flex flex-col items-center justify-center select-none py-2">
-      
       {/* =================================================================== */}
       {/* DÒNG HƯỚNG DẪN TƯƠNG TÁC (TỰ ĐỘNG CHUYỂN TRẠNG THÁI)                */}
       {/* =================================================================== */}
@@ -238,9 +171,7 @@ export default function Cake2D({
             animate={{ opacity: 1, scale: 1 }}
             className="px-4 py-1.5 rounded-full bg-gradient-to-r from-pink-500 via-rose-500 to-pink-500 text-white text-xs font-bold shadow-lg shadow-pink-500/30 tracking-wide"
           >
-            {!isSliced
-              ? '✨ Ngọn nến đã tắt! Hãy cắt lát bánh đầu tiên để nhận may mắn 🍰'
-              : '🍰 Lát bánh ngọt ngào đã được cắt! Chúc bạn tuổi mới rạng rỡ ✨'}
+            ✨ Ngọn nến đã tắt, chúc điều ước của em thành hiện thực! ✨
           </motion.div>
         )}
       </div>
@@ -249,9 +180,8 @@ export default function Cake2D({
       {/* KHUNG BĂNG RÔN & BÁNH KEM CHUẨN MẪU TIKTOK                          */}
       {/* =================================================================== */}
       <div className="relative w-full flex flex-col items-center justify-center">
-        
-        {/* 1. BĂNG RÔN DÂY CỜ PASTEL (KÉO MỞ TỪ TÂM RA 2 BÊN RÕ NÉT 100%) */}
-        <div className="relative w-[110%] sm:w-[116%] mb-2 sm:mb-3 z-10 select-none pointer-events-none">
+        {/* 1. BĂNG RÔN DÂY CỜ PASTEL (HẠ THẤP ÔM LẤY ĐỈNH NẾN NHƯ MẪU TIKTOK) */}
+        <div className="relative w-[110%] sm:w-[116%] -mb-4 sm:-mb-6 z-10 select-none pointer-events-none">
           {/* Nơ vàng trung tâm mở tung khi khai màn */}
           <motion.div
             key={`bow-${bannerKey}`}
@@ -270,7 +200,7 @@ export default function Cake2D({
             </div>
           </motion.div>
 
-          {/* Dải cờ mở bung từ tâm sang 2 bên bằng scaleX (100% rõ nét, mượt mà trên mọi thiết bị) */}
+          {/* Dải cờ mở bung từ tâm sang 2 bên bằng scaleX */}
           <motion.div
             key={`banner-${bannerKey}`}
             style={{ transformOrigin: '50% 20%' }}
@@ -389,14 +319,14 @@ export default function Cake2D({
           </motion.div>
         </div>
 
-        {/* 2. KHUNG CHỨA BÁNH VÀ NẾN (NÂNG BỒNG BỀNH TỪ DƯỚI LÊN KHI VÀO TIẾT MỤC) */}
+        {/* 2. KHUNG CHỨA BÁNH VÀ NẾN */}
         <motion.div
           initial={{ opacity: 0, y: 32, scale: 0.94 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 1.15, ease: [0.16, 1, 0.3, 1], delay: 0.28 }}
-          className="relative w-full aspect-[458/557] max-w-[280px] sm:max-w-[310px] flex items-center justify-center"
+          className="relative w-full aspect-[458/557] max-w-[280px] sm:max-w-[310px] flex items-center justify-center z-20"
         >
-          {/* Ảnh bánh kem màu nước 2 tầng với chân đế gỗ uốn lượn tinh xảo (ĐẾ TRÒN TỰ NHIÊN, KHÔNG CẮT NGANG) */}
+          {/* Ảnh bánh kem màu nước 2 tầng với chân đế gỗ */}
           <img
             src="/cake-lovegift.webp"
             alt="Bánh kem sinh nhật"
@@ -404,12 +334,12 @@ export default function Cake2D({
           />
 
           {/* =============================================================== */}
-          {/* 3. CÂY NẾN THANH MẢNH & NGỌN LỬA TINH TẾ CẮM VÀO MẶT KEM TẦNG TRÊN */}
+          {/* 3. CÂY NẾN & NGỌN LỬA CẮM CHUẨN XÁC VÀO MẶT KEM BÁNH TẦNG TRÊN   */}
           {/* =============================================================== */}
           <div
-            className="absolute z-40 flex flex-col items-center cursor-pointer select-none touch-none p-4 -m-4"
+            className="absolute z-40 flex flex-col items-center cursor-pointer select-none touch-none"
             style={{
-              top: '4.5%',
+              top: '6.5%', // Đặt đáy chân nến cắm chính xác vào mặt kem oval tầng trên
               left: '50%',
               transform: 'translate(-50%, -100%)',
               touchAction: 'none',
@@ -418,8 +348,8 @@ export default function Cake2D({
             onPointerUp={handlePointerUp}
             onPointerCancel={handlePointerUp}
           >
-            {/* Vùng cảm ứng nhấn mở rộng cho ngón tay */}
-            <div className="absolute inset-0 z-10 rounded-full pointer-events-none" />
+            {/* Vùng cảm ứng nhấn mở rộng cho ngón tay (không gây lệch vị trí nến) */}
+            <div className="absolute -inset-x-6 -inset-y-4 z-10 rounded-full pointer-events-none" />
 
             {/* A. NGỌN LỬA VÀ QUẦNG HÀO QUANG ÁNH SÁNG */}
             <div className="relative flex items-center justify-center mb-0.5">
@@ -451,18 +381,18 @@ export default function Cake2D({
                     <div
                       className="absolute pointer-events-none -z-10 rounded-full"
                       style={{
-                        width: '120px',
-                        height: '120px',
+                        width: '130px',
+                        height: '130px',
                         background:
-                          'radial-gradient(circle, rgba(255,206,120,0.7) 0%, rgba(255,160,60,0.25) 45%, rgba(255,140,40,0) 75%)',
+                          'radial-gradient(circle, rgba(255,214,130,0.65) 0%, rgba(255,160,60,0.2) 40%, rgba(255,140,40,0) 70%)',
                       }}
                     />
 
                     {/* Ngọn lửa hình giọt nước mềm mại tinh tế */}
                     <div
                       style={{
-                        width: '15px',
-                        height: '27px',
+                        width: '16px',
+                        height: '28px',
                         borderRadius: '50% 50% 50% 50% / 62% 62% 40% 40%',
                         background:
                           'radial-gradient(60% 55% at 50% 68%, #ffffff 0%, #fff3c4 22%, #ffb347 52%, #ff7a1a 80%, rgba(255,90,10,0.2) 100%)',
@@ -504,113 +434,54 @@ export default function Cake2D({
               </AnimatePresence>
             </div>
 
-            {/* C. TIM NẾN MẢNH MAI (WICK) */}
-            <div className="w-[1.5px] h-[5px] bg-[#27272a] rounded-t-xs -mb-[1px]" />
-
-            {/* D. THÂN NẾN THON GỌN, VÂN XOẮN PASTEL HÀN QUỐC (SLENDER SPIRAL CANDLE) */}
-            <div
-              className="w-[6px] sm:w-[7px] h-[36px] sm:h-[40px] rounded-t-[2px] rounded-b-[2px] shadow-sm relative overflow-hidden"
-              style={{
-                background:
-                  'linear-gradient(135deg, #fffdf8 0%, #fff1f2 40%, #ffedd5 70%, #fce7f3 100%)',
-                boxShadow:
-                  '0 2px 5px rgba(0,0,0,0.22), inset 0 1px 1px rgba(255,255,255,0.9)',
-              }}
-            >
-              {/* Vân sọc xoắn ánh hồng pastel tinh tế */}
-              <div
-                className="absolute inset-0 opacity-40 pointer-events-none"
-                style={{
-                  background:
-                    'repeating-linear-gradient(-45deg, transparent, transparent 3px, rgba(244,114,182,0.6) 3px, rgba(244,114,182,0.6) 6px)',
-                }}
-              />
+            {/* C. TIM NẾN MỘC TỰ NHIÊN (WICK) */}
+            <div className="w-[2px] h-[6px] bg-[#3f3f46] rounded-t-sm -mb-[1px] relative">
+              {!isCandleBlown && (
+                <div className="absolute -top-[1px] left-1/2 -translate-x-1/2 w-[2.5px] h-[2.5px] rounded-full bg-[#f97316] shadow-[0_0_4px_#ef4444]" />
+              )}
             </div>
 
-            {/* E. CHÂN NẾN CẮM VÀO KEM (ĐẢM BẢO KHÔNG BỊ TRÔI LƠ LỬNG) */}
-            <div className="w-[11px] h-[3.5px] rounded-full bg-white/90 shadow-xs -mt-[1.5px] border border-pink-100/80 pointer-events-none" />
-          </div>
-
-          {/* ⚡ ĐƯỜNG RẠCH CẮT BÁNH PHÁT SÁNG PASTEL (LASER SLICE) */}
-          <AnimatePresence>
-            {isSlicingAnim && (
-              <motion.div
-                initial={{ opacity: 0, scaleX: 0, rotate: -25 }}
-                animate={{ opacity: [0, 1, 1, 0], scaleX: [0, 1.2, 1.4, 1.5] }}
-                transition={{ duration: 0.55, ease: "easeOut" }}
-                className="absolute z-50 w-[120%] h-1.5 bg-gradient-to-r from-transparent via-amber-200 to-transparent shadow-[0_0_24px_6px_rgba(251,191,36,0.95)] pointer-events-none"
-                style={{ top: '48%', left: '-10%' }}
+            {/* D. THÂN NẾN MÀU NƯỚC PASTEL HÀN QUỐC HÀI HÒA VỚI BÁNH */}
+            <div
+              className="w-[10px] sm:w-[12px] h-[40px] sm:h-[46px] rounded-t-[3px] rounded-b-[2px] relative overflow-hidden"
+              style={{
+                background:
+                  'linear-gradient(to right, #fbf7ee 0%, #fffcf5 35%, #fbf3e6 70%, #ebdccc 100%)',
+                boxShadow:
+                  'inset -1.5px 0 2px rgba(180, 140, 110, 0.25), inset 1px 0 1.5px rgba(255, 255, 255, 0.8), 0 2px 4px rgba(0,0,0,0.15)',
+              }}
+            >
+              {/* Vân xoắn màu nước pastel hồng dịu nhẹ */}
+              <div
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                  background:
+                    'repeating-linear-gradient(-45deg, transparent, transparent 5px, rgba(244, 143, 177, 0.55) 5px, rgba(244, 143, 177, 0.55) 10px, transparent 10px, transparent 12px)',
+                  mixBlendMode: 'multiply',
+                }}
               />
-            )}
-          </AnimatePresence>
+              {/* Dải sáng phản quang dọc thân nến */}
+              <div className="absolute top-0 bottom-0 left-[2px] w-[1.5px] bg-white/70 blur-[0.4px] pointer-events-none" />
+            </div>
+
+            {/* E. CHÂN NẾN CẮM CHẶT VÀO LỚP KEM BÁNH VỚI VÒNG KEM & BÓNG ĐỔ */}
+            <div className="relative -mt-[2px] flex flex-col items-center pointer-events-none">
+              {/* Vòng kem tròn đùn nhẹ quanh gốc nến */}
+              <div
+                className="w-[15px] sm:w-[17px] h-[4px] rounded-full border border-pink-100/80 shadow-xs"
+                style={{
+                  background:
+                    'radial-gradient(ellipse at 50% 40%, #ffffff 0%, #fdf2f4 60%, #fae2e6 100%)',
+                  boxShadow: '0 1px 2px rgba(140, 100, 80, 0.25)',
+                }}
+              />
+              {/* Vệt bóng đổ êm của nến lên mặt bánh kem */}
+              <div className="w-[18px] sm:w-[20px] h-[3px] rounded-full bg-[#78350f]/20 blur-[1px] -mt-[1.5px]" />
+            </div>
+          </div>
         </motion.div>
 
-        {/* 🍰 NÚT CẮT BÁNH KEM & KHÁM PHÁ QUẺ MAY MẮN */}
-        {isCandleBlown && !isSliced && (
-          <div className="mt-3.5 flex flex-col items-center z-30">
-            <motion.button
-              type="button"
-              onClick={handleSliceCake}
-              initial={{ opacity: 0, scale: 0.85, y: 10 }}
-              animate={{ opacity: 1, scale: [1, 1.04, 1], y: [0, -3, 0] }}
-              transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-              className="px-5 py-2.5 rounded-full bg-gradient-to-r from-amber-400 via-rose-400 to-pink-500 hover:from-amber-500 hover:to-pink-600 text-white text-xs font-bold shadow-lg shadow-rose-400/35 flex items-center gap-2 cursor-pointer hover:scale-105 active:scale-95 transition-all border border-pink-200/80 tracking-wide"
-            >
-              <span className="text-base animate-pulse">🔪</span>
-              <span>Cắt lát bánh đầu tiên & Mở quà may mắn 🍰</span>
-            </motion.button>
-            <span className="text-[11px] text-pink-300/90 font-medium mt-1">
-              (Bấm vào nút để dùng dao cắt lát bánh kem đầu tiên)
-            </span>
-          </div>
-        )}
-
-        {/* 🍓 LÁT BÁNH KEM DÂU TÂY ĐÃ CẮT TRÊN ĐĨA SỨ & THẺ QUẺ MAY MẮN */}
-        {isCandleBlown && isSliced && (
-          <div className="mt-3 flex flex-col items-center z-30">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.7, y: 15 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-              onClick={() => setShowFortuneModal(true)}
-              className="cursor-pointer group flex flex-col items-center"
-              title="Bấm để xem lại thông điệp may mắn ẩn trong lát bánh!"
-            >
-              {/* Đĩa sứ tròn đựng lát bánh kem dâu tây */}
-              <div className="relative w-32 h-20 flex items-center justify-center">
-                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#fff1f2] via-[#ffe4e6] to-[#fff1f2] border-2 border-pink-200/90 shadow-md shadow-pink-200/50" />
-                
-                {/* Lát bánh dâu tây 2D */}
-                <div className="relative z-10 flex flex-col items-center transform -translate-y-1">
-                  <div className="text-xl -mb-1 animate-bounce">🍓</div>
-                  <div
-                    className="w-14 h-9 rounded-t-sm rounded-b-md shadow-sm relative overflow-hidden"
-                    style={{
-                      background: 'linear-gradient(to bottom, #fffdfa 0%, #fffbf0 30%, #f472b6 35%, #ec4899 45%, #fffdfa 50%, #fffbf0 80%, #fbcfe8 100%)',
-                      boxShadow: '0 4px 8px rgba(0,0,0,0.15)',
-                      clipPath: 'polygon(50% 0%, 100% 100%, 0% 100%)',
-                    }}
-                  />
-                  <div className="w-16 h-1 bg-amber-200/80 rounded-full shadow-xs -mt-0.5" />
-                </div>
-
-                {/* Tag cuộn thiệp may mắn cắm trên bánh */}
-                <div className="absolute -top-3 -right-2 z-20 flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-gradient-to-r from-amber-300 to-amber-200 text-stone-900 text-[10px] font-extrabold shadow-md shadow-amber-300/60 border border-amber-200 animate-pulse">
-                  <span>📜</span>
-                  <span>Quẻ may mắn</span>
-                </div>
-              </div>
-
-              <div className="mt-1.5 flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/80 hover:bg-white text-rose-600 text-[11px] font-bold shadow-xs border border-pink-200/80 transition-all group-hover:scale-105">
-                <span>✨</span>
-                <span>Xem lại thông điệp may mắn</span>
-                <span>✨</span>
-              </div>
-            </motion.div>
-          </div>
-        )}
-
-        {/* 🎙️ NÚT BẬT / TRẠNG THÁI MICRO ĐỂ THỔI NẾN (BẤM TRỰC TIẾP ĐỂ TRÌNH DUYỆT BẬT HỘP THOẠI CẤP QUYỀN) */}
+        {/* 🎙️ NÚT BẬT / TRẠNG THÁI MICRO ĐỂ THỔI NẾN */}
         {!isCandleBlown && (
           <div className="mt-3 flex flex-col items-center gap-1.5 z-30">
             {!isMicListening ? (
@@ -645,96 +516,6 @@ export default function Cake2D({
           </button>
         </div>
       </div>
-
-      {/* =================================================================== */}
-      {/* 🔮 MODAL POPUP THÔNG ĐIỆP MAY MẮN ẨN TRONG LÁT BÁNH KEM            */}
-      {/* =================================================================== */}
-      <AnimatePresence>
-        {showFortuneModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.85, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.85, y: 20 }}
-              transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="relative w-full max-w-sm rounded-[32px] bg-gradient-to-b from-[#fffbf5] via-[#fff5f6] to-[#fff0f3] p-6 text-center border-2 border-pink-200 shadow-[0_20px_60px_rgba(244,114,182,0.45)] overflow-hidden"
-            >
-              {/* Hoa văn góc trang trí */}
-              <div className="absolute top-3 left-3 text-sm opacity-60">🌸</div>
-              <div className="absolute top-3 right-3 text-sm opacity-60">✨</div>
-              <div className="absolute bottom-3 left-3 text-sm opacity-60">🍀</div>
-              <div className="absolute bottom-3 right-3 text-sm opacity-60">💖</div>
-
-              {/* Nơ ruy băng vàng trên đỉnh thiệp */}
-              <div className="flex justify-center -mt-2 mb-2">
-                <div className="px-3.5 py-1 rounded-full bg-gradient-to-r from-amber-300 via-amber-200 to-amber-300 text-stone-800 text-[11px] font-extrabold uppercase tracking-widest shadow-sm border border-amber-300/80 flex items-center gap-1.5">
-                  <span>👑</span>
-                  <span>Thông Điệp Tuổi Mới</span>
-                  <span>👑</span>
-                </div>
-              </div>
-
-              {/* Icon lớn phát sáng */}
-              <div className="my-3 relative flex items-center justify-center">
-                <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-pink-300 via-rose-200 to-amber-200 flex items-center justify-center text-4xl shadow-md shadow-pink-300/40">
-                  {FORTUNE_LIST[fortuneIndex].icon}
-                </div>
-              </div>
-
-              {/* Huy hiệu quẻ may mắn */}
-              <span className="inline-block px-3 py-0.5 rounded-full bg-pink-100 text-pink-700 text-[11px] font-bold border border-pink-200 mb-1">
-                #{FORTUNE_LIST[fortuneIndex].badge}
-              </span>
-
-              {/* Tiêu đề thông điệp */}
-              <h3 className="text-lg font-bold text-stone-800 tracking-tight mt-1">
-                {FORTUNE_LIST[fortuneIndex].title}
-              </h3>
-
-              {/* Lời chúc chi tiết */}
-              <p className="text-xs sm:text-sm text-stone-600 mt-2 leading-relaxed font-medium px-2">
-                &ldquo;{FORTUNE_LIST[fortuneIndex].desc}&rdquo;
-              </p>
-
-              {/* Lời phước lành đóng dấu sáp */}
-              <div className="mt-3.5 p-2.5 rounded-2xl bg-white/85 border border-pink-200/80 shadow-xs">
-                <p className="text-[11px] font-bold text-rose-500">
-                  {FORTUNE_LIST[fortuneIndex].blessing}
-                </p>
-                <p className="text-[10px] text-stone-400 mt-0.5 font-medium">
-                  Chứng nhận gửi riêng cho Bé Yêu • 16 Tháng 11
-                </p>
-              </div>
-
-              {/* Các nút bấm tương tác */}
-              <div className="mt-4 flex flex-col gap-2">
-                {/* Nút bốc quẻ khác */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    soundManager.playKeypress(800);
-                    setFortuneIndex((idx) => (idx + 1) % FORTUNE_LIST.length);
-                    confetti({ particleCount: 30, spread: 50, origin: { y: 0.6 } });
-                  }}
-                  className="w-full py-2.5 rounded-xl bg-white hover:bg-pink-50 text-stone-700 text-xs font-bold border border-pink-200 shadow-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95"
-                >
-                  <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                  <span>Bốc thông điệp may mắn khác 🎲</span>
-                </button>
-
-                {/* Nút đóng nhận phước lành */}
-                <button
-                  type="button"
-                  onClick={() => setShowFortuneModal(false)}
-                  className="w-full py-2.5 rounded-xl bg-gradient-to-r from-pink-500 via-rose-500 to-pink-500 hover:brightness-105 text-white text-xs font-bold shadow-md shadow-pink-300/40 flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95"
-                >
-                  <span>Đã nhận phước lành & Tiếp tục 🌸</span>
-                </button>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }
