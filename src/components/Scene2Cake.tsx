@@ -6,7 +6,7 @@ import confetti from "canvas-confetti";
 import { Mic, MicOff, Gift, ArrowRight, Sparkles } from "lucide-react";
 import { soundManager } from "@/utils/sound";
 import { BirthdayConfig } from "@/types/birthday";
-import ThreeCake3D from "./ThreeCake3D";
+import Cake2D from "./Cake2D";
 
 interface Props {
   config: BirthdayConfig;
@@ -32,6 +32,7 @@ export default function Scene2Cake({ config, onNext }: Props) {
   const [canClickToExtinguish, setCanClickToExtinguish] = useState<boolean>(false);
   const [isMicListening, setIsMicListening] = useState<boolean>(false);
   const [micError, setMicError] = useState<string>("");
+  const [blowStrength, setBlowStrength] = useState<number>(0);
   const audioContextRef = useRef<AudioContext | null>(null);
   const micStreamRef = useRef<MediaStream | null>(null);
 
@@ -59,16 +60,16 @@ export default function Scene2Cake({ config, onNext }: Props) {
     return () => clearInterval(timer);
   }, [stage]);
 
-  // 2. HIỂN THỊ BÁNH KEM 3D XINH XẮN + BẬT NHẠC & BẮN PHÁO BÔNG
+  // 2. HIỂN THỊ BÁNH KEM 2D XINH XẮN + BẬT NHẠC & BẮN PHÁO BÔNG
   const startCakeDrop = () => {
     setStage("READY_TO_BLOW");
     fireConfetti();
     soundManager.playBirthdayMelody();
     startMic();
-    // Sau 4 giây nếu người dùng không thể thổi mic, tự động cho phép chạm nến để tắt
+    // Sau 7 giây nếu người dùng không thể thổi mic, tự động cho phép chạm nến để tắt
     setTimeout(() => {
       setCanClickToExtinguish(true);
-    }, 4000);
+    }, 7000);
   };
 
   const fireConfetti = () => {
@@ -84,6 +85,7 @@ export default function Scene2Cake({ config, onNext }: Props) {
   const handleExtinguishCandle = () => {
     if (isCandleBlown) return;
     setIsCandleBlown(true);
+    setBlowStrength(0);
     soundManager.playBlowSound();
     stopMic();
     setTimeout(() => {
@@ -121,7 +123,11 @@ export default function Scene2Cake({ config, onNext }: Props) {
           sum += dataArray[i];
         const avg = sum / analyser.frequencyBinCount;
 
-        if (avg > 65) {
+        // Chuẩn hóa độ mạnh hơi thở từ 0 đến 1
+        const normalized = Math.max(0, Math.min(1, (avg - 18) / 42));
+        setBlowStrength(normalized);
+
+        if (avg > 60) {
           handleExtinguishCandle();
           return;
         }
@@ -217,12 +223,13 @@ export default function Scene2Cake({ config, onNext }: Props) {
       {/* ===================================================================== */}
       {stage !== "TYPING" && (
         <div className="w-full flex flex-col items-center justify-center min-h-[85vh] py-2 z-10">
-          {/* 🍰 BÁNH KEM 3D PHONG CÁCH HÀN QUỐC (ĐỨNG TRỌN VẸN TRUNG TÂM, 100% KHÔNG CÓ CHỮ) */}
+          {/* 🍰 BÁNH KEM 2D PHONG CÁCH HÀN QUỐC (ĐỨNG TRỌN VẸN TRUNG TÂM, 100% KHÔNG CÓ CHỮ) */}
           <div className="w-full max-w-lg my-auto py-2 z-10 flex flex-col items-center justify-center">
-            <ThreeCake3D
+            <Cake2D
               isCandleBlown={isCandleBlown}
               canClickToExtinguish={canClickToExtinguish}
               onExtinguishCandle={handleExtinguishCandle}
+              blowStrength={blowStrength}
             />
           </div>
 
