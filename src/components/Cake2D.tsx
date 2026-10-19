@@ -13,7 +13,6 @@ interface Props {
 
 export default function Cake2D({
   isCandleBlown,
-  canClickToExtinguish = false,
   onExtinguishCandle,
   blowStrength = 0,
 }: Props) {
@@ -46,7 +45,7 @@ export default function Cake2D({
   const holdIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleClick = () => {
-    if (canClickToExtinguish && !isCandleBlown) {
+    if (!isCandleBlown) {
       onExtinguishCandle();
     }
   };
@@ -121,17 +120,19 @@ export default function Cake2D({
             key={isPressing || blowStrength > 0.15 ? 'holding' : 'idle'}
             initial={{ opacity: 0, y: -4 }}
             animate={{ opacity: 1, y: 0 }}
-            className={`px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all ${
+            onClick={handleClick}
+            className={`px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all cursor-pointer active:scale-95 ${
               isPressing || blowStrength > 0.15
                 ? 'bg-amber-500 text-stone-900 shadow-lg shadow-amber-500/40 animate-pulse font-bold'
-                : 'bg-black/60 backdrop-blur-md text-[#fde68a] border border-amber-400/30 shadow-[0_0_15px_rgba(251,191,36,0.15)]'
+                : 'bg-black/60 backdrop-blur-md text-[#fde68a] border border-amber-400/30 shadow-[0_0_15px_rgba(251,191,36,0.15)] hover:bg-black/80'
             }`}
+            title="Bấm để thổi tắt nến ngay lập tức"
           >
             {isPressing || blowStrength > 0.15
               ? holdProgress > 60
                 ? 'giữ nữa… sắp tắt rồi! 💨'
                 : 'giữ tiếp… đang thổi nến… 💨'
-              : '👆 Nhấn & giữ ngọn nến để thổi (hoặc thổi vào mic)'}
+              : '👆 Chạm vào nến để thổi (hoặc thổi vào mic 💨)'}
           </motion.div>
         ) : (
           <motion.div
@@ -150,7 +151,7 @@ export default function Cake2D({
       <div className="relative w-full flex flex-col items-center justify-center">
         
         {/* 1. BĂNG RÔN DÂY CỜ PASTEL (KÉO MỞ TỪ TÂM RA 2 BÊN RÕ NÉT 100%) */}
-        <div className="relative w-[110%] sm:w-[116%] mb-2 sm:mb-3 z-10 select-none">
+        <div className="relative w-[110%] sm:w-[116%] mb-2 sm:mb-3 z-10 select-none pointer-events-none">
           {/* Nơ vàng trung tâm mở tung khi khai màn */}
           <motion.div
             key={`bow-${bannerKey}`}
@@ -306,7 +307,7 @@ export default function Cake2D({
           {/* 3. CÂY NẾN THANH MẢNH & NGỌN LỬA TINH TẾ CẮM VÀNG MẶT KEM TẦNG TRÊN */}
           {/* =============================================================== */}
           <div
-            className="absolute z-20 flex flex-col items-center cursor-pointer"
+            className="absolute z-40 flex flex-col items-center cursor-pointer select-none"
             style={{
               top: '4.5%',
               left: '50%',
@@ -319,7 +320,7 @@ export default function Cake2D({
             onClick={handleClick}
           >
             {/* Vùng cảm ứng nhấn mở rộng cho ngón tay */}
-            <div className="absolute -inset-8 z-30 rounded-full cursor-pointer" />
+            <div className="absolute -inset-10 z-40 rounded-full cursor-pointer" />
 
             {/* A. NGỌN LỬA VÀ QUẦNG HÀO QUANG ÁNH SÁNG */}
             <div className="relative flex items-center justify-center mb-0.5">

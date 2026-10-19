@@ -89,11 +89,11 @@ export default function Scene2Cake({ onNext }: Props) {
           sum += dataArray[i];
         const avg = sum / analyser.frequencyBinCount;
 
-        // Chuẩn hóa độ mạnh hơi thở từ 0 đến 1
-        const normalized = Math.max(0, Math.min(1, (avg - 18) / 42));
+        // Chuẩn hóa độ mạnh hơi thở từ 0 đến 1 (độ nhạy cao, dễ thổi)
+        const normalized = Math.max(0, Math.min(1, (avg - 10) / 25));
         setBlowStrength(normalized);
 
-        if (avg > 60) {
+        if (avg > 35) {
           handleExtinguishCandle();
           return;
         }
