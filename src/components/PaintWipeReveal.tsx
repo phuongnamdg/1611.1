@@ -503,87 +503,91 @@ export default function PaintWipeReveal({ onNext, onBackToCake }: Props) {
   }, [checkButtonClick]);
 
   return (
-    <div className="fixed inset-0 z-50 w-full h-full overflow-hidden select-none bg-stone-950 flex items-center justify-center">
+    <div className="fixed inset-0 z-50 w-full h-full overflow-hidden select-none bg-transparent flex items-center justify-center pointer-events-auto">
       {/* =================================================================== */}
       {/* 1. LỚP BÊN DƯỚI: NÚT CHUYỂN TRANG & KHÔNG GIAN BÍ MẬT LỘ RA KHI LAU */}
+      {/* CHỈ XUẤT HIỆN KHI ĐÃ ĐỔ SƠN PHỦ KÍN 100% MÀN HÌNH (!isPouring)      */}
+      {/* TUYỆT ĐỐI KHÔNG HIỂN THỊ KHI ĐANG ĐỔ SƠN ĐỂ SƠN ĐỔ TRỰC TIẾP LÊN BÁNH*/}
       {/* =================================================================== */}
-      <div className="absolute inset-0 z-10 flex flex-col items-center justify-center p-6 text-center bg-gradient-to-b from-[#fff0f4] via-[#fde2e8] to-[#ffd1dc] overflow-hidden select-none">
-        {/* Ánh sao lung linh */}
-        <div className="absolute inset-0 pointer-events-none opacity-40">
-          {[...Array(22)].map((_, i) => (
-            <motion.div
-              key={`star-${i}`}
-              animate={{
-                scale: [0.8, 1.3, 0.8],
-                opacity: [0.2, 0.8, 0.2],
-              }}
-              transition={{
-                duration: 2.2 + (i % 4) * 0.5,
-                repeat: Infinity,
-                delay: i * 0.15,
-              }}
-              style={{
-                top: `${(i * 17) % 95}%`,
-                left: `${(i * 27) % 95}%`,
-              }}
-              className="absolute text-pink-400 text-lg"
-            >
-              ✦
-            </motion.div>
-          ))}
-        </div>
-
-        {/* Nội dung bên dưới lộ dần theo từng nét lau */}
-        <div className="relative z-20 flex flex-col items-center max-w-sm sm:max-w-md">
-          <div className="px-4 py-1.5 rounded-full bg-white/90 backdrop-blur-md border border-pink-200 text-rose-600 text-xs font-bold shadow-md shadow-pink-200/50 flex items-center gap-1.5 mb-4">
-            <Sparkles className="w-3.5 h-3.5 text-amber-500 animate-spin" />
-            <span>Điều bí mật đã lộ diện 🌸</span>
+      {!isPouring && (
+        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center p-6 text-center bg-gradient-to-b from-[#fff0f4] via-[#fde2e8] to-[#ffd1dc] overflow-hidden select-none">
+          {/* Ánh sao lung linh */}
+          <div className="absolute inset-0 pointer-events-none opacity-40">
+            {[...Array(22)].map((_, i) => (
+              <motion.div
+                key={`star-${i}`}
+                animate={{
+                  scale: [0.8, 1.3, 0.8],
+                  opacity: [0.2, 0.8, 0.2],
+                }}
+                transition={{
+                  duration: 2.2 + (i % 4) * 0.5,
+                  repeat: Infinity,
+                  delay: i * 0.15,
+                }}
+                style={{
+                  top: `${(i * 17) % 95}%`,
+                  left: `${(i * 27) % 95}%`,
+                }}
+                className="absolute text-pink-400 text-lg"
+              >
+                ✦
+              </motion.div>
+            ))}
           </div>
 
-          <h2 className="text-2xl sm:text-3xl font-serif font-bold text-stone-800 tracking-tight leading-snug drop-shadow-xs mb-2">
-            Em đã tìm thấy điều ước bí mật! 💖
-          </h2>
+          {/* Nội dung bên dưới lộ dần theo từng nét lau */}
+          <div className="relative z-20 flex flex-col items-center max-w-sm sm:max-w-md">
+            <div className="px-4 py-1.5 rounded-full bg-white/90 backdrop-blur-md border border-pink-200 text-rose-600 text-xs font-bold shadow-md shadow-pink-200/50 flex items-center gap-1.5 mb-4">
+              <Sparkles className="w-3.5 h-3.5 text-amber-500 animate-spin" />
+              <span>Điều bí mật đã lộ diện 🌸</span>
+            </div>
 
-          <p className="text-xs sm:text-sm text-stone-600 font-medium leading-relaxed max-w-xs mb-8">
-            Hãy bấm vào nút bên dưới để mở những món quà bất ngờ tiếp theo nhé!
-          </p>
+            <h2 className="text-2xl sm:text-3xl font-serif font-bold text-stone-800 tracking-tight leading-snug drop-shadow-xs mb-2">
+              Em đã tìm thấy điều ước bí mật! 💖
+            </h2>
 
-          {/* 🎁 NÚT CHUYỂN TRANG: LỘ RA DƯỚI NÉT LAU */}
-          <button
-            ref={buttonElRef}
-            type="button"
-            onClick={onNext}
-            className="group relative px-8 py-4 sm:py-4.5 sm:px-10 rounded-full bg-gradient-to-r from-pink-500 via-rose-500 to-pink-500 hover:brightness-105 text-white font-extrabold text-base sm:text-lg shadow-[0_12px_40px_rgba(244,63,94,0.5)] border-2 border-white/80 flex items-center justify-center gap-3 hover:scale-105 active:scale-95 transition-all cursor-pointer animate-pulse"
-          >
-            <Gift className="w-6 h-6 text-amber-200 animate-bounce" />
-            <span>Mở 3 Chiếc Hộp Bí Mật</span>
-            <ArrowRight className="w-5 h-5 group-hover:translate-x-1.5 transition-transform" />
-          </button>
-        </div>
+            <p className="text-xs sm:text-sm text-stone-600 font-medium leading-relaxed max-w-xs mb-8">
+              Hãy bấm vào nút bên dưới để mở những món quà bất ngờ tiếp theo nhé!
+            </p>
 
-        {/* Các nút bấm điều hướng góc dưới */}
-        <div className="absolute bottom-6 z-20 flex items-center gap-3">
-          {onBackToCake && (
+            {/* 🎁 NÚT CHUYỂN TRANG: LỘ RA DƯỚI NÉT LAU */}
+            <button
+              ref={buttonElRef}
+              type="button"
+              onClick={onNext}
+              className="group relative px-8 py-4 sm:py-4.5 sm:px-10 rounded-full bg-gradient-to-r from-pink-500 via-rose-500 to-pink-500 hover:brightness-105 text-white font-extrabold text-base sm:text-lg shadow-[0_12px_40px_rgba(244,63,94,0.5)] border-2 border-white/80 flex items-center justify-center gap-3 hover:scale-105 active:scale-95 transition-all cursor-pointer animate-pulse"
+            >
+              <Gift className="w-6 h-6 text-amber-200 animate-bounce" />
+              <span>Mở 3 Chiếc Hộp Bí Mật</span>
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1.5 transition-transform" />
+            </button>
+          </div>
+
+          {/* Các nút bấm điều hướng góc dưới */}
+          <div className="absolute bottom-6 z-20 flex items-center gap-3">
+            {onBackToCake && (
+              <button
+                type="button"
+                onClick={onBackToCake}
+                className="px-3.5 py-1.5 rounded-full bg-white/85 hover:bg-white text-stone-600 text-xs font-semibold shadow-xs border border-pink-200 flex items-center gap-1.5 backdrop-blur-md cursor-pointer hover:scale-105 active:scale-95 transition-all"
+              >
+                <span>🎂</span>
+                <span>Xem lại bánh kem</span>
+              </button>
+            )}
+
             <button
               type="button"
-              onClick={onBackToCake}
-              className="px-3.5 py-1.5 rounded-full bg-white/85 hover:bg-white text-stone-600 text-xs font-semibold shadow-xs border border-pink-200 flex items-center gap-1.5 backdrop-blur-md cursor-pointer hover:scale-105 active:scale-95 transition-all"
+              onClick={onNext}
+              className="px-3.5 py-1.5 rounded-full bg-white/85 hover:bg-white text-rose-600 text-xs font-semibold shadow-xs border border-pink-200 flex items-center gap-1 backdrop-blur-md cursor-pointer hover:scale-105 active:scale-95 transition-all"
             >
-              <span>🎂</span>
-              <span>Xem lại bánh kem</span>
+              <span>Bỏ qua lau sơn</span>
+              <span>⏩</span>
             </button>
-          )}
-
-          <button
-            type="button"
-            onClick={onNext}
-            className="px-3.5 py-1.5 rounded-full bg-white/85 hover:bg-white text-rose-600 text-xs font-semibold shadow-xs border border-pink-200 flex items-center gap-1 backdrop-blur-md cursor-pointer hover:scale-105 active:scale-95 transition-all"
-          >
-            <span>Bỏ qua lau sơn</span>
-            <span>⏩</span>
-          </button>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* =================================================================== */}
       {/* 2. CANVAS CHỨA ĐÚNG NÉT SƠN ĐÃ ĐỔ XONG (GIỮ NGUYÊN ĐỂ LAU)           */}

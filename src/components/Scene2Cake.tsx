@@ -26,6 +26,7 @@ export default function Scene2Cake({ onNext }: Props) {
   const [sentenceIdx, setSentenceIdx] = useState<number>(0);
   const [isCandleBlown, setIsCandleBlown] = useState<boolean>(false);
   const [showPaintWipe, setShowPaintWipe] = useState<boolean>(false);
+  const [hasReturnedFromPaintWipe, setHasReturnedFromPaintWipe] = useState<boolean>(false);
 
   // Micro để thổi nến
   const [canClickToExtinguish, setCanClickToExtinguish] = useState<boolean>(false);
@@ -68,10 +69,10 @@ export default function Scene2Cake({ onNext }: Props) {
       fireConfetti();
     }, 350);
 
-    // Kích hoạt hiệu ứng sơn hồng đổ chéo sau 1.2s để kịp ngắm nến tắt & pháo hoa
+    // Kích hoạt hiệu ứng sơn hồng đổ trực tiếp lên bánh kem sau 850ms để kịp ngắm nến tắt & pháo hoa
     setTimeout(() => {
       setShowPaintWipe(true);
-    }, 1200);
+    }, 850);
   }, [isCandleBlown, stopMic, fireConfetti]);
 
   // Micro thổi nến (Nhận diện chính xác hơi thổi / tiếng phù vào mic)
@@ -413,8 +414,8 @@ export default function Scene2Cake({ onNext }: Props) {
             />
           </div>
 
-          {/* CHỈ KHI NẾN TẮT MỚI XUẤT HIỆN CÁC NÚT */}
-          {isCandleBlown && (
+          {/* CHỈ KHI NẾN TẮT VÀ NGƯỜI DÙNG QUAY LẠI TỪ BƯỚC LAU SƠN MỚI XUẤT HIỆN CÁC NÚT */}
+          {isCandleBlown && hasReturnedFromPaintWipe && !showPaintWipe && (
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
@@ -446,6 +447,7 @@ export default function Scene2Cake({ onNext }: Props) {
                 type="button"
                 onClick={() => {
                   setIsCandleBlown(false);
+                  setHasReturnedFromPaintWipe(false);
                   soundManager.playUnlockSuccess();
                   startMic();
                 }}
@@ -459,7 +461,7 @@ export default function Scene2Cake({ onNext }: Props) {
         </div>
       )}
 
-      {/* 🎨 HIỆU ỨNG CÁC DÒNG SƠN HỒNG ĐỔ CHÉO & DÙNG CON TRỎ LAU SƠN TÌM NÚT MỞ QUÀ */}
+      {/* 🎨 HIỆU ỨNG CÁC DÒNG SƠN HỒNG ĐỔ TRỰC TIẾP LÊN BÁNH KEM & DÙNG CON TRỎ LAU SƠN */}
       <AnimatePresence>
         {showPaintWipe && (
           <motion.div
@@ -467,12 +469,15 @@ export default function Scene2Cake({ onNext }: Props) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
-            className="fixed inset-0 z-50"
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 z-50 pointer-events-auto"
           >
             <PaintWipeReveal
               onNext={onNext}
-              onBackToCake={() => setShowPaintWipe(false)}
+              onBackToCake={() => {
+                setShowPaintWipe(false);
+                setHasReturnedFromPaintWipe(true);
+              }}
             />
           </motion.div>
         )}
