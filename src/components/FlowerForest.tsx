@@ -11,73 +11,71 @@ interface Props {
   onBackToCake?: () => void;
 }
 
-// Danh sách các bảng màu hoa Tulip pastel phong cách Hàn Quốc
-const TULIP_PALETTES = [
+// Bảng màu hoa giấy Origami/Paper-cut pastel chuẩn xác theo mẫu ảnh TikTok
+const FLOWER_PALETTES = [
   {
-    name: 'blushPink',
+    name: 'pinkRose',
     outer: '#fda4af',
     mid: '#fb7185',
     inner: '#f43f5e',
-    dark: '#9f1239',
-    tip: '#ffe4e6',
+    core: '#be123c',
+    stroke: '#9f1239',
+    highlight: '#ffffff',
   },
   {
-    name: 'sunsetPeach',
-    outer: '#fed7aa',
-    mid: '#fb923c',
-    inner: '#ea580c',
-    dark: '#9a3412',
-    tip: '#fff7ed',
+    name: 'mintGreen',
+    outer: '#bbf7d0',
+    mid: '#86efac',
+    inner: '#4ade80',
+    core: '#16a34a',
+    stroke: '#15803d',
+    highlight: '#f0fdf4',
   },
   {
-    name: 'butterYellow',
-    outer: '#fef08a',
-    mid: '#facc15',
-    inner: '#eab308',
-    dark: '#854d0e',
-    tip: '#fefce8',
-  },
-  {
-    name: 'softLavender',
-    outer: '#e9d5ff',
-    mid: '#c084fc',
-    inner: '#9333ea',
-    dark: '#581c87',
-    tip: '#faf5ff',
-  },
-  {
-    name: 'skyAzure',
+    name: 'skyBlue',
     outer: '#bae6fd',
-    mid: '#38bdf8',
-    inner: '#0284c7',
-    dark: '#075985',
-    tip: '#f0f9ff',
+    mid: '#7dd3fc',
+    inner: '#38bdf8',
+    core: '#0284c7',
+    stroke: '#0369a1',
+    highlight: '#f0f9ff',
   },
   {
-    name: 'pearlWhite',
-    outer: '#f8fafc',
-    mid: '#e2e8f0',
-    inner: '#cbd5e1',
-    dark: '#64748b',
-    tip: '#ffffff',
+    name: 'apricotPeach',
+    outer: '#fed7aa',
+    mid: '#fdba74',
+    inner: '#fb923c',
+    core: '#ea580c',
+    stroke: '#c2410c',
+    highlight: '#fff7ed',
   },
   {
-    name: 'rubyRose',
+    name: 'sunnyYellow',
+    outer: '#fef08a',
+    mid: '#fde047',
+    inner: '#facc15',
+    core: '#eab308',
+    stroke: '#ca8a04',
+    highlight: '#fefce8',
+  },
+  {
+    name: 'salmonCoral',
     outer: '#fecdd3',
-    mid: '#f43f5e',
-    inner: '#e11d48',
-    dark: '#881337',
-    tip: '#fff1f2',
+    mid: '#fda4af',
+    inner: '#fb7185',
+    core: '#e11d48',
+    stroke: '#be123c',
+    highlight: '#fff1f2',
   },
 ];
 
-interface TulipData {
+interface FlowerData {
   id: number;
   x: number; // Tọa độ ngang (%)
   heightPct: number; // Chiều cao cành (%)
   flowerSize: number; // Kích thước đóa hoa (px)
   paletteIndex: number;
-  type: 'bloom' | 'bud' | 'open';
+  type: 'rose' | 'disc' | 'bud';
   swayDuration: number;
   swayDelay: number;
   swayDeg: number;
@@ -87,51 +85,60 @@ interface TulipData {
 }
 
 export default function FlowerForest({ onNext, onBackToCake }: Props) {
-  // Các giai đoạn: 'SINGLE_ROSE' -> 'BLOOMING_GARDEN' -> 'LETTER_REVEALED'
-  const [phase, setPhase] = useState<'SINGLE_ROSE' | 'BLOOMING_GARDEN'>('SINGLE_ROSE');
+  // Trạng thái hiển thị thiệp chúc mừng
   const [showLetter, setShowLetter] = useState<boolean>(false);
   const [gardenCycle, setGardenCycle] = useState<number>(0);
 
-  // Sinh ngẫu nhiên dữ liệu cho rừng hoa Tulip
-  const flowers: TulipData[] = useMemo(() => {
-    const list: TulipData[] = [];
-    const count = 48; // Mật độ dày dặn tạo thành cánh đồng Tulip bát ngát
+  // Sinh ngẫu nhiên dữ liệu cho hơn 52 đóa hoa phủ kín màn hình
+  // Không có 1 bông nào nhô cao bất thường, tạo thành thảm hoa lượn sóng tự nhiên
+  const flowers: FlowerData[] = useMemo(() => {
+    const list: FlowerData[] = [];
+    const count = 52; // Mật độ dày đặc bao phủ toàn bộ đáy màn hình
 
     for (let i = 0; i < count; i++) {
       const segment = 98 / count;
       const x = Math.min(98, Math.max(2, i * segment + Math.sin(i * 3.7) * segment * 0.45));
 
-      // 3 lớp độ sâu phối cảnh
+      // 3 lớp chiều sâu phối cảnh
       const layerRank = (i * 7) % 3;
       const layer = layerRank === 0 ? 'back' : layerRank === 1 ? 'mid' : 'front';
 
-      let heightPct = 40;
-      let flowerSize = 46;
+      let heightPct = 45;
+      let flowerSize = 52;
+
+      // Chiều cao phân bố đồng đều, không có bông nào cao vượt trội hẳn
       if (layer === 'back') {
-        heightPct = 26 + ((i * 13) % 24); // 26% - 50%
-        flowerSize = 34 + ((i * 5) % 10); // 34px - 44px
+        heightPct = 32 + ((i * 13) % 20); // 32% - 52%
+        flowerSize = 36 + ((i * 5) % 12); // 36px - 48px
       } else if (layer === 'mid') {
-        heightPct = 46 + ((i * 17) % 24); // 46% - 70%
-        flowerSize = 46 + ((i * 7) % 14); // 46px - 60px
+        heightPct = 48 + ((i * 17) % 20); // 48% - 68%
+        flowerSize = 48 + ((i * 7) % 14); // 48px - 62px
       } else {
-        heightPct = 62 + ((i * 19) % 26); // 62% - 88%
-        flowerSize = 58 + ((i * 9) % 18); // 58px - 76px
+        heightPct = 56 + ((i * 19) % 20); // 56% - 76%
+        flowerSize = 58 + ((i * 9) % 16); // 58px - 74px
       }
 
-      const types: ('bloom' | 'bud' | 'open')[] = ['bloom', 'bloom', 'bud', 'open'];
-      const type = types[i % types.length];
-      const paletteIndex = (i * 3) % TULIP_PALETTES.length;
+      // Tỉ lệ các loại hoa: đa số là hoa hồng xoắn cánh, xen kẽ hoa cúc xoắn và nụ vươn cao
+      const typeRank = i % 8;
+      const type: 'rose' | 'disc' | 'bud' =
+        typeRank === 2 || typeRank === 6 ? 'bud' : typeRank === 4 ? 'disc' : 'rose';
+
+      // Nụ hoa có thể vươn cao thanh mảnh như trong ảnh
+      if (type === 'bud') {
+        heightPct += 8;
+        flowerSize = 28 + (i % 6);
+      }
+
+      const paletteIndex = (i * 3) % FLOWER_PALETTES.length;
 
       // Độ đung đưa trong gió
       const swayDuration = 2.8 + ((i * 3) % 18) * 0.1;
       const swayDelay = ((i * 7) % 20) * 0.1;
-      const swayDeg = (i % 2 === 0 ? 1 : -1) * (2.2 + ((i * 2) % 3) * 0.7);
+      const swayDeg = (i % 2 === 0 ? 1 : -1) * (1.8 + ((i * 2) % 3) * 0.6);
 
-      // Thời gian nở so le
-      const distFromCenter = Math.abs(x - 50);
-      const growDelay = 0.12 + (distFromCenter / 50) * 1.1 + Math.sin(i) * 0.2;
-
-      const stemCurve = ((i * 11) % 24) - 12;
+      // Thời gian mọc liên tục so le từ đáy lên (trong vòng 1.2s là phủ kín)
+      const growDelay = 0.05 + ((i * 13) % count) * 0.025;
+      const stemCurve = ((i * 11) % 20) - 10;
 
       list.push({
         id: i,
@@ -149,54 +156,45 @@ export default function FlowerForest({ onNext, onBackToCake }: Props) {
       });
     }
 
+    // Vẽ lớp xa trước, lớp gần sau
     return list.sort((a, b) => {
       const order = { back: 1, mid: 2, front: 3 };
       return order[a.layer] - order[b.layer];
     });
   }, []);
 
-  // Tự động chuyển từ đóa tulip đơn sang cả cánh đồng tulip sau 2.4 giây
+  // Khi component xuất hiện (ngay sau khi thổi nến): mọc rừng hoa ngay lập tức, không cần tương tác
   useEffect(() => {
-    const timer = setTimeout(() => {
-      if (phase === 'SINGLE_ROSE') {
-        setPhase('BLOOMING_GARDEN');
-        soundManager.playFlowerBloomSound();
-        confetti({
-          particleCount: 55,
-          spread: 85,
-          origin: { y: 0.8 },
-          colors: ['#fda4af', '#f43f5e', '#fed7aa', '#fef08a', '#e9d5ff', '#bae6fd'],
-        });
-      }
-    }, 2400);
-    return () => clearTimeout(timer);
-  }, [phase]);
+    soundManager.playFlowerBloomSound();
+    confetti({
+      particleCount: 65,
+      spread: 90,
+      origin: { y: 0.75 },
+      colors: ['#fda4af', '#f43f5e', '#fed7aa', '#fef08a', '#86efac', '#7dd3fc'],
+    });
 
-  // Tự động mở thiệp chúc sau khi cả rừng hoa tulip đã mọc lên
-  useEffect(() => {
-    if (phase === 'BLOOMING_GARDEN') {
-      const letterTimer = setTimeout(() => {
-        setShowLetter(true);
-      }, 3600);
-      return () => clearTimeout(letterTimer);
-    }
-  }, [phase, gardenCycle]);
+    // Sau khi rừng hoa nở rộ trọn vẹn (khoảng 3.2s) thì mở thiệp chúc mừng
+    const letterTimer = setTimeout(() => {
+      setShowLetter(true);
+    }, 3200);
 
-  // Kích hoạt cho tulip nở lại từ đầu
+    return () => clearTimeout(letterTimer);
+  }, [gardenCycle]);
+
+  // Cho hoa nở lại
   const handleReplayGarden = () => {
     soundManager.playKeypress(600);
-    setPhase('SINGLE_ROSE');
     setShowLetter(false);
     setGardenCycle((c) => c + 1);
   };
 
   return (
     <div className="fixed inset-0 z-50 w-full h-full overflow-hidden select-none flex flex-col items-center justify-between">
-      {/* 1. NỀN BẦU TRỜI XANH DỊU DÀNG VỚI MÂY TRẮNG PASTEL */}
-      <div className="absolute inset-0 -z-30 bg-gradient-to-b from-[#aedcf4] via-[#ceeaf8] to-[#e8f5fc]" />
+      {/* 1. NỀN BẦU TRỜI XANH DỊU DÀNG VỚI MÂY TRẮNG PASTEL (CHUẨN THEO ẢNH) */}
+      <div className="absolute inset-0 -z-30 bg-gradient-to-b from-[#a0d4ef] via-[#c6e6f7] to-[#e4f3fa]" />
 
-      {/* Những vệt mây lững lờ trôi */}
-      <div className="absolute inset-0 -z-20 pointer-events-none opacity-45">
+      {/* Mây trắng trôi nhẹ */}
+      <div className="absolute inset-0 -z-20 pointer-events-none opacity-40">
         <div className="absolute top-[8%] left-[10%] w-72 h-20 rounded-full bg-white/70 blur-xl" />
         <div className="absolute top-[18%] right-[8%] w-96 h-28 rounded-full bg-white/60 blur-2xl" />
         <div className="absolute top-[35%] left-[25%] w-80 h-24 rounded-full bg-white/50 blur-xl" />
@@ -228,7 +226,7 @@ export default function FlowerForest({ onNext, onBackToCake }: Props) {
             className="absolute"
           >
             <div
-              className="w-3.5 h-4.5 rounded-full"
+              className="w-3.5 h-3.5 rounded-full"
               style={{
                 background:
                   i % 3 === 0
@@ -236,7 +234,7 @@ export default function FlowerForest({ onNext, onBackToCake }: Props) {
                     : i % 3 === 1
                     ? 'radial-gradient(circle, #fed7aa 0%, #fb923c 100%)'
                     : 'radial-gradient(circle, #fef08a 0%, #facc15 100%)',
-                borderRadius: '50% 50% 60% 40% / 60% 60% 40% 40%',
+                borderRadius: '60% 40% 70% 30% / 50% 60% 40% 50%',
                 boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
               }}
             />
@@ -244,244 +242,143 @@ export default function FlowerForest({ onNext, onBackToCake }: Props) {
         ))}
       </div>
 
-      {/* 2. DÒNG CHỮ DẪN DẮT TRÊN CÙNG */}
+      {/* 2. DÒNG CHỮ TRÊN CÙNG */}
       <header className="relative z-30 pt-6 sm:pt-8 px-4 text-center max-w-md w-full">
-        <AnimatePresence mode="wait">
-          {phase === 'SINGLE_ROSE' ? (
-            <motion.div
-              key="intro-quote"
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.6 }}
-              className="flex flex-col items-center gap-1"
-            >
-              <span className="text-[11px] sm:text-xs font-semibold tracking-widest text-[#2563eb]/80 uppercase">
-                Dành tặng riêng em • 16 Tháng 11
-              </span>
-              <h2 className="text-xl sm:text-2xl font-serif font-bold text-stone-800 drop-shadow-xs">
-                Từ một đóa Tulip nhỏ… 🌷
-              </h2>
-              <p className="text-xs text-stone-500 font-medium">
-                (Chạm vào đóa hoa hoặc đợi hoa thức giấc nhé)
-              </p>
-            </motion.div>
-          ) : (
-            <motion.div
-              key="garden-quote"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.7 }}
-              className="flex flex-col items-center gap-1"
-            >
-              <div className="flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-white/70 backdrop-blur-md border border-sky-200/80 shadow-xs">
-                <Sparkles className="w-3 h-3 text-amber-500" />
-                <span className="text-[11px] font-bold text-[#0284c7]">
-                  Cả một cánh đồng hoa Tulip đang thức giấc tặng em
-                </span>
-              </div>
-              <h2 className="text-xl sm:text-2xl font-serif font-bold text-stone-800 drop-shadow-xs">
-                Từ một đóa hoa, cả một vườn hoa nở rộ… 🌷
-              </h2>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="flex flex-col items-center gap-1"
+        >
+          <div className="flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-white/75 backdrop-blur-md border border-sky-200/80 shadow-2xs">
+            <Sparkles className="w-3 h-3 text-amber-500" />
+            <span className="text-[11px] font-bold text-[#0284c7]">
+              Rừng hoa thức giấc chúc mừng sinh nhật em
+            </span>
+          </div>
+          <h2 className="text-xl sm:text-2xl font-serif font-bold text-stone-800 drop-shadow-xs">
+            Cả một rừng hoa tươi thắm tặng em 🌸
+          </h2>
+        </motion.div>
       </header>
 
       {/* =================================================================== */}
-      {/* 3. KHU VỰC HIỂN THỊ HOA TULIP                                        */}
+      {/* 3. TOÀN BỘ RỪNG HOA MỌC ĐỒNG LOẠT TỪ ĐÁY LÊN KHÔNG CẦN TƯƠNG TÁC    */}
       {/* =================================================================== */}
-      <div className="relative w-full flex-1 flex items-end justify-center pointer-events-none">
-        
-        {/* A. ĐÓA HOA TULIP TRUNG TÂM NỞ ĐẦU TIÊN (GIAI ĐOẠN 1) */}
-        {phase === 'SINGLE_ROSE' && (
-          <div
-            onClick={() => {
-              setPhase('BLOOMING_GARDEN');
-              soundManager.playFlowerBloomSound();
-            }}
-            className="absolute bottom-0 z-40 flex flex-col items-center cursor-pointer pointer-events-auto group"
-            style={{ width: '160px', height: '64vh' }}
-          >
-            {/* Đóa hoa Tulip kiêu sa ở đỉnh */}
-            <motion.div
-              initial={{ scale: 0, y: 30 }}
-              animate={{ scale: [0, 1.15, 1], y: 0 }}
-              transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: 0.4 }}
-              className="relative -mb-3 z-20 group-hover:scale-110 transition-transform duration-300"
-            >
-              <TulipBloom size={105} palette={TULIP_PALETTES[0]} />
-            </motion.div>
-
-            {/* Thân cành hoa và lá tulip vươn lên */}
-            <motion.div
-              initial={{ scaleY: 0 }}
-              animate={{ scaleY: 1 }}
-              transition={{ duration: 0.85, ease: 'easeOut' }}
-              style={{ transformOrigin: 'bottom center' }}
-              className="relative w-full flex-1 flex justify-center"
-            >
-              <svg
-                width="140"
-                height="100%"
-                viewBox="0 0 140 400"
-                preserveAspectRatio="none"
-                className="overflow-visible"
+      <div
+        key={`garden-${gardenCycle}`}
+        className="relative w-full flex-1 flex items-end justify-center pointer-events-none overflow-hidden"
+      >
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {flowers.map((fl) => {
+            const pal = FLOWER_PALETTES[fl.paletteIndex];
+            return (
+              <div
+                key={`fl-${fl.id}`}
+                style={{
+                  position: 'absolute',
+                  left: `${fl.x}%`,
+                  bottom: 0,
+                  height: `${fl.heightPct}%`,
+                  width: `${fl.flowerSize}px`,
+                  transform: 'translateX(-50%)',
+                  zIndex: fl.layer === 'back' ? 10 : fl.layer === 'mid' ? 20 : 30,
+                  opacity: fl.layer === 'back' ? 0.9 : 1,
+                  filter: fl.layer === 'back' ? 'brightness(1.02) saturate(0.95)' : 'none',
+                }}
               >
-                {/* Cuống hoa xanh mướt */}
-                <path
-                  d="M 70 400 Q 66 200 70 0"
-                  fill="none"
-                  stroke="#16a34a"
-                  strokeWidth="5"
-                  strokeLinecap="round"
-                />
-                {/* Lá tulip dài hình lưỡi kiếm đặc trưng bên trái */}
-                <path
-                  d="M 70 320 C 30 280 10 180 20 80 C 40 140 55 220 70 300 Z"
-                  fill="#22c55e"
-                  stroke="#15803d"
-                  strokeWidth="1.5"
-                  opacity="0.95"
-                />
-                {/* Lá tulip bên phải */}
-                <path
-                  d="M 70 350 C 105 310 130 210 120 110 C 105 170 88 250 70 330 Z"
-                  fill="#16a34a"
-                  stroke="#14532d"
-                  strokeWidth="1.5"
-                  opacity="0.9"
-                />
-              </svg>
-            </motion.div>
-
-            {/* Lời nhắc chạm vào hoa */}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1 }}
-              className="absolute -top-10 px-3 py-1 rounded-full bg-white/90 shadow-md text-[11px] font-bold text-rose-600 border border-pink-200 animate-bounce"
-            >
-              👆 Chạm để nở cả vườn Tulip!
-            </motion.div>
-          </div>
-        )}
-
-        {/* B. TOÀN BỘ CÁNH ĐỒNG HOA TULIP MỌC TỪ ĐÁY LÊN (GIAI ĐOẠN 2 & 3) */}
-        {phase === 'BLOOMING_GARDEN' && (
-          <div key={`garden-cycle-${gardenCycle}`} className="absolute inset-0 overflow-hidden pointer-events-none">
-            {flowers.map((fl) => {
-              const pal = TULIP_PALETTES[fl.paletteIndex];
-              return (
+                {/* Container đung đưa tự nhiên trong gió */}
                 <div
-                  key={`tulip-${fl.id}`}
-                  style={{
-                    position: 'absolute',
-                    left: `${fl.x}%`,
-                    bottom: 0,
-                    height: `${fl.heightPct}%`,
-                    width: `${fl.flowerSize}px`,
-                    transform: 'translateX(-50%)',
-                    zIndex: fl.layer === 'back' ? 10 : fl.layer === 'mid' ? 20 : 30,
-                    opacity: fl.layer === 'back' ? 0.85 : 1,
-                    filter: fl.layer === 'back' ? 'brightness(1.04) saturate(0.95)' : 'none',
-                  }}
+                  style={
+                    {
+                      width: '100%',
+                      height: '100%',
+                      transformOrigin: 'bottom center',
+                      animation: `gardenSway ${fl.swayDuration}s ease-in-out infinite alternate`,
+                      animationDelay: `${fl.swayDelay}s`,
+                      '--sway-angle': `${fl.swayDeg}deg`,
+                    } as React.CSSProperties
+                  }
+                  className="flex flex-col items-center justify-between"
                 >
-                  {/* Container đung đưa trong gió bằng CSS transform */}
-                  <div
-                    style={
-                      {
-                        width: '100%',
-                        height: '100%',
-                        transformOrigin: 'bottom center',
-                        animation: `gardenSway ${fl.swayDuration}s ease-in-out infinite alternate`,
-                        animationDelay: `${fl.swayDelay}s`,
-                        '--sway-angle': `${fl.swayDeg}deg`,
-                      } as React.CSSProperties
-                    }
-                    className="flex flex-col items-center justify-between"
+                  {/* 1. ĐÓA HOA NỞ TRÊN ĐỈNH */}
+                  <motion.div
+                    initial={{ scale: 0, rotate: -25 }}
+                    animate={{ scale: [0, 1.15, 1], rotate: 0 }}
+                    transition={{
+                      duration: 0.85,
+                      delay: fl.growDelay + 0.35,
+                      ease: [0.16, 1, 0.3, 1],
+                    }}
+                    className="relative z-20 flex items-center justify-center -mb-2"
+                    style={{
+                      width: `${fl.flowerSize}px`,
+                      height: `${fl.flowerSize}px`,
+                    }}
                   >
-                    {/* 1. ĐÓA HOA TULIP TRÊN ĐỈNH */}
-                    <motion.div
-                      initial={{ scale: 0, y: 20 }}
-                      animate={{ scale: [0, 1.15, 1], y: 0 }}
-                      transition={{
-                        duration: 0.85,
-                        delay: fl.growDelay + 0.35,
-                        ease: [0.16, 1, 0.3, 1],
-                      }}
-                      className="relative z-20 flex items-center justify-center -mb-2"
-                      style={{
-                        width: `${fl.flowerSize}px`,
-                        height: `${fl.flowerSize * 1.15}px`,
-                      }}
-                    >
-                      {fl.type === 'bloom' && (
-                        <TulipBloom size={fl.flowerSize} palette={pal} />
-                      )}
-                      {fl.type === 'bud' && (
-                        <TulipBud size={fl.flowerSize} palette={pal} />
-                      )}
-                      {fl.type === 'open' && (
-                        <TulipOpen size={fl.flowerSize} palette={pal} />
-                      )}
-                    </motion.div>
+                    {fl.type === 'rose' && (
+                      <ScallopedRose size={fl.flowerSize} palette={pal} />
+                    )}
+                    {fl.type === 'disc' && (
+                      <SpiralDisc size={fl.flowerSize} palette={pal} />
+                    )}
+                    {fl.type === 'bud' && (
+                      <FlameBud size={fl.flowerSize} palette={pal} />
+                    )}
+                  </motion.div>
 
-                    {/* 2. THÂN CÀNH VÀ LÁ TULIP MỌC TỪ ĐÁY LÊN */}
-                    <motion.div
-                      initial={{ scaleY: 0 }}
-                      animate={{ scaleY: 1 }}
-                      transition={{
-                        duration: 0.9,
-                        delay: fl.growDelay,
-                        ease: 'easeOut',
-                      }}
-                      style={{ transformOrigin: 'bottom center' }}
-                      className="relative w-full flex-1 flex justify-center overflow-visible"
+                  {/* 2. THÂN CÀNH VÀ LÁ CÂY MỌC VÚT TỪ ĐÁY LÊN */}
+                  <motion.div
+                    initial={{ scaleY: 0 }}
+                    animate={{ scaleY: 1 }}
+                    transition={{
+                      duration: 0.9,
+                      delay: fl.growDelay,
+                      ease: 'easeOut',
+                    }}
+                    style={{ transformOrigin: 'bottom center' }}
+                    className="relative w-full flex-1 flex justify-center overflow-visible"
+                  >
+                    <svg
+                      width={Math.max(45, fl.flowerSize)}
+                      height="100%"
+                      viewBox="0 0 60 300"
+                      preserveAspectRatio="none"
+                      className="overflow-visible"
                     >
-                      <svg
-                        width={Math.max(45, fl.flowerSize)}
-                        height="100%"
-                        viewBox="0 0 60 300"
-                        preserveAspectRatio="none"
-                        className="overflow-visible"
-                      >
-                        {/* Thân cành */}
-                        <path
-                          d={`M 30 300 Q ${30 + fl.stemCurve} 150 30 0`}
-                          fill="none"
-                          stroke={fl.layer === 'back' ? '#4ade80' : '#16a34a'}
-                          strokeWidth={fl.layer === 'back' ? '3' : '4'}
-                          strokeLinecap="round"
-                        />
-                        {/* Lá tulip trái ôm thân */}
-                        <path
-                          d="M 30 250 C 10 210 2 130 8 60 C 20 110 26 180 30 230 Z"
-                          fill="#22c55e"
-                          stroke="#15803d"
-                          strokeWidth="1"
-                          opacity={fl.layer === 'back' ? 0.8 : 0.95}
-                        />
-                        {/* Lá tulip phải */}
-                        <path
-                          d="M 30 270 C 50 230 58 150 52 80 C 44 130 38 190 30 250 Z"
-                          fill="#16a34a"
-                          stroke="#14532d"
-                          strokeWidth="1"
-                          opacity={fl.layer === 'back' ? 0.75 : 0.9}
-                        />
-                      </svg>
-                    </motion.div>
-                  </div>
+                      {/* Thân cành xanh mướt */}
+                      <path
+                        d={`M 30 300 Q ${30 + fl.stemCurve} 150 30 0`}
+                        fill="none"
+                        stroke={fl.layer === 'back' ? '#22c55e' : '#15803d'}
+                        strokeWidth={fl.layer === 'back' ? '3' : '4'}
+                        strokeLinecap="round"
+                      />
+                      {/* Lá trái botanical */}
+                      <path
+                        d="M 30 160 Q 12 145 6 125 Q 18 135 30 155"
+                        fill="#16a34a"
+                        stroke="#14532d"
+                        strokeWidth="1"
+                      />
+                      {/* Lá phải botanical */}
+                      <path
+                        d="M 30 220 Q 48 205 54 185 Q 42 195 30 215"
+                        fill="#15803d"
+                        stroke="#14532d"
+                        strokeWidth="1"
+                      />
+                    </svg>
+                  </motion.div>
                 </div>
-              );
-            })}
-          </div>
-        )}
+              </div>
+            );
+          })}
+        </div>
       </div>
 
       {/* =================================================================== */}
-      {/* 4. TẤM THIỆP / BỨC THƯ TÌNH CHÚC MỪNG SINH NHẬT VỚI HOA TULIP         */}
+      {/* 4. TẤM THIỆP / BỨC THƯ TÌNH TỰ ĐỘNG HIỆN LÊN KHI HOA NỞ XONG          */}
       {/* =================================================================== */}
       <AnimatePresence>
         {showLetter && (
@@ -494,7 +391,7 @@ export default function FlowerForest({ onNext, onBackToCake }: Props) {
               className="relative w-full max-w-md rounded-[28px] bg-gradient-to-b from-[#fffefc]/95 via-[#fff8f9]/95 to-[#fff2f5]/95 p-6 sm:p-7 text-center shadow-[0_20px_60px_rgba(244,114,182,0.35)] border-2 border-pink-200/90 overflow-hidden"
             >
               {/* Trang trí góc */}
-              <div className="absolute top-3 left-3 text-xs opacity-60">🌷</div>
+              <div className="absolute top-3 left-3 text-xs opacity-60">🌸</div>
               <div className="absolute top-3 right-3 text-xs opacity-60">✨</div>
               <div className="absolute bottom-3 left-3 text-xs opacity-60">🌿</div>
               <div className="absolute bottom-3 right-3 text-xs opacity-60">💖</div>
@@ -502,44 +399,44 @@ export default function FlowerForest({ onNext, onBackToCake }: Props) {
               {/* Huy hiệu đỉnh thiệp */}
               <div className="flex justify-center -mt-1 mb-2">
                 <span className="px-3.5 py-1 rounded-full bg-rose-50 text-rose-600 text-[11px] font-bold border border-rose-200/80 shadow-2xs">
-                  Gửi bạn thương mến 🌷
+                  Gửi bạn thương mến 🌸
                 </span>
               </div>
 
               {/* Tiêu đề chính bức thư */}
               <h3 className="text-lg sm:text-xl font-serif font-bold text-stone-800 tracking-tight leading-snug">
-                Mong những điều dịu dàng<br />luôn nở rộ bên bạn.
+                Mong những điều đẹp đẽ<br />luôn nở bên bạn.
               </h3>
 
-              {/* Nội dung lời chúc ý nghĩa */}
+              {/* Nội dung lời chúc ý nghĩa (chuẩn văn phong video) */}
               <div className="mt-3.5 text-xs sm:text-[13px] text-stone-600 leading-relaxed space-y-2.5 font-medium px-1 sm:px-2">
                 <p>
-                  Mỗi đóa hoa tulip có thể tàn một ngày không đẹp. Còn bạn, làm thế giới này dịu dàng hơn.
+                  Mỗi bông hoa có thể tàn một ngày không đẹp. Còn bạn, làm thế giới này dịu dàng hơn.
                 </p>
                 <p className="p-2.5 rounded-xl bg-pink-100/60 border border-pink-200/60 text-stone-700 font-semibold text-xs">
-                  Nhân ngày sinh nhật 16/11, chúc bạn luôn được yêu thương, trân trọng và có thật nhiều niềm vui. Giống như những đóa tulip kiêu hãnh và thanh thuần, hãy cứ tự tin tỏa sáng theo cách của riêng mình nhé.
+                  Nhân ngày sinh nhật 16/11, chúc bạn luôn được yêu thương, trân trọng và có thật nhiều niềm vui. Không bao giờ phải cô đơn trong bất kỳ hành trình nào, hãy cứ tự tin theo đuổi những điều bạn yêu.
                 </p>
                 <p className="italic text-stone-500 text-[11px]">
-                  Hôm nay và cả những ngày sau, hãy cứ rạng rỡ và hạnh phúc theo cách của bạn.
+                  Hôm nay và cả những ngày sau, hãy cứ rạng rỡ theo cách riêng của mình nhé.
                 </p>
               </div>
 
               {/* Lời kết ngọt ngào */}
               <div className="mt-3 pt-2 border-t border-pink-100 flex items-center justify-between text-[11px] text-stone-400 font-medium">
                 <span>Gửi bạn thật nhiều thương yêu ♡</span>
-                <span className="font-bold text-rose-500">ngàn đóa tulip</span>
+                <span className="font-bold text-rose-500">ngàn đóa hoa</span>
               </div>
 
               {/* Các nút bấm tương tác */}
               <div className="mt-5 flex flex-col sm:flex-row gap-2">
-                {/* Nút ngắm toàn cảnh vườn tulip (tạm ẩn thiệp) */}
+                {/* Nút ngắm toàn cảnh rừng hoa (tạm ẩn thiệp) */}
                 <button
                   type="button"
                   onClick={() => setShowLetter(false)}
                   className="flex-1 py-2.5 px-3 rounded-xl bg-white hover:bg-pink-50 text-stone-700 text-xs font-bold border border-pink-200 shadow-2xs flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95"
                 >
                   <Eye className="w-3.5 h-3.5 text-pink-500" />
-                  <span>Ngắm vườn Tulip 🌷</span>
+                  <span>Ngắm rừng hoa 🌸</span>
                 </button>
 
                 {/* Nút tiếp tục sang mở 3 hộp quà bí mật */}
@@ -559,60 +456,58 @@ export default function FlowerForest({ onNext, onBackToCake }: Props) {
       </AnimatePresence>
 
       {/* =================================================================== */}
-      {/* 5. THANH ĐIỀU KHIỂN DƯỚI ĐÁY KHI ĐANG NGẮM VƯỜN TULIP                */}
+      {/* 5. NÚT ĐIỀU KHIỂN DƯỚI ĐÁY CHUẨN XÁC THEO ẢNH NGƯỜI DÙNG CUNG CẤP    */}
       {/* =================================================================== */}
-      {phase === 'BLOOMING_GARDEN' && (
-        <footer className="relative z-30 pb-4 px-4 flex flex-wrap items-center justify-center gap-2 max-w-lg w-full">
-          {/* Nút mở lại thiệp chúc nếu đang đóng */}
-          {!showLetter && (
-            <button
-              type="button"
-              onClick={() => {
-                soundManager.playKeypress(700);
-                setShowLetter(true);
-              }}
-              className="px-4 py-2 rounded-full bg-white/90 hover:bg-white text-rose-600 text-xs font-bold shadow-md shadow-pink-300/30 border border-pink-200 flex items-center gap-1.5 backdrop-blur-md cursor-pointer hover:scale-105 active:scale-95 transition-all"
-            >
-              <BookOpen className="w-3.5 h-3.5" />
-              <span>Đọc lại bức thư 💌</span>
-            </button>
-          )}
-
-          {/* Nút cho hoa nở lại */}
+      <footer className="relative z-30 pb-4 px-4 flex flex-wrap items-center justify-center gap-2 max-w-lg w-full">
+        {/* Nút 'Đọc lại thiệp' chuẩn theo ảnh */}
+        {!showLetter && (
           <button
             type="button"
-            onClick={handleReplayGarden}
-            className="px-3.5 py-2 rounded-full bg-white/80 hover:bg-white text-stone-600 text-xs font-semibold shadow-xs border border-sky-200 flex items-center gap-1.5 backdrop-blur-md cursor-pointer hover:scale-105 active:scale-95 transition-all"
-            title="Xem lại hiệu ứng hoa mọc từ đầu"
+            onClick={() => {
+              soundManager.playKeypress(700);
+              setShowLetter(true);
+            }}
+            className="px-4 py-2 rounded-full bg-white/90 hover:bg-white text-stone-700 hover:text-stone-900 text-xs font-semibold shadow-md shadow-black/10 border border-white/80 flex items-center gap-1.5 backdrop-blur-md cursor-pointer hover:scale-105 active:scale-95 transition-all"
           >
-            <RotateCw className="w-3.5 h-3.5 text-sky-500" />
-            <span>Cho Tulip nở lại 🌷</span>
+            <BookOpen className="w-3.5 h-3.5 text-rose-500" />
+            <span>Đọc lại thiệp</span>
           </button>
+        )}
 
-          {/* Nút xem lại bánh kem */}
-          {onBackToCake && (
-            <button
-              type="button"
-              onClick={onBackToCake}
-              className="px-3.5 py-2 rounded-full bg-white/80 hover:bg-white text-stone-600 text-xs font-semibold shadow-xs border border-pink-200 flex items-center gap-1.5 backdrop-blur-md cursor-pointer hover:scale-105 active:scale-95 transition-all"
-            >
-              <span>🎂</span>
-              <span>Xem lại bánh kem</span>
-            </button>
-          )}
+        {/* Nút 'Cho hoa nở lại' chuẩn theo ảnh */}
+        <button
+          type="button"
+          onClick={handleReplayGarden}
+          className="px-4 py-2 rounded-full bg-white/90 hover:bg-white text-stone-700 hover:text-stone-900 text-xs font-semibold shadow-md shadow-black/10 border border-white/80 flex items-center gap-1.5 backdrop-blur-md cursor-pointer hover:scale-105 active:scale-95 transition-all"
+          title="Xem lại hiệu ứng hoa mọc từ đầu"
+        >
+          <RotateCw className="w-3.5 h-3.5 text-sky-500" />
+          <span>Cho hoa nở lại</span>
+        </button>
 
-          {/* Nút chuyển tiếp sang Mở 3 Chiếc Hộp Bí Mật */}
+        {/* Nút xem lại bánh kem */}
+        {onBackToCake && (
           <button
             type="button"
-            onClick={onNext}
-            className="px-5 py-2 rounded-full bg-gradient-to-r from-pink-500 via-rose-500 to-pink-500 text-white text-xs font-bold shadow-lg shadow-pink-400/40 flex items-center gap-1.5 hover:brightness-105 active:scale-95 cursor-pointer transition-all"
+            onClick={onBackToCake}
+            className="px-3.5 py-2 rounded-full bg-white/80 hover:bg-white text-stone-600 text-xs font-semibold shadow-xs border border-pink-200 flex items-center gap-1.5 backdrop-blur-md cursor-pointer hover:scale-105 active:scale-95 transition-all"
           >
-            <Gift className="w-3.5 h-3.5 text-amber-200" />
-            <span>Mở 3 Chiếc Hộp Bí Mật</span>
-            <ArrowRight className="w-3.5 h-3.5" />
+            <span>🎂</span>
+            <span>Xem lại bánh kem</span>
           </button>
-        </footer>
-      )}
+        )}
+
+        {/* Nút chuyển tiếp sang Mở 3 Chiếc Hộp Bí Mật */}
+        <button
+          type="button"
+          onClick={onNext}
+          className="px-5 py-2 rounded-full bg-gradient-to-r from-pink-500 via-rose-500 to-pink-500 text-white text-xs font-bold shadow-lg shadow-pink-400/40 flex items-center gap-1.5 hover:brightness-105 active:scale-95 cursor-pointer transition-all"
+        >
+          <Gift className="w-3.5 h-3.5 text-amber-200" />
+          <span>Mở 3 Chiếc Hộp Bí Mật</span>
+          <ArrowRight className="w-3.5 h-3.5" />
+        </button>
+      </footer>
 
       {/* Global CSS keyframes cho hiệu ứng đung đưa cành hoa mượt mà */}
       <style jsx global>{`
@@ -630,152 +525,125 @@ export default function FlowerForest({ onNext, onBackToCake }: Props) {
 }
 
 // ===================================================================
-// CÁC THÀNH PHẦN HOA TULIP SVG VẼ THỦ CÔNG TINH XẢO
+// CÁC ĐÓA HOA SVG PAPER-CUT / SCALLOPED THEO ĐÚNG ẢNH TIKTOK
 // ===================================================================
 
-interface TulipHeadProps {
+interface FlowerHeadProps {
   size: number;
-  palette: (typeof TULIP_PALETTES)[0];
+  palette: (typeof FLOWER_PALETTES)[0];
 }
 
-// 1. HOA TULIP NỞ DÁNG CHÉN HOÀNG GIA (CLASSIC TULIP BLOOM)
-function TulipBloom({ size, palette }: TulipHeadProps) {
-  const gradId = `tulip-grad-${palette.name}-${size}`;
-  const darkGradId = `tulip-dark-${palette.name}-${size}`;
+// 1. ĐÓA HOA HỒNG GIẤY XOẮN CÁNH ĐA TẦNG (SCALLOPED PAPER-CUT ROSE)
+function ScallopedRose({ size, palette }: FlowerHeadProps) {
+  const { outer, mid, inner, core, stroke, highlight } = palette;
+
+  // 6 lớp cánh lượn sóng so le
+  const layers = [
+    { r: 47, count: 8, amp: 4, fill: outer, rot: 0 },
+    { r: 40, count: 7, amp: 3.5, fill: mid, rot: 0.4 },
+    { r: 33, count: 7, amp: 3, fill: outer, rot: 0.8 },
+    { r: 26, count: 6, amp: 2.5, fill: mid, rot: 1.2 },
+    { r: 19, count: 5, amp: 2, fill: inner, rot: 1.6 },
+    { r: 12, count: 4, amp: 1.5, fill: core, rot: 2.0 },
+  ];
 
   return (
-    <svg width={size} height={size * 1.15} viewBox="0 0 100 115" className="overflow-visible drop-shadow-sm">
+    <svg width={size} height={size} viewBox="0 0 100 100" className="overflow-visible drop-shadow-sm">
       <defs>
-        <linearGradient id={gradId} x1="0%" y1="100%" x2="0%" y2="0%">
-          <stop offset="0%" stopColor={palette.inner} />
-          <stop offset="40%" stopColor={palette.mid} />
-          <stop offset="80%" stopColor={palette.outer} />
-          <stop offset="100%" stopColor={palette.tip} />
-        </linearGradient>
-        <linearGradient id={darkGradId} x1="0%" y1="100%" x2="0%" y2="0%">
-          <stop offset="0%" stopColor={palette.dark} />
-          <stop offset="60%" stopColor={palette.inner} />
-          <stop offset="100%" stopColor={palette.mid} />
-        </linearGradient>
+        <filter id={`sh-${palette.name}-${size}`} x="-10%" y="-10%" width="120%" height="120%">
+          <feDropShadow dx="0" dy="1.2" stdDeviation="1" floodColor={core} floodOpacity="0.28" />
+        </filter>
       </defs>
 
-      {/* Cánh sau trung tâm hé mở */}
-      <path
-        d="M 50 12 C 40 22 36 55 50 88 C 64 55 60 22 50 12 Z"
-        fill={`url(#${darkGradId})`}
-      />
+      <g filter={`url(#sh-${palette.name}-${size})`}>
+        {layers.map((l, lIdx) => {
+          let d = '';
+          const n = l.count;
+          for (let i = 0; i < n; i++) {
+            const a1 = (i / n) * Math.PI * 2 + l.rot;
+            const a2 = ((i + 1) / n) * Math.PI * 2 + l.rot;
+            const amid = (a1 + a2) / 2;
 
-      {/* Cánh trái ôm dáng chén */}
-      <path
-        d="M 50 88 C 28 84 14 62 18 36 C 20 22 32 18 42 30 C 47 48 48 70 50 88 Z"
-        fill={`url(#${gradId})`}
-      />
+            const rJoint = l.r - l.amp;
+            const rPeak = l.r + l.amp;
 
-      {/* Cánh phải ôm đè lên cánh trái */}
-      <path
-        d="M 50 88 C 72 84 86 62 82 36 C 80 22 68 18 58 30 C 53 48 52 70 50 88 Z"
-        fill={`url(#${gradId})`}
-        opacity="0.95"
-      />
+            const p1x = 50 + rJoint * Math.cos(a1);
+            const p1y = 50 + rJoint * Math.sin(a1);
 
-      {/* Cánh trước trung tâm tạo khối nổi 3D */}
-      <path
-        d="M 50 90 C 34 86 28 66 32 44 C 35 28 44 24 50 32 C 56 24 65 28 68 44 C 72 66 66 86 50 90 Z"
-        fill={`url(#${gradId})`}
-      />
+            const cpx = 50 + rPeak * 1.15 * Math.cos(amid);
+            const cpy = 50 + rPeak * 1.15 * Math.sin(amid);
 
-      {/* Sống gân sáng nổi bật phản chiếu ánh mặt trời */}
+            const p2x = 50 + rJoint * Math.cos(a2);
+            const p2y = 50 + rJoint * Math.sin(a2);
+
+            if (i === 0) d += `M ${p1x.toFixed(1)} ${p1y.toFixed(1)} `;
+            d += `Q ${cpx.toFixed(1)} ${cpy.toFixed(1)} ${p2x.toFixed(1)} ${p2y.toFixed(1)} `;
+          }
+          d += 'Z';
+          return (
+            <path
+              key={`layer-${lIdx}`}
+              d={d}
+              fill={l.fill}
+              stroke={stroke}
+              strokeWidth="1.3"
+              strokeLinejoin="round"
+            />
+          );
+        })}
+
+        {/* Nhụy xoắn tâm origami */}
+        <circle cx="50" cy="50" r="6" fill={core} />
+        <path
+          d="M 50 46 C 53 46 54 48 53 51 C 52 54 48 54 47 52 C 45 49 47 47 49 47 C 51 47 51 49 50 50"
+          fill="none"
+          stroke={highlight}
+          strokeWidth="1.4"
+          strokeLinecap="round"
+        />
+      </g>
+    </svg>
+  );
+}
+
+// 2. HOA CÚC XOẮN TRÒN (SPIRAL BLOSSOM DISC)
+function SpiralDisc({ size, palette }: FlowerHeadProps) {
+  const { outer, mid, inner, core, stroke } = palette;
+  return (
+    <svg width={size} height={size} viewBox="0 0 100 100" className="overflow-visible drop-shadow-sm">
+      <circle cx="50" cy="50" r="46" fill={outer} stroke={stroke} strokeWidth="1.2" />
+      <circle cx="50" cy="50" r="38" fill={mid} stroke={stroke} strokeWidth="1.1" />
+      <circle cx="50" cy="50" r="30" fill={outer} stroke={stroke} strokeWidth="1" />
+      <circle cx="50" cy="50" r="22" fill={inner} stroke={stroke} strokeWidth="1" />
+      <circle cx="50" cy="50" r="14" fill={core} stroke={stroke} strokeWidth="1" />
+      {/* Vòng xoắn cúc */}
       <path
-        d="M 49 40 Q 48 62 50 82"
-        stroke="#ffffff"
-        strokeWidth="1.8"
-        strokeLinecap="round"
+        d="M 50 36 C 58 36 62 42 60 48 C 58 54 52 58 46 58 C 40 58 36 52 38 46 C 40 40 46 38 50 40"
         fill="none"
-        opacity="0.55"
+        stroke={stroke}
+        strokeWidth="1.4"
+        strokeLinecap="round"
       />
-
-      {/* Đài hoa xanh nối vào cuống */}
-      <path d="M 44 90 C 46 95 54 95 56 90 Z" fill="#15803d" />
     </svg>
   );
 }
 
-// 2. BÚP HOA TULIP THON THẢ E ẤP (SLENDER TULIP BUD)
-function TulipBud({ size, palette }: TulipHeadProps) {
-  const gradId = `tbud-grad-${palette.name}-${size}`;
-  const darkGradId = `tbud-dark-${palette.name}-${size}`;
-
+// 3. BÚP HOA VƯƠN CAO XEN KẼ (FLAME / CUP BUD)
+function FlameBud({ size, palette }: FlowerHeadProps) {
+  const { outer, mid, inner } = palette;
   return (
-    <svg width={size} height={size * 1.2} viewBox="0 0 100 120" className="overflow-visible drop-shadow-sm">
-      <defs>
-        <linearGradient id={gradId} x1="0%" y1="100%" x2="0%" y2="0%">
-          <stop offset="0%" stopColor={palette.inner} />
-          <stop offset="45%" stopColor={palette.mid} />
-          <stop offset="85%" stopColor={palette.outer} />
-          <stop offset="100%" stopColor={palette.tip} />
-        </linearGradient>
-        <linearGradient id={darkGradId} x1="0%" y1="100%" x2="0%" y2="0%">
-          <stop offset="0%" stopColor={palette.dark} />
-          <stop offset="65%" stopColor={palette.inner} />
-          <stop offset="100%" stopColor={palette.mid} />
-        </linearGradient>
-      </defs>
-
-      {/* Cánh sau */}
-      <path d="M 50 16 C 42 24 38 55 50 90 C 62 55 58 24 50 16 Z" fill={`url(#${darkGradId})`} />
-
-      {/* Cánh trái */}
-      <path d="M 50 90 C 32 86 22 64 25 40 C 27 26 38 22 45 34 C 48 52 49 72 50 90 Z" fill={`url(#${gradId})`} />
-
-      {/* Cánh phải */}
-      <path d="M 50 90 C 68 86 78 64 75 40 C 73 26 62 22 55 34 C 52 52 51 72 50 90 Z" fill={`url(#${gradId})`} opacity="0.96" />
-
+    <svg width={size * 0.85} height={size * 1.3} viewBox="0 0 70 110" className="overflow-visible drop-shadow-sm">
+      {/* Cánh búp sau */}
+      <path d="M 35 15 C 26 28 20 60 35 90 C 50 60 44 28 35 15 Z" fill={inner} />
+      {/* Cánh búp trái */}
+      <path d="M 35 90 C 18 84 10 60 16 38 C 22 28 30 35 35 50 Z" fill={mid} />
+      {/* Cánh búp phải */}
+      <path d="M 35 90 C 52 84 60 60 54 38 C 48 28 40 35 35 50 Z" fill={outer} />
       {/* Cánh giữa khép búp */}
-      <path d="M 50 91 C 38 88 34 68 37 48 C 40 34 46 30 50 38 C 54 30 60 34 63 48 C 66 68 62 88 50 91 Z" fill={`url(#${gradId})`} />
-
-      {/* Vệt phản quang */}
-      <path d="M 50 44 Q 49 66 50 84" stroke="#ffffff" strokeWidth="1.6" strokeLinecap="round" fill="none" opacity="0.5" />
-      <path d="M 45 91 C 47 95 53 95 55 91 Z" fill="#15803d" />
-    </svg>
-  );
-}
-
-// 3. HOA TULIP NỞ RỘ CÁNH XÒE TỰ DO (OPEN TULIP BLOOM)
-function TulipOpen({ size, palette }: TulipHeadProps) {
-  const gradId = `topen-grad-${palette.name}-${size}`;
-  const darkGradId = `topen-dark-${palette.name}-${size}`;
-
-  return (
-    <svg width={size} height={size * 1.15} viewBox="0 0 100 115" className="overflow-visible drop-shadow-sm">
-      <defs>
-        <linearGradient id={gradId} x1="0%" y1="100%" x2="0%" y2="0%">
-          <stop offset="0%" stopColor={palette.inner} />
-          <stop offset="40%" stopColor={palette.mid} />
-          <stop offset="80%" stopColor={palette.outer} />
-          <stop offset="100%" stopColor={palette.tip} />
-        </linearGradient>
-        <linearGradient id={darkGradId} x1="0%" y1="100%" x2="0%" y2="0%">
-          <stop offset="0%" stopColor={palette.dark} />
-          <stop offset="60%" stopColor={palette.inner} />
-          <stop offset="100%" stopColor={palette.mid} />
-        </linearGradient>
-      </defs>
-
-      {/* Cánh sau */}
-      <path d="M 50 10 C 38 20 34 55 50 88 C 66 55 62 20 50 10 Z" fill={`url(#${darkGradId})`} />
-
-      {/* Cánh trái xòe nhẹ */}
-      <path d="M 50 88 C 26 82 12 58 16 32 C 18 18 30 14 42 28 C 46 48 48 70 50 88 Z" fill={`url(#${gradId})`} />
-
-      {/* Cánh phải xòe nhẹ */}
-      <path d="M 50 88 C 74 82 88 58 84 32 C 82 18 70 14 58 28 C 54 48 52 70 50 88 Z" fill={`url(#${gradId})`} opacity="0.95" />
-
-      {/* Cánh trước xòe */}
-      <path d="M 50 90 C 32 85 26 64 30 42 C 34 26 43 22 50 30 C 57 22 66 26 70 42 C 74 64 68 85 50 90 Z" fill={`url(#${gradId})`} />
-
-      {/* Vệt sáng */}
-      <path d="M 49 38 Q 48 60 50 82" stroke="#ffffff" strokeWidth="1.8" strokeLinecap="round" fill="none" opacity="0.6" />
-      <path d="M 44 90 C 46 95 54 95 56 90 Z" fill="#15803d" />
+      <path d="M 35 92 C 24 88 20 66 26 48 C 30 38 40 38 44 48 C 50 66 46 88 35 92 Z" fill={mid} />
+      {/* Đài hoa xanh ôm gốc búp */}
+      <path d="M 22 90 C 26 100 35 104 35 104 C 35 104 44 100 48 90 C 44 94 35 96 22 90 Z" fill="#15803d" />
+      <path d="M 35 92 L 35 106" stroke="#16a34a" strokeWidth="3" strokeLinecap="round" />
     </svg>
   );
 }

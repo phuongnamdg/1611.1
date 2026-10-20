@@ -67,10 +67,10 @@ export default function Scene2Cake({ onNext }: Props) {
       soundManager.playCelebrationCheer();
       fireConfetti();
     }, 350);
-    // Tự động mọc rừng hoa sau khi nến tắt 2 giây
+    // Tự động mọc rừng hoa ngay sau khi nến tắt (1.2s để kịp ngắm nến tắt & pháo hoa bừng sáng)
     setTimeout(() => {
       setShowFlowerForest(true);
-    }, 2000);
+    }, 1200);
   }, [isCandleBlown, stopMic, fireConfetti]);
 
   // Micro thổi nến (Nhận diện chính xác hơi thổi / tiếng phù vào mic)
