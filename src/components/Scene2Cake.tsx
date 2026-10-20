@@ -413,12 +413,6 @@ export default function Scene2Cake({ onNext }: Props) {
               animate={{ opacity: 1, y: 0 }}
               className="w-full pb-4 max-w-xs mt-3 flex flex-col gap-2.5 items-center"
             >
-              {/* Lời chúc mừng khi nến tắt */}
-              <div className="px-4 py-1.5 rounded-full bg-pink-100/80 border border-pink-200 text-rose-600 text-xs font-bold shadow-2xs flex items-center gap-1.5">
-                <span>✨</span>
-                <span>Điều ước đã được gửi đi! Chúc mừng em! 🎉</span>
-              </div>
-
               {/* Nút chuyển tiếp chính sang mở 3 hộp quà bí mật */}
               <button
                 type="button"

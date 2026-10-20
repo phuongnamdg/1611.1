@@ -165,15 +165,7 @@ export default function Cake2D({
               ? '🎙️ Đang nghe micro… Hãy thổi phù vào mic nào! 💨'
               : '👆 Nhấn giữ nến để thổi (hoặc bấm để bật Micro 🎤)'}
           </motion.div>
-        ) : (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="px-4 py-1.5 rounded-full bg-gradient-to-r from-pink-500 via-rose-500 to-pink-500 text-white text-xs font-bold shadow-lg shadow-pink-500/30 tracking-wide"
-          >
-            ✨ Ngọn nến đã tắt, chúc điều ước của em thành hiện thực! ✨
-          </motion.div>
-        )}
+        ) : null}
       </div>
 
       {/* =================================================================== */}
@@ -182,24 +174,6 @@ export default function Cake2D({
       <div className="relative w-full flex flex-col items-center justify-center">
         {/* 1. BĂNG RÔN DÂY CỜ PASTEL (HẠ THẤP ÔM LẤY ĐỈNH NẾN NHƯ MẪU TIKTOK) */}
         <div className="relative w-[110%] sm:w-[116%] -mb-4 sm:-mb-6 z-10 select-none pointer-events-none">
-          {/* Nơ vàng trung tâm mở tung khi khai màn */}
-          <motion.div
-            key={`bow-${bannerKey}`}
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{
-              scale: [0, 1.2, 1.2, 0],
-              opacity: [0, 1, 1, 0],
-              rotate: [0, 0, -8, 12],
-            }}
-            transition={{ duration: 0.85, times: [0, 0.25, 0.55, 1], ease: 'easeInOut' }}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 pointer-events-none flex items-center justify-center"
-          >
-            <div className="px-3 py-1 rounded-full bg-gradient-to-r from-amber-300 via-rose-300 to-amber-300 text-stone-900 text-xs font-bold shadow-lg shadow-amber-300/60 border border-amber-200 flex items-center gap-1.5">
-              <span>🎀</span>
-              <span className="tracking-wide text-[11px] font-semibold text-rose-800">Happy Birthday</span>
-            </div>
-          </motion.div>
-
           {/* Dải cờ mở bung từ tâm sang 2 bên bằng scaleX */}
           <motion.div
             key={`banner-${bannerKey}`}
