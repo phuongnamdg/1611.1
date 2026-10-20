@@ -12,64 +12,94 @@ interface Props {
 }
 
 // ===================================================================
-// BẢNG MÀU HOA GIẤY CUỘN (QUILLED PAPER ROSES)
-// 8 bảng màu: 3 biến thể hồng (chiếm ưu thế) + xanh bạc hà + xanh dương
-// + cam đào + vàng kem + tím oải hương — chuẩn xác ảnh mẫu TikTok
-// Mỗi bảng có 5 cấp sáng tối: l1 (ngoài cùng, nhạt nhất) → l5 (tâm, đậm nhất)
+// BẢNG MÀU HOA HỒNG CAO CẤP (8 BẢNG MÀU PASTEL CHUẨN MẪU)
+// Tỉ lệ ưu tiên sắc hồng phấn, hồng thắm, cam đào (~65%) xen kẽ kem, bạc hà, xanh ngọc, tím
 // ===================================================================
-const PALETTES = [
+export const ROSE_PALETTES = [
   {
-    name: 'pk1',
-    l1: '#fce7f3', l2: '#fbcfe8', l3: '#f9a8d4', l4: '#ec4899', l5: '#be185d',
-    stroke: '#9d174d',
+    name: 'blushPink',
+    c1: '#fff0f3', // Cánh ngoài nhạt nhất
+    c2: '#fecdd3', // Cánh tầng 2
+    c3: '#fb7185', // Cánh tầng 3
+    c4: '#e11d48', // Cánh trong thắm
+    c5: '#9f1239', // Tâm nhung
+    stroke: '#be123c',
   },
   {
-    name: 'pk2',
-    l1: '#ffe4e6', l2: '#fecdd3', l3: '#fda4af', l4: '#f43f5e', l5: '#be123c',
-    stroke: '#881337',
+    name: 'sweetRose',
+    c1: '#fdf2f8',
+    c2: '#fce7f3',
+    c3: '#f472b6',
+    c4: '#db2777',
+    c5: '#9d174d',
+    stroke: '#be185d',
   },
   {
-    name: 'pk3',
-    l1: '#fce4ec', l2: '#f8bbd0', l3: '#f48fb1', l4: '#e91e63', l5: '#ad1457',
-    stroke: '#880e4f',
+    name: 'softCoral',
+    c1: '#fff1f2',
+    c2: '#ffe4e6',
+    c3: '#fda4af',
+    c4: '#f43f5e',
+    c5: '#9f1239',
+    stroke: '#e11d48',
   },
   {
-    name: 'mint',
-    l1: '#dcfce7', l2: '#bbf7d0', l3: '#86efac', l4: '#22c55e', l5: '#15803d',
-    stroke: '#14532d',
+    name: 'apricotPeach',
+    c1: '#fff7ed',
+    c2: '#fed7aa',
+    c3: '#fdba74',
+    c4: '#fb923c',
+    c5: '#c2410c',
+    stroke: '#ea580c',
   },
   {
-    name: 'sky',
-    l1: '#e0f2fe', l2: '#bae6fd', l3: '#7dd3fc', l4: '#0ea5e9', l5: '#0369a1',
-    stroke: '#0c4a6e',
+    name: 'butterCream',
+    c1: '#fefce8',
+    c2: '#fef9c3',
+    c3: '#fde047',
+    c4: '#eab308',
+    c5: '#a16207',
+    stroke: '#ca8a04',
   },
   {
-    name: 'peach',
-    l1: '#fff7ed', l2: '#fed7aa', l3: '#fdba74', l4: '#f97316', l5: '#c2410c',
-    stroke: '#7c2d12',
+    name: 'mintGreen',
+    c1: '#f0fdf4',
+    c2: '#dcfce7',
+    c3: '#86efac',
+    c4: '#22c55e',
+    c5: '#15803d',
+    stroke: '#16a34a',
   },
   {
-    name: 'cream',
-    l1: '#fefce8', l2: '#fef9c3', l3: '#fef08a', l4: '#eab308', l5: '#a16207',
-    stroke: '#713f12',
+    name: 'skyBlue',
+    c1: '#f0f9ff',
+    c2: '#e0f2fe',
+    c3: '#7dd3fc',
+    c4: '#0284c7',
+    c5: '#075985',
+    stroke: '#0369a1',
   },
   {
-    name: 'lilac',
-    l1: '#faf5ff', l2: '#f3e8ff', l3: '#e9d5ff', l4: '#a855f7', l5: '#7e22ce',
-    stroke: '#581c87',
+    name: 'lavenderLilac',
+    c1: '#faf5ff',
+    c2: '#f3e8ff',
+    c3: '#d8b4fe',
+    c4: '#a855f7',
+    c5: '#6b21a8',
+    stroke: '#7e22ce',
   },
 ];
 
-// Phân bổ ưu tiên hồng (~50%), giống ảnh mẫu
-const PALETTE_WEIGHTS = [0, 0, 1, 1, 2, 2, 3, 4, 5, 6, 7, 0];
+// Trọng số phân bổ màu: 65% tông hồng / đào, 35% màu phối dịu mắt
+const PALETTE_WEIGHTS = [0, 0, 1, 1, 2, 2, 3, 3, 4, 5, 6, 7, 0, 1, 3];
 
 type FlowerType = 'rose' | 'bud';
 
 interface FlowerData {
   id: number;
-  x: number;
-  heightPct: number;
-  flowerSize: number;
+  x: number; // Tọa độ ngang (%)
+  heightPct: number; // Chiều cao cành vươn lên (% màn hình, tối đa 68% = 2/3 màn hình)
+  flowerSize: number; // Kích thước đóa hoa (px)
   paletteIndex: number;
   type: FlowerType;
   swayDuration: number;
@@ -77,24 +107,36 @@ interface FlowerData {
   swayDeg: number;
   growDelay: number;
   stemCurve: number;
-  layer: 'deep' | 'back' | 'mid' | 'front1' | 'front2';
+  layer: 'ground' | 'low' | 'midLow' | 'mid' | 'midHigh' | 'canopy';
   zIndex: number;
   brightnessFilter: string;
-  ringCount: number;
+}
+
+// Hoa đặt trực tiếp sát mép dưới cùng màn hình (bao gồm cả đáy màn hình)
+interface GroundBorderRose {
+  id: number;
+  x: number; // Tọa độ ngang (%)
+  bottomOffsetPx: number; // Đặt sát mép dưới cùng (-12px đến 18px)
+  size: number;
+  paletteIndex: number;
+  swayDelay: number;
+  growDelay: number;
+  zIndex: number;
 }
 
 export default function FlowerForest({ onNext, onBackToCake }: Props) {
+  // Trạng thái thiệp chúc mừng: Mặc định KHÔNG tự động mở để người dùng ngắm trọn vẹn rừng hoa
   const [showLetter, setShowLetter] = useState<boolean>(false);
   const [gardenCycle, setGardenCycle] = useState<number>(0);
 
   // ===================================================================
-  // SINH DỮ LIỆU 130 ĐÓA HOA DÀY ĐẶC PHỦ KÍN MÀN HÌNH
-  // 5 tầng chiều sâu, hoa chồng lấp nặng — chuẩn xác ảnh mẫu
+  // 1. SINH DỮ LIỆU RỪNG HOA CHI TIẾM 2/3 MÀN HÌNH (135 ĐÓA HOA CÓ CÀNH)
+  // Chiều cao phân bố từ 12% đến 68% (chuẩn xác 2/3 màn hình), không có bông nào cao vượt trội hẳn
   // ===================================================================
   const flowers: FlowerData[] = useMemo(() => {
     const list: FlowerData[] = [];
     const layerConfigs: Array<{
-      name: 'deep' | 'back' | 'mid' | 'front1' | 'front2';
+      name: 'ground' | 'low' | 'midLow' | 'mid' | 'midHigh' | 'canopy';
       count: number;
       z: number;
       hMin: number;
@@ -103,44 +145,42 @@ export default function FlowerForest({ onNext, onBackToCake }: Props) {
       sMax: number;
       brightness: string;
     }> = [
-      { name: 'deep', count: 22, z: 5, hMin: 30, hMax: 45, sMin: 32, sMax: 44, brightness: 'brightness(1.06) saturate(0.9)' },
-      { name: 'back', count: 26, z: 10, hMin: 38, hMax: 55, sMin: 40, sMax: 54, brightness: 'brightness(1.03) saturate(0.95)' },
-      { name: 'mid', count: 30, z: 15, hMin: 46, hMax: 64, sMin: 50, sMax: 66, brightness: 'none' },
-      { name: 'front1', count: 28, z: 20, hMin: 52, hMax: 70, sMin: 58, sMax: 76, brightness: 'none' },
-      { name: 'front2', count: 20, z: 25, hMin: 56, hMax: 74, sMin: 68, sMax: 88, brightness: 'none' },
+      { name: 'ground',  count: 22, z: 8,  hMin: 12, hMax: 24, sMin: 38, sMax: 50, brightness: 'brightness(1.05) saturate(0.92)' },
+      { name: 'low',     count: 25, z: 12, hMin: 22, hMax: 36, sMin: 44, sMax: 56, brightness: 'brightness(1.03) saturate(0.95)' },
+      { name: 'midLow',  count: 26, z: 16, hMin: 34, hMax: 48, sMin: 48, sMax: 62, brightness: 'none' },
+      { name: 'mid',     count: 25, z: 20, hMin: 44, hMax: 57, sMin: 54, sMax: 68, brightness: 'none' },
+      { name: 'midHigh', count: 22, z: 24, hMin: 52, hMax: 64, sMin: 60, sMax: 76, brightness: 'none' },
+      { name: 'canopy',  count: 18, z: 28, hMin: 58, hMax: 68, sMin: 64, sMax: 82, brightness: 'none' },
     ];
 
-    let id = 0;
+    let idCounter = 0;
     layerConfigs.forEach((lc) => {
       for (let i = 0; i < lc.count; i++) {
         const step = 100 / lc.count;
-        // Jitter tạo phân bố tự nhiên, hoa chồng lấp nhau
-        const jitter = Math.sin(id * 3.7 + 0.5) * step * 0.48;
-        const x = Math.min(99, Math.max(1, i * step + step * 0.5 + jitter));
+        const jitter = Math.sin(idCounter * 3.7 + 0.5) * step * 0.48;
+        const x = Math.min(99.2, Math.max(0.8, i * step + step * 0.5 + jitter));
 
-        const heightPct = lc.hMin + ((id * 17 + 3) % (lc.hMax - lc.hMin + 1));
-        const flowerSize = lc.sMin + ((id * 13 + 5) % (lc.sMax - lc.sMin + 1));
+        const heightPct = lc.hMin + ((idCounter * 17 + 3) % (lc.hMax - lc.hMin + 1));
+        const flowerSize = lc.sMin + ((idCounter * 13 + 5) % (lc.sMax - lc.sMin + 1));
 
-        // 85% hoa hồng cuộn tròn, 15% nụ nhọn — chuẩn ảnh mẫu
-        const typeSeed = (id * 7 + 3) % 20;
+        // Phân bổ 85% hoa hồng nở đa tầng, 15% nụ hoa vươn cao
+        const typeSeed = (idCounter * 7 + 3) % 20;
         const type: FlowerType = typeSeed < 3 ? 'bud' : 'rose';
 
-        // Lấy palette từ bảng phân bổ ưu tiên hồng
-        const paletteIndex = PALETTE_WEIGHTS[(id * 3 + 1) % PALETTE_WEIGHTS.length];
+        const paletteIndex = PALETTE_WEIGHTS[(idCounter * 3 + 1) % PALETTE_WEIGHTS.length];
+        const stemCurve = ((idCounter * 11 + 2) % 26) - 13;
 
-        const stemCurve = ((id * 11 + 2) % 28) - 14;
-        const swayDuration = 2.8 + ((id * 3 + 1) % 14) * 0.13;
-        const swayDelay = ((id * 7 + 2) % 22) * 0.09;
-        const swayDeg = (id % 2 === 0 ? 1 : -1) * (1.2 + ((id * 2 + 1) % 5) * 0.3);
-        const growDelay = 0.03 + ((id * 13 + 7) % 45) * 0.028;
+        const swayDuration = 2.8 + ((idCounter * 3 + 1) % 15) * 0.12;
+        const swayDelay = ((idCounter * 7 + 2) % 22) * 0.09;
+        const swayDeg = (idCounter % 2 === 0 ? 1 : -1) * (1.2 + ((idCounter * 2 + 1) % 5) * 0.3);
 
-        // Số vòng đồng tâm tỉ lệ với kích thước hoa
-        const ringCount = flowerSize >= 70 ? 12 : flowerSize >= 55 ? 10 : flowerSize >= 42 ? 8 : 7;
+        // Nở so le mượt mà trong vòng 1.2s từ khi vào màn hình
+        const growDelay = 0.04 + ((idCounter * 13 + 5) % 45) * 0.026;
 
         list.push({
-          id: id++,
+          id: idCounter++,
           x,
-          heightPct: type === 'bud' ? Math.min(80, heightPct + 8) : heightPct,
+          heightPct: type === 'bud' ? Math.min(68, heightPct + 5) : heightPct,
           flowerSize: type === 'bud' ? Math.round(flowerSize * 0.55) : flowerSize,
           paletteIndex,
           type,
@@ -152,7 +192,6 @@ export default function FlowerForest({ onNext, onBackToCake }: Props) {
           layer: lc.name,
           zIndex: lc.z,
           brightnessFilter: lc.brightness,
-          ringCount,
         });
       }
     });
@@ -160,135 +199,179 @@ export default function FlowerForest({ onNext, onBackToCake }: Props) {
     return list.sort((a, b) => a.zIndex - b.zIndex);
   }, []);
 
-  // Âm thanh & pháo hoa khi rừng hoa mọc
+  // ===================================================================
+  // 2. LỚP HOA KHỔNG LỒ PHỦ KÍN MÉP DƯỚI CÙNG MÀN HÌNH (24 ĐÓA HOA ĐÁY)
+  // Đảm bảo mép dưới cùng màn hình 100% là hoa nở và lá xanh mướt, không có khoảng hở
+  // ===================================================================
+  const groundRoses: GroundBorderRose[] = useMemo(() => {
+    const list: GroundBorderRose[] = [];
+    const count = 24;
+    for (let i = 0; i < count; i++) {
+      const step = 100 / count;
+      const x = Math.min(99.5, Math.max(0.5, i * step + (step * 0.5) + (Math.sin(i * 2.8) * step * 0.35)));
+      const bottomOffsetPx = -10 + ((i * 7) % 24); // Nằm sát ngay mép đáy màn hình
+      const size = 62 + ((i * 11) % 32); // Kích thước to (62px - 94px)
+      const paletteIndex = PALETTE_WEIGHTS[(i * 5 + 2) % PALETTE_WEIGHTS.length];
+      const swayDelay = (i * 0.15) % 2;
+      const growDelay = 0.3 + ((i * 9) % 20) * 0.04;
+
+      list.push({
+        id: i,
+        x,
+        bottomOffsetPx,
+        size,
+        paletteIndex,
+        swayDelay,
+        growDelay,
+        zIndex: 32 + (i % 2),
+      });
+    }
+    return list;
+  }, []);
+
+  // Âm thanh nở hoa & pháo hoa giấy chúc mừng
   useEffect(() => {
     soundManager.playFlowerBloomSound();
     confetti({
       particleCount: 65,
-      spread: 100,
-      origin: { y: 0.75 },
-      colors: ['#fda4af', '#f472b6', '#fed7aa', '#fef08a', '#86efac', '#7dd3fc'],
+      spread: 95,
+      origin: { y: 0.72 },
+      colors: ['#fda4af', '#f472b6', '#fbcfe8', '#fecdd3', '#fce7f3', '#fecaca'],
     });
   }, [gardenCycle]);
 
+  // Cho hoa nở lại từ đầu
   const handleReplayGarden = useCallback(() => {
     soundManager.playFlowerBloomSound();
     confetti({
       particleCount: 50,
       spread: 80,
-      origin: { y: 0.8 },
-      colors: ['#fda4af', '#f472b6', '#fed7aa', '#86efac', '#7dd3fc'],
+      origin: { y: 0.78 },
+      colors: ['#fda4af', '#f472b6', '#fbcfe8', '#fecdd3'],
     });
     setGardenCycle((prev) => prev + 1);
   }, []);
 
   return (
     <div className="fixed inset-0 z-50 w-full h-full overflow-hidden select-none flex flex-col items-center justify-between">
-      {/* ================ GLOBAL SVG DEFS ================ */}
+      {/* =================================================================== */}
+      {/* 0. BỘ LỌC ĐỔ BÓNG SVG DÙNG CHUNG (TỐI ƯU HIỆU NĂNG 60FPS)            */}
+      {/* =================================================================== */}
       <svg className="absolute w-0 h-0 pointer-events-none" aria-hidden="true">
         <defs>
-          {PALETTES.map((p) => (
-            <React.Fragment key={`defs-${p.name}`}>
-              <filter id={`sh-${p.name}`} x="-15%" y="-15%" width="130%" height="130%">
-                <feDropShadow dx="0" dy="1" stdDeviation="0.7" floodColor={p.stroke} floodOpacity="0.28" />
+          {ROSE_PALETTES.map((p) => (
+            <React.Fragment key={`defs-rose-${p.name}`}>
+              <filter id={`rose-sh-${p.name}`} x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="1.2" stdDeviation="0.9" floodColor={p.stroke} floodOpacity="0.28" />
               </filter>
-              <linearGradient id={`bud-g-${p.name}`} x1="0" y1="1" x2="0" y2="0">
+              <linearGradient id={`bud-grad-${p.name}`} x1="0" y1="1" x2="0" y2="0">
                 <stop offset="0%" stopColor="#ffffff" />
-                <stop offset="30%" stopColor={p.l1} />
-                <stop offset="65%" stopColor={p.l2} />
-                <stop offset="100%" stopColor={p.l4} />
+                <stop offset="35%" stopColor={p.c1} />
+                <stop offset="70%" stopColor={p.c2} />
+                <stop offset="100%" stopColor={p.c4} />
               </linearGradient>
             </React.Fragment>
           ))}
         </defs>
       </svg>
 
-      {/* ================ 1. NỀN TRỜI XANH PASTEL ================ */}
-      <div className="absolute inset-0 -z-30 bg-gradient-to-b from-[#a0d4ef] via-[#c6e6f7] to-[#e4f3fa]" />
+      {/* =================================================================== */}
+      {/* 1. PHÔNG NỀN HỒNG PHẤN PASTEL DỊU DÀNG, LÃNG MẠN (THEO YÊU CẦU)     */}
+      {/* =================================================================== */}
+      <div className="absolute inset-0 -z-30 bg-gradient-to-b from-[#fff0f4] via-[#fde4ec] to-[#f9c2d3]" />
 
-      {/* Mây trắng */}
-      <div className="absolute inset-0 -z-20 pointer-events-none opacity-40">
-        <div className="absolute top-[5%] left-[6%] w-80 h-24 rounded-full bg-white/70 blur-2xl" />
-        <div className="absolute top-[14%] right-[4%] w-[28rem] h-32 rounded-full bg-white/55 blur-3xl" />
-        <div className="absolute top-[28%] left-[30%] w-96 h-28 rounded-full bg-white/45 blur-2xl" />
+      {/* Ánh sáng mây hồng trắng mờ ảo phía sau */}
+      <div className="absolute inset-0 -z-20 pointer-events-none opacity-45">
+        <div className="absolute top-[4%] left-[6%] w-84 h-28 rounded-full bg-white/70 blur-2xl" />
+        <div className="absolute top-[12%] right-[5%] w-[28rem] h-36 rounded-full bg-white/60 blur-3xl" />
+        <div className="absolute top-[26%] left-[28%] w-96 h-32 rounded-full bg-white/50 blur-2xl" />
       </div>
 
-      {/* Cánh hoa rơi */}
+      {/* Cánh hoa hồng rơi lất phất trong không gian hồng phấn */}
       <div className="absolute inset-0 -z-10 pointer-events-none overflow-hidden">
-        {[...Array(12)].map((_, i) => (
+        {[...Array(14)].map((_, i) => (
           <motion.div
-            key={`petal-${i}`}
-            initial={{ y: -30, x: `${(i * 8.5) % 100}%`, rotate: 0, opacity: 0 }}
+            key={`falling-petal-${i}`}
+            initial={{
+              y: -30,
+              x: `${(i * 7.5) % 100}%`,
+              rotate: 0,
+              opacity: 0,
+            }}
             animate={{
               y: ['0vh', '105vh'],
-              x: [`${(i * 8.5) % 100}%`, `${((i * 8.5) % 100) + (i % 2 === 0 ? 12 : -12)}%`],
-              rotate: [0, 360 + i * 40],
+              x: [`${(i * 7.5) % 100}%`, `${((i * 7.5) % 100) + (i % 2 === 0 ? 12 : -12)}%`],
+              rotate: [0, 360 + i * 45],
               opacity: [0, 0.7, 0.7, 0],
             }}
             transition={{
               duration: 8 + (i % 4) * 1.5,
               repeat: Infinity,
-              delay: i * 0.55,
+              delay: i * 0.5,
               ease: 'linear',
             }}
             className="absolute"
           >
             <div
-              className="w-3 h-3 rounded-full"
+              className="w-3.5 h-3.5 rounded-full"
               style={{
                 background:
                   i % 3 === 0
-                    ? 'radial-gradient(circle, #fecdd3, #fb7185)'
+                    ? 'radial-gradient(circle, #fecdd3 0%, #fb7185 100%)'
                     : i % 3 === 1
-                    ? 'radial-gradient(circle, #ffedd5, #fb923c)'
-                    : 'radial-gradient(circle, #fef9c3, #facc15)',
+                    ? 'radial-gradient(circle, #ffedd5 0%, #fb923c 100%)'
+                    : 'radial-gradient(circle, #ffe4e6 0%, #f43f5e 100%)',
                 borderRadius: '60% 40% 70% 30% / 50% 60% 40% 50%',
+                boxShadow: '0 2px 6px rgba(0,0,0,0.08)',
               }}
             />
           </motion.div>
         ))}
       </div>
 
-      {/* ================ 2. TIÊU ĐỀ ================ */}
-      <header className="relative z-30 pt-4 sm:pt-5 px-4 text-center max-w-md w-full">
+      {/* 2. DÒNG TIÊU ĐỀ THANH LỊCH TRÊN CÙNG */}
+      <header className="relative z-30 pt-4 sm:pt-6 px-4 text-center max-w-md w-full">
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           className="flex flex-col items-center gap-1"
         >
-          <div className="flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white/80 backdrop-blur-md border border-sky-200/80 shadow-xs">
+          <div className="flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white/85 backdrop-blur-md border border-pink-200/80 shadow-xs">
             <Sparkles className="w-3.5 h-3.5 text-amber-500" />
             <span className="text-xs font-semibold text-stone-700">
-              Rừng hoa nở rộ chúc mừng sinh nhật em 🌸
+              Rừng hoa hồng nở rộ chúc mừng sinh nhật em 🌸
             </span>
           </div>
         </motion.div>
       </header>
 
-      {/* ================ 3. VƯỜN HOA 130 ĐÓA DÀY ĐẶC ================ */}
+      {/* =================================================================== */}
+      {/* 3. THẢM HOA HỒNG CHIẾM 2/3 MÀN HÌNH & PHỦ KÍN MÉP ĐÁY DƯỚI CÙNG     */}
+      {/* =================================================================== */}
       <div
         key={`garden-${gardenCycle}`}
         className="relative w-full flex-1 flex items-end justify-center pointer-events-none overflow-hidden"
       >
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {/* A. 135 ĐÓA HOA CÓ CÀNH LÁ VƯƠN CAO CHIẾM 2/3 MÀN HÌNH */}
           {flowers.map((fl) => {
-            const pal = PALETTES[fl.paletteIndex];
+            const pal = ROSE_PALETTES[fl.paletteIndex];
             return (
               <div
-                key={`f-${fl.id}`}
+                key={`flower-${fl.id}`}
                 style={{
                   position: 'absolute',
                   left: `${fl.x}%`,
                   bottom: 0,
-                  height: `${fl.heightPct}%`,
-                  width: `${fl.flowerSize + 4}px`,
+                  height: `${fl.heightPct}%`, // Chiều cao tối đa 68% = 2/3 màn hình
+                  width: `${fl.flowerSize + 6}px`,
                   transform: 'translateX(-50%)',
                   zIndex: fl.zIndex,
                   filter: fl.brightnessFilter,
                 }}
               >
-                {/* Lắc lư trong gió */}
+                {/* Khối lắc lư theo gió tự nhiên */}
                 <div
                   style={
                     {
@@ -302,35 +385,35 @@ export default function FlowerForest({ onNext, onBackToCake }: Props) {
                   }
                   className="flex flex-col items-center justify-between"
                 >
-                  {/* ĐÓA HOA / NỤ */}
+                  {/* ĐÓA HOA HỒNG NỞ TRÊN ĐỈNH */}
                   <motion.div
                     initial={{ scale: 0, rotate: -15 }}
                     animate={{ scale: [0, 1.12, 1], rotate: 0 }}
                     transition={{
-                      duration: 0.8,
-                      delay: fl.growDelay + 0.3,
+                      duration: 0.85,
+                      delay: fl.growDelay + 0.32,
                       ease: [0.16, 1, 0.3, 1],
                     }}
-                    className="relative z-20 flex items-center justify-center -mb-1"
+                    className="relative z-20 flex items-center justify-center -mb-2"
                     style={{
                       width: `${fl.flowerSize}px`,
                       height: `${fl.flowerSize}px`,
                     }}
                   >
                     {fl.type === 'rose' && (
-                      <QuilledPaperRose size={fl.flowerSize} palette={pal} ringCount={fl.ringCount} />
+                      <BotanicalEnglishRose size={fl.flowerSize} palette={pal} />
                     )}
                     {fl.type === 'bud' && (
-                      <TeardropBud size={fl.flowerSize} palette={pal} />
+                      <SlenderTeardropBud size={fl.flowerSize} palette={pal} />
                     )}
                   </motion.div>
 
-                  {/* THÂN CÀNH + LÁ */}
+                  {/* THÂN CÀNH VÀ LÁ MỌC VÚT LÊN TỪ ĐÁY */}
                   <motion.div
                     initial={{ scaleY: 0 }}
                     animate={{ scaleY: 1 }}
                     transition={{
-                      duration: 0.85,
+                      duration: 0.88,
                       delay: fl.growDelay,
                       ease: 'easeOut',
                     }}
@@ -338,41 +421,55 @@ export default function FlowerForest({ onNext, onBackToCake }: Props) {
                     className="relative w-full flex-1 flex justify-center overflow-visible"
                   >
                     <svg
-                      width={Math.max(40, fl.flowerSize)}
+                      width={Math.max(42, fl.flowerSize)}
                       height="100%"
                       viewBox="0 0 60 300"
                       preserveAspectRatio="none"
                       className="overflow-visible"
                     >
-                      {/* Thân */}
+                      {/* Thân cành */}
                       <path
                         d={`M 30 300 Q ${30 + fl.stemCurve} 150 30 0`}
                         fill="none"
-                        stroke={fl.zIndex < 12 ? '#22c55e' : '#15803d'}
-                        strokeWidth={fl.zIndex < 12 ? '2.5' : '3.2'}
+                        stroke={fl.zIndex < 15 ? '#22c55e' : '#15803d'}
+                        strokeWidth={fl.zIndex < 15 ? '2.6' : '3.4'}
                         strokeLinecap="round"
                       />
-                      {/* Lá trái */}
+                      {/* Lá trái với gân lá */}
                       <path
                         d="M 30 155 Q 10 138 4 115 Q 16 128 30 148"
                         fill="#16a34a"
                         stroke="#14532d"
                         strokeWidth="0.8"
                       />
-                      {/* Lá phải */}
+                      <path
+                        d="M 30 148 Q 18 135 8 120"
+                        fill="none"
+                        stroke="#14532d"
+                        strokeWidth="0.5"
+                        opacity="0.6"
+                      />
+                      {/* Lá phải với gân lá */}
                       <path
                         d="M 30 225 Q 50 208 56 185 Q 44 198 30 218"
                         fill="#15803d"
                         stroke="#14532d"
                         strokeWidth="0.8"
                       />
-                      {/* Lá nhỏ phụ */}
+                      <path
+                        d="M 30 218 Q 42 205 52 190"
+                        fill="none"
+                        stroke="#14532d"
+                        strokeWidth="0.5"
+                        opacity="0.6"
+                      />
+                      {/* Lá phụ cho hoa lớn */}
                       {fl.flowerSize > 55 && (
                         <path
-                          d="M 30 100 Q 18 90 12 74 Q 20 82 30 95"
+                          d="M 30 95 Q 16 85 10 70 Q 20 78 30 90"
                           fill="#22c55e"
                           stroke="#14532d"
-                          strokeWidth="0.6"
+                          strokeWidth="0.7"
                         />
                       )}
                     </svg>
@@ -381,13 +478,51 @@ export default function FlowerForest({ onNext, onBackToCake }: Props) {
               </div>
             );
           })}
+
+          {/* B. 24 HOA HỒNG LỚN NỞ SÁT MÉP ĐÁY DƯỚI CÙNG (KHÔNG ĐỂ LỘ KHOẢNG TRỐNG ĐÁY) */}
+          {groundRoses.map((gr) => {
+            const pal = ROSE_PALETTES[gr.paletteIndex];
+            return (
+              <motion.div
+                key={`ground-rose-${gr.id}`}
+                initial={{ scale: 0, rotate: -20 }}
+                animate={{ scale: [0, 1.1, 1], rotate: 0 }}
+                transition={{
+                  duration: 0.8,
+                  delay: gr.growDelay,
+                  ease: [0.16, 1, 0.3, 1],
+                }}
+                style={{
+                  position: 'absolute',
+                  left: `${gr.x}%`,
+                  bottom: `${gr.bottomOffsetPx}px`,
+                  transform: 'translateX(-50%)',
+                  zIndex: gr.zIndex,
+                  width: `${gr.size}px`,
+                  height: `${gr.size}px`,
+                }}
+              >
+                <div
+                  style={{
+                    animation: `gardenSway 3.2s ease-in-out infinite alternate`,
+                    animationDelay: `${gr.swayDelay}s`,
+                    '--sway-angle': '1.5deg',
+                  } as React.CSSProperties}
+                >
+                  <BotanicalEnglishRose size={gr.size} palette={pal} />
+                </div>
+              </motion.div>
+            );
+          })}
         </div>
 
-        {/* Thảm cỏ chân đáy */}
-        <div className="absolute bottom-0 left-0 right-0 h-12 pointer-events-none z-[35] bg-gradient-to-t from-[#15803d]/35 via-[#16a34a]/12 to-transparent" />
+        {/* Lớp bóng đổ xanh ngọc & lá xanh ôm trọn chân đáy màn hình */}
+        <div className="absolute bottom-0 left-0 right-0 h-14 pointer-events-none z-30 bg-gradient-to-t from-[#15803d]/30 via-[#16a34a]/10 to-transparent" />
       </div>
 
-      {/* ================ 4. THIỆP CHÚC MỪNG (CHỈ MỞ KHI BẤM NÚT) ================ */}
+      {/* =================================================================== */}
+      {/* 4. TẤM THIỆP CHÚC MỪNG (CHỈ MỞ KHI BẤM NÚT 'ĐỌC LẠI THIỆP')         */}
+      {/* =================================================================== */}
       <AnimatePresence>
         {showLetter && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs">
@@ -398,6 +533,7 @@ export default function FlowerForest({ onNext, onBackToCake }: Props) {
               transition={{ type: 'spring', damping: 25, stiffness: 280 }}
               className="relative w-full max-w-md rounded-[28px] bg-gradient-to-b from-[#fffefc]/95 via-[#fff8f9]/95 to-[#fff2f5]/95 p-6 sm:p-7 text-center shadow-[0_20px_60px_rgba(244,114,182,0.35)] border-2 border-pink-200/90 overflow-hidden"
             >
+              {/* Nút đóng góc phải */}
               <button
                 type="button"
                 onClick={() => setShowLetter(false)}
@@ -407,20 +543,24 @@ export default function FlowerForest({ onNext, onBackToCake }: Props) {
                 <X className="w-5 h-5" />
               </button>
 
+              {/* Trang trí góc */}
               <div className="absolute top-3 left-3 text-xs opacity-60">🌸</div>
               <div className="absolute bottom-3 left-3 text-xs opacity-60">🌿</div>
               <div className="absolute bottom-3 right-3 text-xs opacity-60">💖</div>
 
+              {/* Huy hiệu đỉnh thiệp */}
               <div className="flex justify-center -mt-1 mb-2">
                 <span className="px-3.5 py-1 rounded-full bg-rose-50 text-rose-600 text-[11px] font-bold border border-rose-200/80 shadow-2xs">
                   Gửi bạn thương mến 🌸
                 </span>
               </div>
 
+              {/* Tiêu đề chính bức thư */}
               <h3 className="text-lg sm:text-xl font-serif font-bold text-stone-800 tracking-tight leading-snug">
                 Mong những điều đẹp đẽ<br />luôn nở bên bạn.
               </h3>
 
+              {/* Nội dung lời chúc ý nghĩa */}
               <div className="mt-3.5 text-xs sm:text-[13px] text-stone-600 leading-relaxed space-y-2.5 font-medium px-1 sm:px-2">
                 <p>
                   Mỗi bông hoa có thể tàn một ngày không đẹp. Còn bạn, làm thế giới này dịu dàng hơn.
@@ -433,11 +573,13 @@ export default function FlowerForest({ onNext, onBackToCake }: Props) {
                 </p>
               </div>
 
+              {/* Lời kết ngọt ngào */}
               <div className="mt-3 pt-2 border-t border-pink-100 flex items-center justify-between text-[11px] text-stone-400 font-medium">
                 <span>Gửi bạn thật nhiều thương yêu ♡</span>
                 <span className="font-bold text-rose-500">ngàn đóa hoa</span>
               </div>
 
+              {/* Các nút bấm tương tác */}
               <div className="mt-5 flex flex-col sm:flex-row gap-2">
                 <button
                   type="button"
@@ -463,8 +605,11 @@ export default function FlowerForest({ onNext, onBackToCake }: Props) {
         )}
       </AnimatePresence>
 
-      {/* ================ 5. NÚT ĐIỀU KHIỂN ĐÁY MÀN HÌNH ================ */}
+      {/* =================================================================== */}
+      {/* 5. NÚT ĐIỀU KHIỂN DƯỚI ĐÁY CHUẨN XÁC THEO ẢNH MẪU                   */}
+      {/* =================================================================== */}
       <footer className="relative z-40 pb-5 px-4 flex flex-wrap items-center justify-center gap-2.5 max-w-lg w-full">
+        {/* Nút 'Đọc lại thiệp' */}
         <button
           type="button"
           onClick={() => setShowLetter(true)}
@@ -475,6 +620,7 @@ export default function FlowerForest({ onNext, onBackToCake }: Props) {
           <span>Đọc lại thiệp</span>
         </button>
 
+        {/* Nút 'Cho hoa nở lại' */}
         <button
           type="button"
           onClick={handleReplayGarden}
@@ -485,6 +631,7 @@ export default function FlowerForest({ onNext, onBackToCake }: Props) {
           <span>Cho hoa nở lại</span>
         </button>
 
+        {/* Nút xem lại bánh kem */}
         {onBackToCake && (
           <button
             type="button"
@@ -496,6 +643,7 @@ export default function FlowerForest({ onNext, onBackToCake }: Props) {
           </button>
         )}
 
+        {/* Nút chuyển tiếp sang Mở 3 Chiếc Hộp Bí Mật */}
         <button
           type="button"
           onClick={onNext}
@@ -507,10 +655,15 @@ export default function FlowerForest({ onNext, onBackToCake }: Props) {
         </button>
       </footer>
 
+      {/* Global CSS keyframes cho hiệu ứng đung đưa cành hoa mượt mà */}
       <style jsx global>{`
         @keyframes gardenSway {
-          0% { transform: rotate(calc(-1 * var(--sway-angle, 2deg))); }
-          100% { transform: rotate(var(--sway-angle, 2deg)); }
+          0% {
+            transform: rotate(calc(-1 * var(--sway-angle, 2deg)));
+          }
+          100% {
+            transform: rotate(var(--sway-angle, 2deg));
+          }
         }
       `}</style>
     </div>
@@ -518,100 +671,127 @@ export default function FlowerForest({ onNext, onBackToCake }: Props) {
 }
 
 // ===================================================================
-// HOA HỒNG GIẤY CUỘN TRÒN ĐỒNG TÂM (QUILLED CONCENTRIC PAPER ROSE)
-// Mô phỏng chính xác hoa cuộn giấy trong ảnh mẫu TikTok:
-// Nhiều vòng tròn đồng tâm xếp chồng nhau, tạo hiệu ứng cuộn giấy xoắn ốc 3D
-// Vòng ngoài nhạt nhất → vòng trong đậm dần → tâm đậm nhất kèm xoắn trắng
+// HOA HỒNG ANH QUỐC NỞ ĐA TẦNG CÁNH UỐN LƯỢN (BOTANICAL ENGLISH ROSE)
+// Thiết kế tinh tế, không bị thô: Cánh hoa vỏ sò mềm mại, xếp đan xen so le,
+// có lá xanh lấp ló viền ngoài và lõi xoắn ốc hoa hồng đặc trưng
 // ===================================================================
+
 interface FlowerHeadProps {
   size: number;
-  palette: (typeof PALETTES)[0];
+  palette: (typeof ROSE_PALETTES)[0];
 }
 
-function QuilledPaperRose({ size, palette, ringCount }: FlowerHeadProps & { ringCount: number }) {
-  const p = palette;
-  const maxR = 47;
-  const minR = 6;
-  const step = (maxR - minR) / ringCount;
+function BotanicalEnglishRose({ size, palette }: FlowerHeadProps) {
+  const { c1, c2, c3, c4, c5, stroke } = palette;
 
-  // Bảng màu vòng tròn: luân phiên nhạt/đậm, tối dần vào tâm
-  const getColor = (i: number): string => {
-    const t = i / ringCount;
-    if (t < 0.25) return i % 2 === 0 ? p.l1 : p.l2;
-    if (t < 0.5) return i % 2 === 0 ? p.l2 : p.l3;
-    if (t < 0.75) return i % 2 === 0 ? p.l2 : p.l4;
-    return i % 2 === 0 ? p.l3 : p.l5;
-  };
-
-  // Tính trước tất cả vòng tròn để tránh tạo mảng trong render
-  const circles: React.ReactElement[] = [];
-  for (let i = 0; i <= ringCount; i++) {
-    const r = maxR - i * step;
-    // Offset xoắn ốc nhẹ: mỗi vòng lệch tâm một chút tạo hiệu ứng cuộn giấy
-    const angle = i * 0.55;
-    const mag = i * 0.22;
-    const cx = 50 + Math.cos(angle) * mag;
-    const cy = 50 + Math.sin(angle) * mag;
-
-    circles.push(
-      <circle
-        key={i}
-        cx={cx.toFixed(1)}
-        cy={cy.toFixed(1)}
-        r={r.toFixed(1)}
-        fill={getColor(i)}
-        stroke={p.stroke}
-        strokeWidth="0.5"
-      />
-    );
-  }
+  // 6 tầng cánh từ ngoài vào trong: Cánh rộng cuộn hình vỏ sò, có nếp hõm nhẹ ở giữa cánh hoa hồng
+  const layers = [
+    { n: 7, rOut: 48, rIn: 28, dip: 3.5, spread: 0.68, fill: c1, strokeW: 0.75, rot: 0 },
+    { n: 7, rOut: 42, rIn: 22, dip: 3.0, spread: 0.65, fill: c2, strokeW: 0.70, rot: 0.42 },
+    { n: 6, rOut: 35, rIn: 17, dip: 2.6, spread: 0.66, fill: c1, strokeW: 0.65, rot: 0.88 },
+    { n: 6, rOut: 28, rIn: 13, dip: 2.2, spread: 0.64, fill: c3, strokeW: 0.60, rot: 1.35 },
+    { n: 5, rOut: 21, rIn: 9,  dip: 1.8, spread: 0.66, fill: c4, strokeW: 0.55, rot: 1.85 },
+    { n: 5, rOut: 15, rIn: 6,  dip: 1.4, spread: 0.68, fill: c4, strokeW: 0.50, rot: 2.38 },
+  ];
 
   return (
-    <svg width={size} height={size} viewBox="0 0 100 100" className="overflow-visible">
-      <g filter={`url(#sh-${p.name})`}>
-        {circles}
-        {/* Tâm hoa đậm nhất */}
-        <circle cx="50" cy="50" r={(minR * 0.7).toFixed(1)} fill={p.l5} stroke={p.stroke} strokeWidth="0.4" />
-        {/* Xoắn ốc trắng ở tâm — dấu ấn đặc trưng quilled paper rose */}
-        <path
-          d="M 50 44 C 54 44 56.5 47 55.5 51 C 54.5 55 49 56 46 52.5 C 43.5 49.5 44.5 46 48 45.5 C 51 45 52.5 48 51 50.5 C 49.5 52.5 47.5 51.5 48 50"
-          fill="none"
-          stroke="#ffffff"
-          strokeWidth="0.9"
-          strokeLinecap="round"
-          opacity="0.8"
-        />
+    <svg width={size} height={size} viewBox="0 0 100 100" className="overflow-visible drop-shadow-xs">
+      {/* Lá xanh lấp ló quanh viền cánh ngoài cùng tạo nét tự nhiên sống động */}
+      <g filter={`url(#rose-sh-${palette.name})`}>
+        <path d="M 50 50 C 35 70 12 72 2 62 C 10 50 30 48 50 50 Z" fill="#15803d" stroke="#14532d" strokeWidth="0.7" />
+        <path d="M 50 50 C 65 70 88 72 98 62 C 90 50 70 48 50 50 Z" fill="#16a34a" stroke="#14532d" strokeWidth="0.7" />
+        <path d="M 50 50 C 60 25 80 12 88 20 C 82 32 68 40 50 50 Z" fill="#15803d" stroke="#14532d" strokeWidth="0.7" />
+      </g>
+
+      {/* 6 tầng cánh hoa xếp so le xoắn ốc */}
+      {layers.map((layer, lIdx) => {
+        let d = '';
+        let foldLines = '';
+        const count = layer.n;
+        const angleStep = (Math.PI * 2) / count;
+
+        for (let i = 0; i < count; i++) {
+          const aMid = i * angleStep + layer.rot;
+          const aLeft = aMid - angleStep * layer.spread;
+          const aRight = aMid + angleStep * layer.spread;
+
+          const aPeakL = aMid - angleStep * 0.26;
+          const aPeakR = aMid + angleStep * 0.26;
+
+          // Điểm neo trong
+          const bx1 = 50 + layer.rIn * Math.cos(aLeft);
+          const by1 = 50 + layer.rIn * Math.sin(aLeft);
+
+          const bx2 = 50 + layer.rIn * Math.cos(aRight);
+          const by2 = 50 + layer.rIn * Math.sin(aRight);
+
+          // Điểm đỉnh cánh hoa uốn lượn
+          const pxL = 50 + layer.rOut * Math.cos(aPeakL);
+          const pyL = 50 + layer.rOut * Math.sin(aPeakL);
+
+          const pxDip = 50 + (layer.rOut - layer.dip) * Math.cos(aMid);
+          const pyDip = 50 + (layer.rOut - layer.dip) * Math.sin(aMid);
+
+          const pxR = 50 + layer.rOut * Math.cos(aPeakR);
+          const pyR = 50 + layer.rOut * Math.sin(aPeakR);
+
+          d += `M ${bx1.toFixed(1)} ${by1.toFixed(1)} ` +
+            `C ${bx1.toFixed(1)} ${by1.toFixed(1)} ${pxL.toFixed(1)} ${pyL.toFixed(1)} ${pxDip.toFixed(1)} ${pyDip.toFixed(1)} ` +
+            `C ${pxDip.toFixed(1)} ${pyDip.toFixed(1)} ${pxR.toFixed(1)} ${pyR.toFixed(1)} ${bx2.toFixed(1)} ${by2.toFixed(1)} ` +
+            `Q 50 50 ${bx1.toFixed(1)} ${by1.toFixed(1)} Z `;
+
+          foldLines += `M ${pxDip.toFixed(1)} ${pyDip.toFixed(1)} Q 50 50 ${((bx1 + bx2) / 2).toFixed(1)} ${((by1 + by2) / 2).toFixed(1)} `;
+        }
+
+        return (
+          <g key={`rose-layer-${lIdx}`} filter={`url(#rose-sh-${palette.name})`}>
+            <path d={d} fill={layer.fill} stroke={stroke} strokeWidth={layer.strokeW} strokeLinejoin="round" />
+            <path d={foldLines} fill="none" stroke="#ffffff" strokeWidth="0.45" strokeLinecap="round" opacity="0.4" />
+          </g>
+        );
+      })}
+
+      {/* Tâm hoa hồng cuộn chặt (Rose Bud Core) */}
+      <g filter={`url(#rose-sh-${palette.name})`}>
+        {/* Vỏ bao nhụy */}
+        <path d="M 43 49 C 41 42 47 37 54 39 C 60 41 60 48 57 53 C 53 58 45 57 43 49 Z" fill={c4} stroke={stroke} strokeWidth="0.55" />
+        {/* Cánh cuộn trăng khuyết 1 */}
+        <path d="M 46 47 C 45 42 51 40 55 42 C 58 44 57 49 54 51 C 51 53 47 52 46 47 Z" fill={c5} stroke={stroke} strokeWidth="0.55" />
+        {/* Cánh cuộn trăng khuyết 2 */}
+        <path d="M 48 46 C 48 43 52 42 54 44 C 55 46 54 49 52 50 C 50 50 48 49 48 46 Z" fill={c4} stroke={stroke} strokeWidth="0.5" />
+        {/* Nét uốn xoắn ốc highlight tinh tế */}
+        <path d="M 52 43 C 55 44 55 47 53 49 C 51 51 49 49 49 47 C 49 45 52 44 53 45" fill="none" stroke="#ffffff" strokeWidth="0.85" strokeLinecap="round" opacity="0.85" />
       </g>
     </svg>
   );
 }
 
 // ===================================================================
-// NỤ HOA GIỌT NƯỚC VƯƠN CAO XEN KẼ (TEARDROP BUD)
-// Nụ nhọn thanh mảnh trên cành cao, giống ảnh mẫu TikTok
+// NỤ HOA HỒNG GIỌT NƯỚC THANH MẢNH TRÊN ĐÀI XANH (SLENDER TEARDROP BUD)
 // ===================================================================
-function TeardropBud({ size, palette }: FlowerHeadProps) {
-  const p = palette;
-  const w = size * 0.8;
-  const h = size * 1.3;
+
+function SlenderTeardropBud({ size, palette }: FlowerHeadProps) {
+  const { stroke, c1 } = palette;
+  const w = size * 0.72;
+  const h = size * 1.15;
+
   return (
-    <svg width={w} height={h} viewBox="0 0 60 90" className="overflow-visible">
-      <g filter={`url(#sh-${p.name})`}>
-        {/* Thân nụ giọt nước */}
-        <path
-          d="M 30 8 C 14 26 10 56 30 74 C 50 56 46 26 30 8 Z"
-          fill={`url(#bud-g-${p.name})`}
-          stroke={p.stroke}
-          strokeWidth="0.7"
-        />
-        {/* Gân nếp gấp */}
-        <path d="M 30 8 Q 32 40 30 74" fill="none" stroke={p.stroke} strokeWidth="0.6" opacity="0.5" />
-        <path d="M 30 74 C 22 64 18 46 22 28" fill="none" stroke={p.l1} strokeWidth="1" opacity="0.6" />
-      </g>
-      {/* Đài hoa xanh */}
-      <path d="M 30 74 C 23 76 14 68 12 52 C 17 64 24 70 30 74 Z" fill="#15803d" stroke="#14532d" strokeWidth="0.6" />
-      <path d="M 30 74 C 37 76 46 68 48 52 C 43 64 36 70 30 74 Z" fill="#16a34a" stroke="#14532d" strokeWidth="0.6" />
-      <path d="M 30 72 L 30 86" stroke="#15803d" strokeWidth="2.2" strokeLinecap="round" />
+    <svg width={w} height={h} viewBox="0 0 60 90" className="overflow-visible drop-shadow-xs">
+      {/* Thân búp hoa giọt nước chuyển màu mượt mà */}
+      <path
+        d="M 30 10 C 15 28 12 55 30 72 C 48 55 45 28 30 10 Z"
+        fill={`url(#bud-grad-${palette.name})`}
+        stroke={stroke}
+        strokeWidth="0.75"
+        filter={`url(#rose-sh-${palette.name})`}
+      />
+      {/* Nếp gấp gân nụ hoa */}
+      <path d="M 30 10 Q 32 40 30 72" fill="none" stroke={stroke} strokeWidth="0.65" opacity="0.5" />
+      <path d="M 30 72 C 22 62 18 45 22 30" fill="none" stroke={c1} strokeWidth="1.1" opacity="0.6" />
+      {/* Đài hoa xanh ôm giữ gốc búp */}
+      <path d="M 30 72 C 24 74 16 68 14 54 C 18 64 24 68 30 72 Z" fill="#15803d" stroke="#14532d" strokeWidth="0.65" />
+      <path d="M 30 72 C 36 74 44 68 46 54 C 42 64 36 68 30 72 Z" fill="#16a34a" stroke="#14532d" strokeWidth="0.65" />
+      <path d="M 30 70 L 30 84" stroke="#15803d" strokeWidth="2.4" strokeLinecap="round" />
     </svg>
   );
 }
