@@ -140,6 +140,17 @@ class SoundManager {
     });
   }
 
+  // 🌸 Tiếng rừng hoa nở rộ lấp lánh (Harp arpeggio blooming chord)
+  public playFlowerBloomSound() {
+    if (this.isMuted) return;
+    const notes = [392.00, 440.00, 523.25, 659.25, 783.99, 880.00, 1046.50, 1318.51]; // G4, A4, C5, E5, G5, A5, C6, E6
+    notes.forEach((freq, idx) => {
+      setTimeout(() => {
+        if (!this.isMuted) this.playMusicBoxNote(freq, 1.4);
+      }, idx * 110);
+    });
+  }
+
   // Tiếng thổi phù / nến tắt
   public playBlowSound() {
     if (this.isMuted) return;

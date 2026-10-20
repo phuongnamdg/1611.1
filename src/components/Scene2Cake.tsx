@@ -7,6 +7,7 @@ import { Gift, ArrowRight } from "lucide-react";
 import { soundManager } from "@/utils/sound";
 import { BirthdayConfig } from "@/types/birthday";
 import Cake2D from "./Cake2D";
+import FlowerForest from "./FlowerForest";
 
 interface Props {
   config?: BirthdayConfig;
@@ -24,6 +25,7 @@ export default function Scene2Cake({ onNext }: Props) {
   const [stage, setStage] = useState<"TYPING" | "READY_TO_BLOW">("TYPING");
   const [sentenceIdx, setSentenceIdx] = useState<number>(0);
   const [isCandleBlown, setIsCandleBlown] = useState<boolean>(false);
+  const [showFlowerForest, setShowFlowerForest] = useState<boolean>(false);
 
   // Micro để thổi nến
   const [canClickToExtinguish, setCanClickToExtinguish] = useState<boolean>(false);
@@ -65,6 +67,10 @@ export default function Scene2Cake({ onNext }: Props) {
       soundManager.playCelebrationCheer();
       fireConfetti();
     }, 350);
+    // Tự động mọc rừng hoa sau khi nến tắt 2 giây
+    setTimeout(() => {
+      setShowFlowerForest(true);
+    }, 2000);
   }, [isCandleBlown, stopMic, fireConfetti]);
 
   // Micro thổi nến (Nhận diện chính xác hơi thổi / tiếng phù vào mic)
@@ -406,25 +412,55 @@ export default function Scene2Cake({ onNext }: Props) {
             />
           </div>
 
-          {/* CHỈ KHI NẾN TẮT MỚI XUẤT HIỆN NÚT CHUYỂN TIẾP */}
+          {/* CHỈ KHI NẾN TẮT MỚI XUẤT HIỆN CÁC NÚT */}
           {isCandleBlown && (
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              className="w-full pb-4 max-w-xs mt-2"
+              className="w-full pb-4 max-w-xs mt-2 flex flex-col gap-2"
             >
+              {/* Nút xem rừng hoa nở rộ */}
               <button
-                onClick={onNext}
-                className="w-full py-3.5 px-6 rounded-full bg-gradient-to-r from-pink-500 via-rose-500 to-pink-500 text-white font-bold text-base shadow-lg shadow-pink-300/40 flex items-center justify-center gap-2 hover:brightness-105 active:scale-95 transition-all cursor-pointer"
+                type="button"
+                onClick={() => setShowFlowerForest(true)}
+                className="w-full py-3 px-5 rounded-full bg-gradient-to-r from-pink-400 via-rose-400 to-pink-500 text-white font-bold text-sm shadow-md shadow-pink-300/40 flex items-center justify-center gap-2 hover:scale-105 active:scale-95 transition-all cursor-pointer"
               >
-                <Gift className="w-5 h-5 text-amber-200 animate-spin" />
-                Mở 3 Chiếc Hộp Bí Mật
-                <ArrowRight className="w-5 h-5" />
+                <span>🌸</span>
+                <span>Bước vào Rừng Hoa Nở Rộ 🌸</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={onNext}
+                className="w-full py-3 px-5 rounded-full bg-white/90 hover:bg-white text-rose-600 font-bold text-sm shadow-md shadow-pink-200/50 border border-pink-200 flex items-center justify-center gap-2 hover:scale-105 active:scale-95 transition-all cursor-pointer"
+              >
+                <Gift className="w-4 h-4 text-amber-500 animate-spin" />
+                <span>Mở 3 Chiếc Hộp Bí Mật</span>
+                <ArrowRight className="w-4 h-4" />
               </button>
             </motion.div>
           )}
         </div>
       )}
+
+      {/* 🌸 HIỆU ỨNG RỪNG HOA MỌC NỞ RỘ KHI THỔI NẾN (THEO MẪU TIKTOK) */}
+      <AnimatePresence>
+        {showFlowerForest && (
+          <motion.div
+            key="flower-forest-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.8 }}
+            className="fixed inset-0 z-50"
+          >
+            <FlowerForest
+              onNext={onNext}
+              onBackToCake={() => setShowFlowerForest(false)}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }
