@@ -155,7 +155,7 @@ export default function PaintWipeReveal({ onNext, onBackToCake }: Props) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const isPointerDownRef = useRef<boolean>(false);
   const lastPointRef = useRef<{ x: number; y: number } | null>(null);
-  const buttonElRef = useRef<HTMLButtonElement | null>(null);
+  const buttonElRef = useRef<HTMLDivElement | null>(null);
   const animFrameIdRef = useRef<number | null>(null);
 
   // ===================================================================
@@ -508,72 +508,199 @@ export default function PaintWipeReveal({ onNext, onBackToCake }: Props) {
   return (
     <div className="fixed inset-0 z-50 w-full h-full overflow-hidden select-none bg-transparent flex items-center justify-center pointer-events-auto">
       {/* =================================================================== */}
-      {/* 1. LỚP BÊN DƯỚI: NÚT CHUYỂN TRANG & KHÔNG GIAN BÍ MẬT LỘ RA KHI LAU */}
+      {/* 1. LỚP BÊN DƯỚI: PHONG BÌ THƯ VINTAGE HOA DẠI & CON DẤU SÁP TÍM     */}
+      {/* (CHUẨN 100% THEO ẢNH MẪU: KRAFT ENVELOPE + BOTANICAL + TAP TO OPEN)  */}
       {/* CHỈ XUẤT HIỆN KHI ĐÃ ĐỔ SƠN PHỦ KÍN 100% MÀN HÌNH (!isPouring)      */}
-      {/* TUYỆT ĐỐI KHÔNG HIỂN THỊ KHI ĐANG ĐỔ SƠN ĐỂ SƠN ĐỔ TRỰC TIẾP LÊN BÁNH*/}
       {/* =================================================================== */}
       {!isPouring && (
-        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center p-6 text-center bg-gradient-to-b from-[#fff0f4] via-[#fde2e8] to-[#ffd1dc] overflow-hidden select-none">
-          {/* Ánh sao lung linh */}
-          <div className="absolute inset-0 pointer-events-none opacity-40">
-            {[...Array(22)].map((_, i) => (
+        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center p-6 text-center bg-[#f6eee0] overflow-hidden select-none">
+          {/* Họa tiết giấy linen / parchment vintage mờ nhẹ */}
+          <div className="absolute inset-0 pointer-events-none opacity-25 bg-[radial-gradient(#d3c3a9_1px,transparent_1px)] [background-size:16px_16px]" />
+
+          {/* Ánh sáng lung linh màu mơ / pastel mờ ảo xung quanh */}
+          <div className="absolute inset-0 pointer-events-none opacity-30">
+            {[...Array(14)].map((_, i) => (
               <motion.div
                 key={`star-${i}`}
                 animate={{
-                  scale: [0.8, 1.3, 0.8],
-                  opacity: [0.2, 0.8, 0.2],
+                  scale: [0.7, 1.2, 0.7],
+                  opacity: [0.2, 0.7, 0.2],
                 }}
                 transition={{
-                  duration: 2.2 + (i % 4) * 0.5,
+                  duration: 2.5 + (i % 3) * 0.6,
                   repeat: Infinity,
-                  delay: i * 0.15,
+                  delay: i * 0.2,
                 }}
                 style={{
-                  top: `${(i * 17) % 95}%`,
-                  left: `${(i * 27) % 95}%`,
+                  top: `${(i * 19) % 92}%`,
+                  left: `${(i * 29) % 92}%`,
                 }}
-                className="absolute text-pink-400 text-lg"
+                className="absolute text-amber-600/40 text-sm"
               >
                 ✦
               </motion.div>
             ))}
           </div>
 
-          {/* Nội dung bên dưới lộ dần theo từng nét lau */}
-          <div className="relative z-20 flex flex-col items-center max-w-sm sm:max-w-md">
-            <div className="px-4 py-1.5 rounded-full bg-white/90 backdrop-blur-md border border-pink-200 text-rose-600 text-xs font-bold shadow-md shadow-pink-200/50 flex items-center gap-1.5 mb-4">
-              <Sparkles className="w-3.5 h-3.5 text-amber-500 animate-spin" />
-              <span>Điều bí mật đã lộ diện 🌸</span>
-            </div>
-
-            <h2 className="text-2xl sm:text-3xl font-serif font-bold text-stone-800 tracking-tight leading-snug drop-shadow-xs mb-2">
-              Em đã tìm thấy điều ước bí mật! 💖
-            </h2>
-
-            <p className="text-xs sm:text-sm text-stone-600 font-medium leading-relaxed max-w-xs mb-8">
-              Hãy bấm vào nút bên dưới để mở những món quà bất ngờ tiếp theo nhé!
-            </p>
-
-            {/* 🎁 NÚT CHUYỂN TRANG: LỘ RA DƯỚI NÉT LAU */}
-            <button
-              ref={buttonElRef}
-              type="button"
-              onClick={onNext}
-              className="group relative px-8 py-4 sm:py-4.5 sm:px-10 rounded-full bg-gradient-to-r from-pink-500 via-rose-500 to-pink-500 hover:brightness-105 text-white font-extrabold text-base sm:text-lg shadow-[0_12px_40px_rgba(244,63,94,0.5)] border-2 border-white/80 flex items-center justify-center gap-3 hover:scale-105 active:scale-95 transition-all cursor-pointer animate-pulse"
+          {/* 💌 PHONG BÌ THƯ VINTAGE NGHỆ THUẬT (THAY THẾ TOÀN BỘ NỘI DUNG CŨ) */}
+          <div
+            ref={buttonElRef}
+            onClick={() => {
+              soundManager.playUnlockSuccess();
+              confetti({
+                particleCount: 75,
+                spread: 85,
+                origin: { y: 0.6 },
+                colors: ['#cbb3d4', '#fbcfe8', '#fed7aa', '#f472b6', '#a78bfa'],
+              });
+              onNext();
+            }}
+            className="relative z-20 group cursor-pointer flex flex-col items-center select-none my-auto"
+          >
+            {/* THÂN PHONG BÌ THƯ */}
+            <motion.div
+              animate={{ y: [0, -6, 0] }}
+              transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.98 }}
+              className="relative w-64 sm:w-80 aspect-[4/3] drop-shadow-[0_16px_32px_rgba(150,120,85,0.25)] transition-transform duration-300"
             >
-              <Gift className="w-6 h-6 text-amber-200 animate-bounce" />
-              <span>Mở 3 Chiếc Hộp Bí Mật</span>
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1.5 transition-transform" />
-            </button>
+              <svg viewBox="0 0 380 270" className="w-full h-full overflow-visible">
+                <defs>
+                  {/* Gradient màu giấy Kraft Vintage */}
+                  <linearGradient id="kraftBase" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stopColor="#ede1cc" />
+                    <stop offset="50%" stopColor="#e5d4bc" />
+                    <stop offset="100%" stopColor="#dac2a4" />
+                  </linearGradient>
+                  <linearGradient id="kraftFlapTop" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stopColor="#f3e8d6" />
+                    <stop offset="60%" stopColor="#ecdec9" />
+                    <stop offset="100%" stopColor="#e0cfb5" />
+                  </linearGradient>
+                  <linearGradient id="kraftFlapSide" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor="#e4d2b9" />
+                    <stop offset="100%" stopColor="#d5bf9e" />
+                  </linearGradient>
+                  {/* Gradient con dấu sáp tím (Lavender Wax Seal) */}
+                  <radialGradient id="waxSeal" cx="42%" cy="38%" r="60%">
+                    <stop offset="0%" stopColor="#d3bad9" />
+                    <stop offset="45%" stopColor="#ad87b8" />
+                    <stop offset="85%" stopColor="#875e94" />
+                    <stop offset="100%" stopColor="#674472" />
+                  </radialGradient>
+                  {/* Bóng đổ nắp phong bì & con dấu */}
+                  <filter id="flapShadow" x="-10%" y="-10%" width="120%" height="130%">
+                    <feDropShadow dx="0" dy="4" stdDeviation="3.5" floodColor="#755a3c" floodOpacity="0.22" />
+                  </filter>
+                  <filter id="sealShadow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="0" dy="3.5" stdDeviation="3" floodColor="#42254e" floodOpacity="0.35" />
+                  </filter>
+                </defs>
+
+                {/* Khung thân phong bì viền giấy sờn tự nhiên */}
+                <rect x="10" y="10" width="360" height="250" rx="8" ry="8" fill="url(#kraftBase)" stroke="#cbb493" strokeWidth="1.2" />
+
+                {/* Nếp gấp cánh phong bì trái */}
+                <path d="M 10 10 L 190 145 L 10 260 Z" fill="url(#kraftFlapSide)" opacity="0.65" stroke="#caaE8c" strokeWidth="0.8" />
+                {/* Nếp gấp cánh phong bì phải */}
+                <path d="M 370 10 L 190 145 L 370 260 Z" fill="url(#kraftFlapSide)" opacity="0.75" stroke="#caaE8c" strokeWidth="0.8" />
+                {/* Nếp gấp đáy phong bì */}
+                <path d="M 10 260 L 190 138 L 370 260 Z" fill="#dfcca9" opacity="0.85" stroke="#caaE8c" strokeWidth="0.8" />
+
+                {/* Nắp phong bì gập xuống (Top Flap) */}
+                <path
+                  d="M 10 10 C 70 8, 130 14, 190 138 C 250 14, 310 8, 370 10 Z"
+                  fill="url(#kraftFlapTop)"
+                  filter="url(#flapShadow)"
+                  stroke="#c8af8d"
+                  strokeWidth="1"
+                />
+
+                {/* 🌸 HOA DẠI WATERCOLOR VẼ TRÊN NẮP PHONG BÌ (CHUẨN ẢNH MẪU 1) */}
+                <g transform="translate(190, 130)">
+                  {/* Cành cuống hoa trung tâm */}
+                  <path d="M 0 0 Q -4 -35 -2 -70" stroke="#718d73" strokeWidth="2" fill="none" strokeLinecap="round" />
+
+                  {/* 1. CÀNH HOA CHUÔNG HỒNG (DROOPING BELL FLOWERS) Ở GIỮA */}
+                  <path d="M -2 -50 Q -14 -55 -18 -48" stroke="#718d73" strokeWidth="1.2" fill="none" />
+                  <path d="M -18 -48 Q -24 -42 -22 -36 Q -18 -34 -14 -38 Q -16 -44 -18 -48 Z" fill="#d86e88" opacity="0.9" />
+                  <circle cx="-18" cy="-35" r="1.5" fill="#fdf2f4" />
+
+                  <path d="M -1 -60 Q 12 -65 16 -58" stroke="#718d73" strokeWidth="1.2" fill="none" />
+                  <path d="M 16 -58 Q 22 -52 20 -46 Q 16 -44 12 -48 Q 14 -54 16 -58 Z" fill="#e27c95" opacity="0.9" />
+                  <circle cx="16" cy="-45" r="1.5" fill="#fdf2f4" />
+
+                  <path d="M -2 -70 Q -6 -76 -3 -82 Q 1 -80 3 -75 Q 0 -71 -2 -70 Z" fill="#e889a0" opacity="0.95" />
+                  <path d="M -2 -42 Q 8 -46 9 -38" stroke="#718d73" strokeWidth="1.2" fill="none" />
+                  <path d="M 9 -38 Q 14 -32 12 -26 Q 8 -24 5 -29 Q 7 -35 9 -38 Z" fill="#d46782" opacity="0.88" />
+
+                  {/* 2. CÀNH QUẢ MỌNG TÍM (PURPLE BERRIES) BÊN TRÁI */}
+                  <path d="M -2 -25 Q -25 -40 -38 -65" stroke="#68846c" strokeWidth="1.6" fill="none" strokeLinecap="round" />
+                  <circle cx="-38" cy="-66" r="4.2" fill="#885e96" opacity="0.92" />
+                  <circle cx="-39.5" cy="-67.5" r="1.2" fill="#e9d8f0" />
+                  <circle cx="-33" cy="-56" r="4.5" fill="#9b6ea9" opacity="0.9" />
+                  <circle cx="-34.5" cy="-57.5" r="1.2" fill="#f1e3f7" />
+                  <circle cx="-25" cy="-48" r="4.2" fill="#7d538b" opacity="0.92" />
+                  <circle cx="-26.5" cy="-49.5" r="1.2" fill="#eed9f7" />
+                  <circle cx="-18" cy="-38" r="3.8" fill="#9465a3" opacity="0.88" />
+                  <path d="M -30 -60 Q -38 -58 -36 -52 Q -30 -54 -30 -60 Z" fill="#6d8e74" opacity="0.85" />
+                  <path d="M -21 -46 Q -28 -44 -26 -39 Q -20 -41 -21 -46 Z" fill="#6d8e74" opacity="0.85" />
+
+                  {/* 3. CÀNH LÁ XANH SAGE (GREEN LEAVES) BÊN PHẢI */}
+                  <path d="M 0 -22 Q 22 -40 38 -72" stroke="#5d7e6c" strokeWidth="1.6" fill="none" strokeLinecap="round" />
+                  <path d="M 38 -72 Q 46 -80 44 -86 Q 38 -84 34 -77 Q 35 -74 38 -72 Z" fill="#587c69" opacity="0.9" />
+                  <path d="M 33 -62 Q 44 -68 47 -63 Q 44 -56 35 -58 Z" fill="#678b77" opacity="0.88" />
+                  <path d="M 30 -65 Q 22 -72 18 -68 Q 20 -60 28 -62 Z" fill="#759885" opacity="0.85" />
+                  <path d="M 24 -48 Q 36 -54 39 -48 Q 36 -42 26 -44 Z" fill="#5c806d" opacity="0.88" />
+                  <path d="M 20 -51 Q 12 -58 8 -54 Q 10 -47 18 -48 Z" fill="#6f927f" opacity="0.85" />
+                  <path d="M 14 -34 Q 24 -38 26 -32 Q 23 -27 15 -30 Z" fill="#668a76" opacity="0.88" />
+                </g>
+
+                {/* 🟣 CON DẤU SÁP TÍM (LAVENDER WAX SEAL STAMP) Ở GIỮA */}
+                <g filter="url(#sealShadow)">
+                  {/* Vành sáp loang tự nhiên */}
+                  <path
+                    d="M 190 114
+                       C 202 113, 212 118, 219 126
+                       C 226 134, 227 146, 223 156
+                       C 219 166, 208 172, 196 172
+                       C 183 172, 172 165, 166 154
+                       C 160 143, 162 131, 169 123
+                       C 176 115, 182 114, 190 114 Z"
+                    fill="url(#waxSeal)"
+                  />
+                  {/* Vòng dập nổi bên trong */}
+                  <circle cx="193" cy="143" r="16" fill="none" stroke="#be9ec7" strokeWidth="1.5" opacity="0.65" />
+                  {/* Biểu tượng dập nổi trên con dấu */}
+                  <path
+                    d="M 193 135 C 190 131, 184 133, 185 139 C 186 144, 193 150, 193 151 C 193 150, 200 144, 201 139 C 202 133, 196 131, 193 135 Z"
+                    fill="#ebd8f1"
+                    opacity="0.82"
+                  />
+                  {/* Đốm sáng sáp bóng */}
+                  <ellipse cx="184" cy="130" rx="3" ry="1.8" fill="#ffffff" opacity="0.55" transform="rotate(-30 184 130)" />
+                </g>
+              </svg>
+            </motion.div>
+
+            {/* ✍️ DÒNG CHỮ VIẾT TAY "Tap to open" (CHUẨN THEO ẢNH MẪU 1) */}
+            <motion.p
+              animate={{ y: [0, -3, 0] }}
+              transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
+              className="font-dancing text-2xl sm:text-3xl text-[#b85b6a] font-bold tracking-wider italic mt-6 select-none transition-all group-hover:scale-105 group-hover:text-[#9e4352]"
+            >
+              Tap to open
+            </motion.p>
           </div>
 
-          {/* Các nút bấm điều hướng góc dưới */}
+          {/* Các nút bấm điều hướng góc dưới (Tone màu Kraft Vintage thanh nhã) */}
           <div className="absolute bottom-6 z-20 flex items-center gap-3">
             {onBackToCake && (
               <button
                 type="button"
                 onClick={onBackToCake}
-                className="px-3.5 py-1.5 rounded-full bg-white/85 hover:bg-white text-stone-600 text-xs font-semibold shadow-xs border border-pink-200 flex items-center gap-1.5 backdrop-blur-md cursor-pointer hover:scale-105 active:scale-95 transition-all"
+                className="px-3.5 py-1.5 rounded-full bg-[#ede1cc]/80 hover:bg-[#ede1cc] text-[#785b40] text-xs font-semibold shadow-xs border border-[#d8c3a1] flex items-center gap-1.5 backdrop-blur-md cursor-pointer hover:scale-105 active:scale-95 transition-all"
               >
                 <span>🎂</span>
                 <span>Xem lại bánh kem</span>
@@ -583,9 +710,9 @@ export default function PaintWipeReveal({ onNext, onBackToCake }: Props) {
             <button
               type="button"
               onClick={onNext}
-              className="px-3.5 py-1.5 rounded-full bg-white/85 hover:bg-white text-rose-600 text-xs font-semibold shadow-xs border border-pink-200 flex items-center gap-1 backdrop-blur-md cursor-pointer hover:scale-105 active:scale-95 transition-all"
+              className="px-3.5 py-1.5 rounded-full bg-[#ede1cc]/80 hover:bg-[#ede1cc] text-[#a04554] text-xs font-semibold shadow-xs border border-[#d8c3a1] flex items-center gap-1 backdrop-blur-md cursor-pointer hover:scale-105 active:scale-95 transition-all"
             >
-              <span>Bỏ qua lau sơn</span>
+              <span>Bỏ qua</span>
               <span>⏩</span>
             </button>
           </div>
@@ -617,7 +744,7 @@ export default function PaintWipeReveal({ onNext, onBackToCake }: Props) {
               className="px-5 py-2 rounded-full bg-white/90 backdrop-blur-md border border-pink-200 text-stone-700 text-xs sm:text-sm font-bold shadow-lg shadow-pink-300/40 flex items-center gap-2"
             >
               <span className="text-base">🧽</span>
-              <span>Dùng con trỏ hoặc ngón tay lau bớt sơn để tìm nút bấm ✨</span>
+              <span>Dùng con trỏ hoặc ngón tay lau bớt sơn để tìm bức thư bí mật ✨</span>
             </motion.div>
           </div>
 
