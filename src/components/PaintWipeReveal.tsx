@@ -150,6 +150,7 @@ const DRIP_STREAMS: OrganicDripStream[] = [
 export default function PaintWipeReveal({ onNext, onBackToCake }: Props) {
   const [isPouring, setIsPouring] = useState<boolean>(true);
   const [hasStartedWiping, setHasStartedWiping] = useState<boolean>(false);
+  const [isEnvelopeRevealed, setIsEnvelopeRevealed] = useState<boolean>(false);
   const [cursorPos, setCursorPos] = useState<{ x: number; y: number } | null>(null);
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -444,31 +445,67 @@ export default function PaintWipeReveal({ onNext, onBackToCake }: Props) {
     soundManager.playWipeSound();
   }, []);
 
-  // Kiểm tra xem vị trí bấm có trúng phong bì đã lau lộ diện hay không
+  // Tính toán diện tích phong bì đã được lau lộ ra (tỉ lệ 0 đến 1)
+  const getEnvelopeWipeProgress = useCallback((): number => {
+    if (!buttonElRef.current || !canvasRef.current) return 0;
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    if (!ctx) return 0;
+
+    const b = buttonElRef.current.getBoundingClientRect();
+    const bx = Math.max(0, Math.floor(b.left));
+    const by = Math.max(0, Math.floor(b.top));
+    const bw = Math.min(canvas.width - bx, Math.floor(b.width));
+    const bh = Math.min(canvas.height - by, Math.floor(b.height));
+
+    if (bw <= 0 || bh <= 0) return 0;
+
+    const imgData = ctx.getImageData(bx, by, bw, bh);
+    const data = imgData.data;
+    const totalPixels = data.length / 4;
+    const step = Math.max(1, Math.floor(totalPixels / 80)) * 4;
+    let transparentCount = 0;
+    let sampleCount = 0;
+
+    for (let i = 3; i < data.length; i += step) {
+      sampleCount++;
+      if (data[i] < 120) {
+        transparentCount++;
+      }
+    }
+
+    const ratio = sampleCount > 0 ? transparentCount / sampleCount : 0;
+    if (ratio >= 0.28) {
+      setIsEnvelopeRevealed(true);
+    }
+    return ratio;
+  }, []);
+
+  // Kiểm tra xem vị trí bấm có trúng phong bì VÀ phong bì đã được lau lộ diện (>= 28%) hay chưa
   const checkButtonClick = useCallback((x: number, y: number) => {
     if (!buttonElRef.current) return;
     const b = buttonElRef.current.getBoundingClientRect();
     const pad = 16;
     if (x >= b.left - pad && x <= b.right + pad && y >= b.top - pad && y <= b.bottom + pad) {
-      const canvas = canvasRef.current;
-      if (!canvas) return;
-      const ctx = canvas.getContext('2d', { willReadFrequently: true });
-      if (!ctx) return;
-
-      // Đọc pixel tại vị trí bấm: Nếu alpha < 155 nghĩa là sơn ở đây đã được lau sạch
-      const pixel = ctx.getImageData(Math.round(x), Math.round(y), 1, 1).data;
-      if (pixel[3] < 155) {
-        soundManager.playUnlockSuccess();
-        confetti({
-          particleCount: 75,
-          spread: 85,
-          origin: { y: 0.6 },
-          colors: ['#cbb3d4', '#fbcfe8', '#fed7aa', '#f472b6', '#a78bfa'],
-        });
-        onNext();
+      // BẮT BUỘC: Kiểm tra tỉ lệ lau sạch phong bì
+      const wipeRatio = getEnvelopeWipeProgress();
+      
+      // Nếu chưa lau sạch tối thiểu 28% diện tích phong bì -> KHÔNG CHO PHÉP MỞ!
+      if (wipeRatio < 0.28) {
+        return;
       }
+
+      // ĐÃ LAU SẠCH PHONG BÌ -> KÍCH HOẠT MỞ THƯ!
+      soundManager.playUnlockSuccess();
+      confetti({
+        particleCount: 75,
+        spread: 85,
+        origin: { y: 0.6 },
+        colors: ['#cbb3d4', '#fbcfe8', '#fed7aa', '#f472b6', '#a78bfa'],
+      });
+      onNext();
     }
-  }, [onNext]);
+  }, [getEnvelopeWipeProgress, onNext]);
 
   const handlePointerDown = useCallback((e: React.PointerEvent<HTMLCanvasElement>) => {
     if (isPouring) return;
@@ -483,9 +520,8 @@ export default function PaintWipeReveal({ onNext, onBackToCake }: Props) {
     setCursorPos({ x: e.clientX, y: e.clientY });
     erasePaint(x, y);
 
-    // Kiểm tra bấm nút
-    checkButtonClick(e.clientX, e.clientY);
-  }, [erasePaint, isPouring, checkButtonClick]);
+    // Tuyệt đối KHÔNG kiểm tra bấm nút ở pointerDown để tránh vừa chạm đã mở thư
+  }, [erasePaint, isPouring]);
 
   const handlePointerMove = useCallback((e: React.PointerEvent<HTMLCanvasElement>) => {
     setCursorPos({ x: e.clientX, y: e.clientY });
@@ -498,7 +534,10 @@ export default function PaintWipeReveal({ onNext, onBackToCake }: Props) {
 
     erasePaint(x, y, prev.x, prev.y);
     lastPointRef.current = { x, y };
-  }, [erasePaint, isPouring]);
+
+    // Cập nhật trạng thái hiển thị phong bì khi người dùng lau
+    getEnvelopeWipeProgress();
+  }, [erasePaint, isPouring, getEnvelopeWipeProgress]);
 
   const handlePointerUp = useCallback((e: React.PointerEvent<HTMLCanvasElement>) => {
     isPointerDownRef.current = false;
@@ -547,6 +586,9 @@ export default function PaintWipeReveal({ onNext, onBackToCake }: Props) {
           <div
             ref={buttonElRef}
             onClick={() => {
+              // BẮT BUỘC: Chỉ mở khi phong bì đã được lau lộ diện thật sự (>= 28%)
+              if (getEnvelopeWipeProgress() < 0.28) return;
+
               soundManager.playUnlockSuccess();
               confetti({
                 particleCount: 65,
