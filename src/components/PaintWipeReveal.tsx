@@ -444,25 +444,26 @@ export default function PaintWipeReveal({ onNext, onBackToCake }: Props) {
     soundManager.playWipeSound();
   }, []);
 
-  // Kiểm tra xem vị trí bấm có trúng nút bấm đã lau lộ diện hay không
+  // Kiểm tra xem vị trí bấm có trúng phong bì đã lau lộ diện hay không
   const checkButtonClick = useCallback((x: number, y: number) => {
     if (!buttonElRef.current) return;
     const b = buttonElRef.current.getBoundingClientRect();
-    if (x >= b.left && x <= b.right && y >= b.top && y <= b.bottom) {
+    const pad = 16;
+    if (x >= b.left - pad && x <= b.right + pad && y >= b.top - pad && y <= b.bottom + pad) {
       const canvas = canvasRef.current;
       if (!canvas) return;
       const ctx = canvas.getContext('2d', { willReadFrequently: true });
       if (!ctx) return;
 
-      // Đọc pixel tại vị trí bấm: Nếu alpha < 140 nghĩa là sơn ở đây đã được lau sạch
+      // Đọc pixel tại vị trí bấm: Nếu alpha < 155 nghĩa là sơn ở đây đã được lau sạch
       const pixel = ctx.getImageData(Math.round(x), Math.round(y), 1, 1).data;
-      if (pixel[3] < 140) {
-        soundManager.playCelebrationCheer();
+      if (pixel[3] < 155) {
+        soundManager.playUnlockSuccess();
         confetti({
-          particleCount: 85,
-          spread: 90,
+          particleCount: 75,
+          spread: 85,
           origin: { y: 0.6 },
-          colors: ['#fda4af', '#f43f5e', '#fed7aa', '#fef08a'],
+          colors: ['#cbb3d4', '#fbcfe8', '#fed7aa', '#f472b6', '#a78bfa'],
         });
         onNext();
       }
@@ -542,14 +543,14 @@ export default function PaintWipeReveal({ onNext, onBackToCake }: Props) {
             ))}
           </div>
 
-          {/* 💌 PHONG BÌ THƯ VINTAGE NGHỆ THUẬT (THAY THẾ TOÀN BỘ NỘI DUNG CŨ) */}
+          {/* 💌 PHONG BÌ THƯ VINTAGE VẼ TAY NHỎ NHẮN & NGHỆ THUẬT (CHUẨN ẢNH MẪU 1) */}
           <div
             ref={buttonElRef}
             onClick={() => {
               soundManager.playUnlockSuccess();
               confetti({
-                particleCount: 75,
-                spread: 85,
+                particleCount: 65,
+                spread: 80,
                 origin: { y: 0.6 },
                 colors: ['#cbb3d4', '#fbcfe8', '#fed7aa', '#f472b6', '#a78bfa'],
               });
@@ -557,138 +558,164 @@ export default function PaintWipeReveal({ onNext, onBackToCake }: Props) {
             }}
             className="relative z-20 group cursor-pointer flex flex-col items-center select-none my-auto"
           >
-            {/* THÂN PHONG BÌ THƯ */}
+            {/* THÂN PHONG BÌ THƯ BÉ XINH, VẼ TAY MỘC MẠC */}
             <motion.div
-              animate={{ y: [0, -6, 0] }}
-              transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.98 }}
-              className="relative w-64 sm:w-80 aspect-[4/3] drop-shadow-[0_16px_32px_rgba(150,120,85,0.25)] transition-transform duration-300"
+              animate={{ y: [0, -5, 0] }}
+              transition={{ duration: 3.2, repeat: Infinity, ease: 'easeInOut' }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.96 }}
+              className="relative w-44 sm:w-52 aspect-[4/3] drop-shadow-[0_10px_20px_rgba(145,115,80,0.22)] transition-transform duration-300"
             >
-              <svg viewBox="0 0 380 270" className="w-full h-full overflow-visible">
+              <svg viewBox="0 0 320 230" className="w-full h-full overflow-visible">
                 <defs>
-                  {/* Gradient màu giấy Kraft Vintage */}
+                  {/* Bộ lọc tạo viền sờn / nét vẽ tay thủ công tự nhiên cho mép giấy */}
+                  <filter id="handDrawn" x="-10%" y="-10%" width="120%" height="120%">
+                    <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" result="noise" />
+                    <feDisplacementMap in="SourceGraphic" in2="noise" scale="2.2" xChannelSelector="R" yChannelSelector="G" />
+                  </filter>
+
+                  {/* Gradient màu giấy Kraft loang nước mềm mại */}
                   <linearGradient id="kraftBase" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stopColor="#ede1cc" />
-                    <stop offset="50%" stopColor="#e5d4bc" />
-                    <stop offset="100%" stopColor="#dac2a4" />
+                    <stop offset="0%" stopColor="#ede2cf" />
+                    <stop offset="60%" stopColor="#e5d4bd" />
+                    <stop offset="100%" stopColor="#d8c2a3" />
                   </linearGradient>
+
                   <linearGradient id="kraftFlapTop" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stopColor="#f3e8d6" />
-                    <stop offset="60%" stopColor="#ecdec9" />
-                    <stop offset="100%" stopColor="#e0cfb5" />
+                    <stop offset="0%" stopColor="#f4ebda" />
+                    <stop offset="70%" stopColor="#ebdcc8" />
+                    <stop offset="100%" stopColor="#dfcdb2" />
                   </linearGradient>
-                  <linearGradient id="kraftFlapSide" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor="#e4d2b9" />
-                    <stop offset="100%" stopColor="#d5bf9e" />
-                  </linearGradient>
-                  {/* Gradient con dấu sáp tím (Lavender Wax Seal) */}
-                  <radialGradient id="waxSeal" cx="42%" cy="38%" r="60%">
-                    <stop offset="0%" stopColor="#d3bad9" />
-                    <stop offset="45%" stopColor="#ad87b8" />
-                    <stop offset="85%" stopColor="#875e94" />
-                    <stop offset="100%" stopColor="#674472" />
+
+                  {/* Gradient con dấu sáp tím loang nước */}
+                  <radialGradient id="waxSeal" cx="40%" cy="38%" r="62%">
+                    <stop offset="0%" stopColor="#cfb6d6" />
+                    <stop offset="48%" stopColor="#a983b6" />
+                    <stop offset="85%" stopColor="#835c91" />
+                    <stop offset="100%" stopColor="#634170" />
                   </radialGradient>
-                  {/* Bóng đổ nắp phong bì & con dấu */}
-                  <filter id="flapShadow" x="-10%" y="-10%" width="120%" height="130%">
-                    <feDropShadow dx="0" dy="4" stdDeviation="3.5" floodColor="#755a3c" floodOpacity="0.22" />
+
+                  {/* Bóng đổ êm dịu */}
+                  <filter id="softShadow" x="-15%" y="-15%" width="130%" height="130%">
+                    <feDropShadow dx="0" dy="2.5" stdDeviation="2.5" floodColor="#705235" floodOpacity="0.18" />
                   </filter>
                   <filter id="sealShadow" x="-20%" y="-20%" width="140%" height="140%">
-                    <feDropShadow dx="0" dy="3.5" stdDeviation="3" floodColor="#42254e" floodOpacity="0.35" />
+                    <feDropShadow dx="0" dy="2.5" stdDeviation="2.5" floodColor="#3c2049" floodOpacity="0.3" />
                   </filter>
                 </defs>
 
-                {/* Khung thân phong bì viền giấy sờn tự nhiên */}
-                <rect x="10" y="10" width="360" height="250" rx="8" ry="8" fill="url(#kraftBase)" stroke="#cbb493" strokeWidth="1.2" />
+                {/* Gốc thân phong bì nét vẽ tay */}
+                <g filter="url(#handDrawn)">
+                  {/* Nền phong bì */}
+                  <path
+                    d="M 12 12 Q 160 9, 308 12 Q 310 115, 308 218 Q 160 220, 12 218 Q 10 115, 12 12 Z"
+                    fill="url(#kraftBase)"
+                    stroke="#c7af8b"
+                    strokeWidth="0.8"
+                  />
 
-                {/* Nếp gấp cánh phong bì trái */}
-                <path d="M 10 10 L 190 145 L 10 260 Z" fill="url(#kraftFlapSide)" opacity="0.65" stroke="#caaE8c" strokeWidth="0.8" />
-                {/* Nếp gấp cánh phong bì phải */}
-                <path d="M 370 10 L 190 145 L 370 260 Z" fill="url(#kraftFlapSide)" opacity="0.75" stroke="#caaE8c" strokeWidth="0.8" />
-                {/* Nếp gấp đáy phong bì */}
-                <path d="M 10 260 L 190 138 L 370 260 Z" fill="#dfcca9" opacity="0.85" stroke="#caaE8c" strokeWidth="0.8" />
+                  {/* Vết loang màu nước nhẹ ở viền phong bì tạo chất mộc */}
+                  <path d="M 12 12 Q 160 14, 308 12 L 308 35 Q 160 40, 12 35 Z" fill="#dfcca9" opacity="0.35" />
+                  <path d="M 12 200 Q 160 196, 308 200 L 308 218 Q 160 220, 12 218 Z" fill="#d2bb95" opacity="0.38" />
 
-                {/* Nắp phong bì gập xuống (Top Flap) */}
-                <path
-                  d="M 10 10 C 70 8, 130 14, 190 138 C 250 14, 310 8, 370 10 Z"
-                  fill="url(#kraftFlapTop)"
-                  filter="url(#flapShadow)"
-                  stroke="#c8af8d"
-                  strokeWidth="1"
-                />
+                  {/* Nếp gấp cánh phong bì trái */}
+                  <path d="M 12 12 L 160 120 L 12 218 Z" fill="#e0ceb1" opacity="0.5" stroke="#caaE8c" strokeWidth="0.6" />
+                  {/* Nếp gấp cánh phong bì phải */}
+                  <path d="M 308 12 L 160 120 L 308 218 Z" fill="#d9c5a5" opacity="0.6" stroke="#caaE8c" strokeWidth="0.6" />
+                  {/* Nếp gấp đáy phong bì */}
+                  <path d="M 12 218 L 160 115 L 308 218 Z" fill="#dfcca9" opacity="0.75" stroke="#caaE8c" strokeWidth="0.6" />
 
-                {/* 🌸 HOA DẠI WATERCOLOR VẼ TRÊN NẮP PHONG BÌ (CHUẨN ẢNH MẪU 1) */}
-                <g transform="translate(190, 130)">
-                  {/* Cành cuống hoa trung tâm */}
-                  <path d="M 0 0 Q -4 -35 -2 -70" stroke="#718d73" strokeWidth="2" fill="none" strokeLinecap="round" />
-
-                  {/* 1. CÀNH HOA CHUÔNG HỒNG (DROOPING BELL FLOWERS) Ở GIỮA */}
-                  <path d="M -2 -50 Q -14 -55 -18 -48" stroke="#718d73" strokeWidth="1.2" fill="none" />
-                  <path d="M -18 -48 Q -24 -42 -22 -36 Q -18 -34 -14 -38 Q -16 -44 -18 -48 Z" fill="#d86e88" opacity="0.9" />
-                  <circle cx="-18" cy="-35" r="1.5" fill="#fdf2f4" />
-
-                  <path d="M -1 -60 Q 12 -65 16 -58" stroke="#718d73" strokeWidth="1.2" fill="none" />
-                  <path d="M 16 -58 Q 22 -52 20 -46 Q 16 -44 12 -48 Q 14 -54 16 -58 Z" fill="#e27c95" opacity="0.9" />
-                  <circle cx="16" cy="-45" r="1.5" fill="#fdf2f4" />
-
-                  <path d="M -2 -70 Q -6 -76 -3 -82 Q 1 -80 3 -75 Q 0 -71 -2 -70 Z" fill="#e889a0" opacity="0.95" />
-                  <path d="M -2 -42 Q 8 -46 9 -38" stroke="#718d73" strokeWidth="1.2" fill="none" />
-                  <path d="M 9 -38 Q 14 -32 12 -26 Q 8 -24 5 -29 Q 7 -35 9 -38 Z" fill="#d46782" opacity="0.88" />
-
-                  {/* 2. CÀNH QUẢ MỌNG TÍM (PURPLE BERRIES) BÊN TRÁI */}
-                  <path d="M -2 -25 Q -25 -40 -38 -65" stroke="#68846c" strokeWidth="1.6" fill="none" strokeLinecap="round" />
-                  <circle cx="-38" cy="-66" r="4.2" fill="#885e96" opacity="0.92" />
-                  <circle cx="-39.5" cy="-67.5" r="1.2" fill="#e9d8f0" />
-                  <circle cx="-33" cy="-56" r="4.5" fill="#9b6ea9" opacity="0.9" />
-                  <circle cx="-34.5" cy="-57.5" r="1.2" fill="#f1e3f7" />
-                  <circle cx="-25" cy="-48" r="4.2" fill="#7d538b" opacity="0.92" />
-                  <circle cx="-26.5" cy="-49.5" r="1.2" fill="#eed9f7" />
-                  <circle cx="-18" cy="-38" r="3.8" fill="#9465a3" opacity="0.88" />
-                  <path d="M -30 -60 Q -38 -58 -36 -52 Q -30 -54 -30 -60 Z" fill="#6d8e74" opacity="0.85" />
-                  <path d="M -21 -46 Q -28 -44 -26 -39 Q -20 -41 -21 -46 Z" fill="#6d8e74" opacity="0.85" />
-
-                  {/* 3. CÀNH LÁ XANH SAGE (GREEN LEAVES) BÊN PHẢI */}
-                  <path d="M 0 -22 Q 22 -40 38 -72" stroke="#5d7e6c" strokeWidth="1.6" fill="none" strokeLinecap="round" />
-                  <path d="M 38 -72 Q 46 -80 44 -86 Q 38 -84 34 -77 Q 35 -74 38 -72 Z" fill="#587c69" opacity="0.9" />
-                  <path d="M 33 -62 Q 44 -68 47 -63 Q 44 -56 35 -58 Z" fill="#678b77" opacity="0.88" />
-                  <path d="M 30 -65 Q 22 -72 18 -68 Q 20 -60 28 -62 Z" fill="#759885" opacity="0.85" />
-                  <path d="M 24 -48 Q 36 -54 39 -48 Q 36 -42 26 -44 Z" fill="#5c806d" opacity="0.88" />
-                  <path d="M 20 -51 Q 12 -58 8 -54 Q 10 -47 18 -48 Z" fill="#6f927f" opacity="0.85" />
-                  <path d="M 14 -34 Q 24 -38 26 -32 Q 23 -27 15 -30 Z" fill="#668a76" opacity="0.88" />
+                  {/* Nắp phong bì gập xuống (Top Flap) vẽ tay */}
+                  <path
+                    d="M 12 12 Q 90 10, 160 114 Q 230 10, 308 12 Z"
+                    fill="url(#kraftFlapTop)"
+                    filter="url(#softShadow)"
+                    stroke="#c5ab87"
+                    strokeWidth="0.8"
+                  />
                 </g>
 
-                {/* 🟣 CON DẤU SÁP TÍM (LAVENDER WAX SEAL STAMP) Ở GIỮA */}
+                {/* 🌸 HOA DẠI WATERCOLOR VẼ TAY TINH TẾ (CHUẨN ẢNH MẪU 1) */}
+                <g transform="translate(160, 108)">
+                  {/* Cành chính trung tâm vẽ tay */}
+                  <path d="M 0 0 Q -3 -30 -2 -58" stroke="#68846c" strokeWidth="1.6" fill="none" strokeLinecap="round" opacity="0.9" />
+
+                  {/* 1. CÀNH HOA CHUÔNG HỒNG RỦ XUỐNG Ở GIỮA */}
+                  {/* Hoa 1 (trái) */}
+                  <path d="M -2 -42 Q -12 -46 -15 -40" stroke="#68846c" strokeWidth="1" fill="none" opacity="0.85" />
+                  <path d="M -15 -40 Q -20 -35 -18 -30 Q -15 -28 -12 -32 Q -13 -37 -15 -40 Z" fill="#d66883" opacity="0.9" />
+                  <circle cx="-15" cy="-29" r="1.1" fill="#fff" opacity="0.9" />
+
+                  {/* Hoa 2 (phải) */}
+                  <path d="M -1 -50 Q 10 -54 13 -48" stroke="#68846c" strokeWidth="1" fill="none" opacity="0.85" />
+                  <path d="M 13 -48 Q 18 -43 16 -38 Q 13 -36 10 -40 Q 11 -45 13 -48 Z" fill="#e07790" opacity="0.9" />
+                  <circle cx="13" cy="-37" r="1.1" fill="#fff" opacity="0.9" />
+
+                  {/* Hoa 3 (trên đỉnh) */}
+                  <path d="M -2 -58 Q -5 -63 -2 -68 Q 1 -66 2 -62 Q 0 -59 -2 -58 Z" fill="#e7859d" opacity="0.95" />
+                  {/* Nụ hoa nhỏ */}
+                  <path d="M -2 -34 Q 6 -38 7 -31" stroke="#68846c" strokeWidth="0.9" fill="none" opacity="0.85" />
+                  <path d="M 7 -31 Q 11 -26 9 -21 Q 6 -19 4 -23 Q 5 -28 7 -31 Z" fill="#d05e79" opacity="0.88" />
+
+                  {/* 2. CÀNH QUẢ MỌNG TÍM BÊN TRÁI (PURPLE BERRIES) */}
+                  <path d="M -2 -20 Q -20 -32 -30 -52" stroke="#5d7861" strokeWidth="1.3" fill="none" strokeLinecap="round" opacity="0.85" />
+                  <circle cx="-30" cy="-53" r="3.4" fill="#845b91" opacity="0.92" />
+                  <circle cx="-31.2" cy="-54.2" r="0.9" fill="#f0e2f5" />
+                  <circle cx="-26" cy="-45" r="3.6" fill="#9769a5" opacity="0.9" />
+                  <circle cx="-27.2" cy="-46.2" r="0.9" fill="#f6e8fa" />
+                  <circle cx="-19" cy="-38" r="3.4" fill="#7a4f88" opacity="0.92" />
+                  <circle cx="-20.2" cy="-39.2" r="0.9" fill="#f1e0f6" />
+                  <circle cx="-13" cy="-30" r="3" fill="#90609f" opacity="0.88" />
+                  {/* Lá nhỏ cành tím */}
+                  <path d="M -24 -48 Q -30 -47 -28 -42 Q -24 -43 -24 -48 Z" fill="#65866b" opacity="0.82" />
+                  <path d="M -16 -37 Q -22 -35 -20 -31 Q -15 -33 -16 -37 Z" fill="#65866b" opacity="0.82" />
+
+                  {/* 3. CÀNH LÁ XANH SAGE BÊN PHẢI (SAGE LEAVES) */}
+                  <path d="M 0 -18 Q 18 -32 30 -58" stroke="#557563" strokeWidth="1.3" fill="none" strokeLinecap="round" opacity="0.88" />
+                  {/* Lá chóp ngọn */}
+                  <path d="M 30 -58 Q 36 -65 35 -69 Q 30 -67 27 -62 Q 28 -60 30 -58 Z" fill="#527663" opacity="0.9" />
+                  {/* Cặp lá 1 */}
+                  <path d="M 26 -50 Q 35 -55 37 -51 Q 35 -45 28 -47 Z" fill="#608470" opacity="0.88" />
+                  <path d="M 24 -52 Q 17 -58 14 -55 Q 16 -48 22 -50 Z" fill="#6f927e" opacity="0.85" />
+                  {/* Cặp lá 2 */}
+                  <path d="M 19 -38 Q 29 -43 31 -38 Q 29 -33 21 -35 Z" fill="#567a67" opacity="0.88" />
+                  <path d="M 16 -41 Q 10 -47 7 -43 Q 8 -37 14 -38 Z" fill="#678c77" opacity="0.85" />
+                  {/* Cặp lá 3 */}
+                  <path d="M 11 -27 Q 19 -30 20 -25 Q 18 -21 12 -24 Z" fill="#5f836f" opacity="0.88" />
+                </g>
+
+                {/* 🟣 CON DẤU SÁP TÍM VẼ TAY NHỎ XINH (LAVENDER WAX SEAL) */}
                 <g filter="url(#sealShadow)">
-                  {/* Vành sáp loang tự nhiên */}
+                  {/* Vành sáp loang nước vẽ tay tự nhiên */}
                   <path
-                    d="M 190 114
-                       C 202 113, 212 118, 219 126
-                       C 226 134, 227 146, 223 156
-                       C 219 166, 208 172, 196 172
-                       C 183 172, 172 165, 166 154
-                       C 160 143, 162 131, 169 123
-                       C 176 115, 182 114, 190 114 Z"
+                    d="M 160 100
+                       C 170 99, 178 103, 184 110
+                       C 190 117, 191 126, 187 134
+                       C 183 142, 174 147, 165 147
+                       C 154 147, 145 141, 141 132
+                       C 136 123, 137 113, 143 107
+                       C 149 101, 154 100, 160 100 Z"
                     fill="url(#waxSeal)"
                   />
-                  {/* Vòng dập nổi bên trong */}
-                  <circle cx="193" cy="143" r="16" fill="none" stroke="#be9ec7" strokeWidth="1.5" opacity="0.65" />
-                  {/* Biểu tượng dập nổi trên con dấu */}
+                  {/* Vòng chìm dập nổi bên trong */}
+                  <circle cx="162" cy="123" r="12.5" fill="none" stroke="#ba97c4" strokeWidth="1.2" opacity="0.6" />
+                  {/* Biểu tượng dập nổi búp hoa / trái tim */}
                   <path
-                    d="M 193 135 C 190 131, 184 133, 185 139 C 186 144, 193 150, 193 151 C 193 150, 200 144, 201 139 C 202 133, 196 131, 193 135 Z"
-                    fill="#ebd8f1"
-                    opacity="0.82"
+                    d="M 162 117 C 160 114, 155 115, 156 120 C 157 124, 162 129, 162 130 C 162 129, 168 124, 169 120 C 170 115, 165 114, 162 117 Z"
+                    fill="#ecd9f2"
+                    opacity="0.8"
                   />
-                  {/* Đốm sáng sáp bóng */}
-                  <ellipse cx="184" cy="130" rx="3" ry="1.8" fill="#ffffff" opacity="0.55" transform="rotate(-30 184 130)" />
+                  {/* Đốm sáng trên sáp */}
+                  <ellipse cx="155" cy="113" rx="2.4" ry="1.4" fill="#ffffff" opacity="0.55" transform="rotate(-30 155 113)" />
                 </g>
               </svg>
             </motion.div>
 
-            {/* ✍️ DÒNG CHỮ VIẾT TAY "Tap to open" (CHUẨN THEO ẢNH MẪU 1) */}
+            {/* ✍️ DÒNG CHỮ VIẾT TAY "Tap to open" NHỎ NHẮN, MỀM MẠI (CHUẨN ẢNH MẪU 1) */}
             <motion.p
-              animate={{ y: [0, -3, 0] }}
+              animate={{ y: [0, -2, 0] }}
               transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
-              className="font-dancing text-2xl sm:text-3xl text-[#b85b6a] font-bold tracking-wider italic mt-6 select-none transition-all group-hover:scale-105 group-hover:text-[#9e4352]"
+              className="font-dancing text-xl sm:text-2xl text-[#b85b6a] font-semibold tracking-wider italic mt-4 select-none transition-all group-hover:scale-105 group-hover:text-[#9e4352]"
             >
               Tap to open
             </motion.p>
