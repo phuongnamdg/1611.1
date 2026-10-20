@@ -7,6 +7,7 @@ import { Gift, ArrowRight } from "lucide-react";
 import { soundManager } from "@/utils/sound";
 import { BirthdayConfig } from "@/types/birthday";
 import Cake2D from "./Cake2D";
+import PaintWipeReveal from "./PaintWipeReveal";
 
 interface Props {
   config?: BirthdayConfig;
@@ -24,6 +25,7 @@ export default function Scene2Cake({ onNext }: Props) {
   const [stage, setStage] = useState<"TYPING" | "READY_TO_BLOW">("TYPING");
   const [sentenceIdx, setSentenceIdx] = useState<number>(0);
   const [isCandleBlown, setIsCandleBlown] = useState<boolean>(false);
+  const [showPaintWipe, setShowPaintWipe] = useState<boolean>(false);
 
   // Micro để thổi nến
   const [canClickToExtinguish, setCanClickToExtinguish] = useState<boolean>(false);
@@ -65,6 +67,11 @@ export default function Scene2Cake({ onNext }: Props) {
       soundManager.playCelebrationCheer();
       fireConfetti();
     }, 350);
+
+    // Kích hoạt hiệu ứng sơn hồng đổ chéo sau 1.2s để kịp ngắm nến tắt & pháo hoa
+    setTimeout(() => {
+      setShowPaintWipe(true);
+    }, 1200);
   }, [isCandleBlown, stopMic, fireConfetti]);
 
   // Micro thổi nến (Nhận diện chính xác hơi thổi / tiếng phù vào mic)
@@ -424,6 +431,16 @@ export default function Scene2Cake({ onNext }: Props) {
                 <ArrowRight className="w-4 h-4" />
               </button>
 
+              {/* Nút trải nghiệm lau sơn mở quà */}
+              <button
+                type="button"
+                onClick={() => setShowPaintWipe(true)}
+                className="w-full py-2.5 px-4 rounded-full bg-gradient-to-r from-pink-400 via-rose-400 to-pink-500 hover:brightness-105 text-white font-bold text-xs shadow-md shadow-pink-300/30 flex items-center justify-center gap-1.5 hover:scale-105 active:scale-95 transition-all cursor-pointer"
+              >
+                <span>🎨</span>
+                <span>Lau lớp sơn tìm bí mật ✨</span>
+              </button>
+
               {/* Nút thắp nến ước lại nếu muốn chơi tiếp */}
               <button
                 type="button"
@@ -441,6 +458,25 @@ export default function Scene2Cake({ onNext }: Props) {
           )}
         </div>
       )}
+
+      {/* 🎨 HIỆU ỨNG CÁC DÒNG SƠN HỒNG ĐỔ CHÉO & DÙNG CON TRỎ LAU SƠN TÌM NÚT MỞ QUÀ */}
+      <AnimatePresence>
+        {showPaintWipe && (
+          <motion.div
+            key="paint-wipe-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+            className="fixed inset-0 z-50"
+          >
+            <PaintWipeReveal
+              onNext={onNext}
+              onBackToCake={() => setShowPaintWipe(false)}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }
