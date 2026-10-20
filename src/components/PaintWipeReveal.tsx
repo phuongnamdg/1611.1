@@ -33,8 +33,8 @@ const DRIP_STREAMS: OrganicDripStream[] = [
     shadow: 'rgba(251, 113, 133, 0.35)',
     xRatio: -0.42,
     widthRatio: 0.26,
-    delay: 0.02,
-    duration: 1.15,
+    delay: 0.05,
+    duration: 2.6,
     waviness: 16,
     waveFreq: 0.009,
     phase: 0.5,
@@ -46,8 +46,8 @@ const DRIP_STREAMS: OrganicDripStream[] = [
     shadow: 'rgba(244, 63, 94, 0.38)',
     xRatio: -0.28,
     widthRatio: 0.28,
-    delay: 0.08,
-    duration: 1.25,
+    delay: 0.18,
+    duration: 2.8,
     waviness: 20,
     waveFreq: 0.011,
     phase: 1.8,
@@ -59,8 +59,8 @@ const DRIP_STREAMS: OrganicDripStream[] = [
     shadow: 'rgba(219, 39, 119, 0.42)',
     xRatio: -0.14,
     widthRatio: 0.30,
-    delay: 0.16,
-    duration: 1.20,
+    delay: 0.32,
+    duration: 2.7,
     waviness: 18,
     waveFreq: 0.008,
     phase: 3.2,
@@ -72,8 +72,8 @@ const DRIP_STREAMS: OrganicDripStream[] = [
     shadow: 'rgba(225, 29, 72, 0.38)',
     xRatio: 0.02,
     widthRatio: 0.29,
-    delay: 0.22,
-    duration: 1.30,
+    delay: 0.45,
+    duration: 2.9,
     waviness: 22,
     waveFreq: 0.012,
     phase: 4.5,
@@ -85,8 +85,8 @@ const DRIP_STREAMS: OrganicDripStream[] = [
     shadow: 'rgba(190, 18, 60, 0.44)',
     xRatio: 0.18,
     widthRatio: 0.31,
-    delay: 0.30,
-    duration: 1.18,
+    delay: 0.58,
+    duration: 2.7,
     waviness: 19,
     waveFreq: 0.010,
     phase: 0.8,
@@ -98,8 +98,8 @@ const DRIP_STREAMS: OrganicDripStream[] = [
     shadow: 'rgba(157, 23, 77, 0.46)',
     xRatio: 0.34,
     widthRatio: 0.32,
-    delay: 0.38,
-    duration: 1.35,
+    delay: 0.72,
+    duration: 3.0,
     waviness: 24,
     waveFreq: 0.013,
     phase: 2.4,
@@ -111,8 +111,8 @@ const DRIP_STREAMS: OrganicDripStream[] = [
     shadow: 'rgba(131, 24, 67, 0.48)',
     xRatio: 0.48,
     widthRatio: 0.32,
-    delay: 0.46,
-    duration: 1.22,
+    delay: 0.85,
+    duration: 2.8,
     waviness: 17,
     waveFreq: 0.009,
     phase: 5.1,
@@ -124,8 +124,8 @@ const DRIP_STREAMS: OrganicDripStream[] = [
     shadow: 'rgba(110, 15, 45, 0.48)',
     xRatio: 0.62,
     widthRatio: 0.35,
-    delay: 0.54,
-    duration: 1.28,
+    delay: 0.98,
+    duration: 2.9,
     waviness: 21,
     waveFreq: 0.011,
     phase: 1.2,
@@ -137,8 +137,8 @@ const DRIP_STREAMS: OrganicDripStream[] = [
     shadow: 'rgba(244, 114, 182, 0.40)',
     xRatio: 0.76,
     widthRatio: 0.36,
-    delay: 0.62,
-    duration: 1.20,
+    delay: 1.10,
+    duration: 2.7,
     waviness: 18,
     waveFreq: 0.010,
     phase: 3.7,
@@ -178,11 +178,13 @@ export default function PaintWipeReveal({ onNext, onBackToCake }: Props) {
     // Âm thanh đổ ào sơn ban đầu
     soundManager.playPaintSplashSound();
 
-    // Hẹn giờ phát tiếng bloop giọt sơn rơi ngộ nghĩnh
+    // Hẹn giờ phát tiếng bloop giọt sơn rơi ngộ nghĩnh theo nhịp chảy chậm rãi
     const dripTimers = [
-      setTimeout(() => soundManager.playLiquidDripSound(), 260),
-      setTimeout(() => soundManager.playLiquidDripSound(), 520),
-      setTimeout(() => soundManager.playLiquidDripSound(), 840),
+      setTimeout(() => soundManager.playLiquidDripSound(), 400),
+      setTimeout(() => soundManager.playLiquidDripSound(), 900),
+      setTimeout(() => soundManager.playLiquidDripSound(), 1500),
+      setTimeout(() => soundManager.playLiquidDripSound(), 2200),
+      setTimeout(() => soundManager.playLiquidDripSound(), 2900),
     ];
 
     const startTime = performance.now();
@@ -205,7 +207,8 @@ export default function PaintWipeReveal({ onNext, onBackToCake }: Props) {
       ctx.rotate(angle);
 
       // --- A. DÒNG CHẢY NỀN HỮU CƠ TIẾN DẦN ĐẰNG SAU (ĐẢM BẢO PHỦ KÍN 100%) ---
-      const baseProgress = Math.min(1, Math.max(0, (elapsed - 0.15) / 1.7));
+      // Tốc độ phủ sơn chậm rãi, êm ái hơn để thưởng thức trọn vẹn chất lỏng
+      const baseProgress = Math.min(1, Math.max(0, (elapsed - 0.35) / 3.4));
       if (baseProgress > 0) {
         const floodFrontY = startY + (1 - Math.pow(1 - baseProgress, 2.5)) * totalTravel;
         ctx.save();
@@ -234,8 +237,8 @@ export default function PaintWipeReveal({ onNext, onBackToCake }: Props) {
         const p = streamElapsed <= 0 ? 0 : Math.min(1, streamElapsed / st.duration);
         if (p < 1) allCompleted = false;
 
-        // Easing nhớt: chất lỏng chảy vọt ra rồi chậm dần do sức căng bề mặt
-        const ease = 1 - Math.pow(1 - p, 2.8);
+        // Easing nhớt tự nhiên: chất lỏng chảy đầm, lướt êm ái
+        const ease = 1 - Math.pow(1 - p, 2.2);
         const currentHeadY = startY + ease * totalTravel;
 
         if (currentHeadY <= startY + 10) return;
