@@ -159,6 +159,11 @@ export default function PaintWipeReveal({ onNext, onBackToCake }: Props) {
   const buttonElRef = useRef<HTMLDivElement | null>(null);
   const animFrameIdRef = useRef<number | null>(null);
 
+  // Phân biệt rõ ràng giữa hành động LAU SƠN (kéo chuột/vuốt tay) và CLICK MỞ THƯ (chạm dứt khoát)
+  const pointerStartPosRef = useRef<{ x: number; y: number } | null>(null);
+  const hasDraggedRef = useRef<boolean>(false);
+  const hasTriggeredNextRef = useRef<boolean>(false);
+
   // ===================================================================
   // 1. VẼ HIỆU ỨNG SƠN LỎNG CHẢY HỮU CƠ (ORGANIC VISCOUS DRIP)
   // ĐẦU GIỌT TRĨU NẶNG, MÃI SÓNG LƯỢN TỰ NHIÊN, GIỌT BẮN LI TI
@@ -481,7 +486,25 @@ export default function PaintWipeReveal({ onNext, onBackToCake }: Props) {
     return ratio;
   }, []);
 
-  // Kiểm tra xem vị trí bấm có trúng phong bì VÀ phong bì đã được lau lộ diện (>= 28%) hay chưa
+  // Hàm kích hoạt mở thư duy nhất 1 lần (có confetti và âm thanh)
+  const triggerOpenEnvelope = useCallback(() => {
+    if (hasTriggeredNextRef.current) return;
+    hasTriggeredNextRef.current = true;
+
+    soundManager.playUnlockSuccess();
+    confetti({
+      particleCount: 75,
+      spread: 85,
+      origin: { y: 0.6 },
+      colors: ['#cbb3d4', '#fbcfe8', '#fed7aa', '#f472b6', '#a78bfa'],
+    });
+
+    setTimeout(() => {
+      onNext();
+    }, 380);
+  }, [onNext]);
+
+  // Kiểm tra xem vị trí click có trúng phong bì VÀ phong bì đã được lau lộ diện (>= 28%) hay chưa
   const checkButtonClick = useCallback((x: number, y: number) => {
     if (!buttonElRef.current) return;
     const b = buttonElRef.current.getBoundingClientRect();
@@ -490,27 +513,24 @@ export default function PaintWipeReveal({ onNext, onBackToCake }: Props) {
       // BẮT BUỘC: Kiểm tra tỉ lệ lau sạch phong bì
       const wipeRatio = getEnvelopeWipeProgress();
       
-      // Nếu chưa lau sạch tối thiểu 28% diện tích phong bì -> KHÔNG CHO PHÉP MỞ!
+      // Nếu chưa lau sạch tối thiểu 28% diện tích phong bì -> TUYỆT ĐỐI KHÔNG MỞ!
       if (wipeRatio < 0.28) {
         return;
       }
 
-      // ĐÃ LAU SẠCH PHONG BÌ -> KÍCH HOẠT MỞ THƯ!
-      soundManager.playUnlockSuccess();
-      confetti({
-        particleCount: 75,
-        spread: 85,
-        origin: { y: 0.6 },
-        colors: ['#cbb3d4', '#fbcfe8', '#fed7aa', '#f472b6', '#a78bfa'],
-      });
-      onNext();
+      // ĐÃ LAU LỘ DIỆN VÀ NGƯỜI DÙNG CLICK DỨT KHOÁT -> MỞ THƯ!
+      triggerOpenEnvelope();
     }
-  }, [getEnvelopeWipeProgress, onNext]);
+  }, [getEnvelopeWipeProgress, triggerOpenEnvelope]);
 
   const handlePointerDown = useCallback((e: React.PointerEvent<HTMLCanvasElement>) => {
     if (isPouring) return;
     isPointerDownRef.current = true;
     setHasStartedWiping(true);
+
+    // Ghi nhận vị trí bắt đầu chạm để phân biệt giữa CLICK (chạm dứt khoát) và DRAG (kéo lau sơn)
+    pointerStartPosRef.current = { x: e.clientX, y: e.clientY };
+    hasDraggedRef.current = false;
 
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -520,12 +540,20 @@ export default function PaintWipeReveal({ onNext, onBackToCake }: Props) {
     setCursorPos({ x: e.clientX, y: e.clientY });
     erasePaint(x, y);
 
-    // Tuyệt đối KHÔNG kiểm tra bấm nút ở pointerDown để tránh vừa chạm đã mở thư
+    // TUYỆT ĐỐI KHÔNG gọi checkButtonClick ở pointerDown!
   }, [erasePaint, isPouring]);
 
   const handlePointerMove = useCallback((e: React.PointerEvent<HTMLCanvasElement>) => {
     setCursorPos({ x: e.clientX, y: e.clientY });
     if (!isPointerDownRef.current || isPouring) return;
+
+    // Nếu con trỏ di chuyển quá 8px -> Đây là hành vi LAU SƠN (dragging), không phải click mở thư
+    if (pointerStartPosRef.current) {
+      const dist = Math.hypot(e.clientX - pointerStartPosRef.current.x, e.clientY - pointerStartPosRef.current.y);
+      if (dist > 8) {
+        hasDraggedRef.current = true;
+      }
+    }
 
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -542,8 +570,19 @@ export default function PaintWipeReveal({ onNext, onBackToCake }: Props) {
   const handlePointerUp = useCallback((e: React.PointerEvent<HTMLCanvasElement>) => {
     isPointerDownRef.current = false;
     lastPointRef.current = null;
+
+    // QUAN TRỌNG: Nếu người dùng vừa thực hiện thao tác kéo/rê để LAU SƠN -> DỪNG LẠI, TUYỆT ĐỐI KHÔNG TỰ ĐỘNG MỞ!
+    if (hasDraggedRef.current) {
+      hasDraggedRef.current = false;
+      pointerStartPosRef.current = null;
+      getEnvelopeWipeProgress();
+      return;
+    }
+
+    // CHỈ KHI NGƯỜI DÙNG CHẠM DỨT KHOÁT (TAP / CLICK CỐ ĐỊNH, KHÔNG RÊ CHUỘT) THÌ MỚI KIỂM TRA MỞ THƯ!
+    pointerStartPosRef.current = null;
     checkButtonClick(e.clientX, e.clientY);
-  }, [checkButtonClick]);
+  }, [checkButtonClick, getEnvelopeWipeProgress]);
 
   return (
     <div className="fixed inset-0 z-50 w-full h-full overflow-hidden select-none bg-transparent flex items-center justify-center pointer-events-auto">
@@ -588,15 +627,7 @@ export default function PaintWipeReveal({ onNext, onBackToCake }: Props) {
             onClick={() => {
               // BẮT BUỘC: Chỉ mở khi phong bì đã được lau lộ diện thật sự (>= 28%)
               if (getEnvelopeWipeProgress() < 0.28) return;
-
-              soundManager.playUnlockSuccess();
-              confetti({
-                particleCount: 65,
-                spread: 80,
-                origin: { y: 0.6 },
-                colors: ['#cbb3d4', '#fbcfe8', '#fed7aa', '#f472b6', '#a78bfa'],
-              });
-              onNext();
+              triggerOpenEnvelope();
             }}
             className="relative z-20 group cursor-pointer flex flex-col items-center select-none my-auto"
           >
@@ -670,12 +701,16 @@ export default function PaintWipeReveal({ onNext, onBackToCake }: Props) {
           <div className="fixed top-8 left-1/2 -translate-x-1/2 z-40 pointer-events-none text-center">
             <motion.div
               initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: hasStartedWiping ? 0.4 : 1, y: 0 }}
-              transition={{ duration: 0.5 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
               className="px-5 py-2 rounded-full bg-white/90 backdrop-blur-md border border-pink-200 text-stone-700 text-xs sm:text-sm font-bold shadow-lg shadow-pink-300/40 flex items-center gap-2"
             >
-              <span className="text-base">🧽</span>
-              <span>Dùng con trỏ hoặc ngón tay lau bớt sơn để tìm bức thư bí mật ✨</span>
+              <span className="text-base">{isEnvelopeRevealed ? '💌' : '🧽'}</span>
+              <span>
+                {isEnvelopeRevealed
+                  ? 'Bức thư đã lộ diện! Hãy chạm vào phong bì để mở nhé ✨'
+                  : 'Dùng con trỏ hoặc ngón tay lau bớt sơn để tìm bức thư bí mật ✨'}
+              </span>
             </motion.div>
           </div>
 
