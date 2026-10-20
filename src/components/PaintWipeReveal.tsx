@@ -11,17 +11,140 @@ interface Props {
   onBackToCake?: () => void;
 }
 
-// 9 dải sơn đổ chéo từ góc trên-trái xuống dưới-phải (gối đè lên nhau kín 100% màn hình)
-const PAINT_STREAMS = [
-  { color: '#fce7f3', shadow: 'rgba(244,114,182,0.45)', delay: 0.04, widthRatio: 0.19, offsetRatio: -0.28 },
-  { color: '#fbcfe8', shadow: 'rgba(251,113,133,0.45)', delay: 0.12, widthRatio: 0.20, offsetRatio: -0.12 },
-  { color: '#f472b6', shadow: 'rgba(225,29,72,0.45)', delay: 0.20, widthRatio: 0.20, offsetRatio: 0.04 },
-  { color: '#fb7185', shadow: 'rgba(190,18,60,0.45)', delay: 0.28, widthRatio: 0.22, offsetRatio: 0.20 },
-  { color: '#fecdd3', shadow: 'rgba(244,63,94,0.45)', delay: 0.36, widthRatio: 0.21, offsetRatio: 0.38 },
-  { color: '#ec4899', shadow: 'rgba(157,23,77,0.45)', delay: 0.44, widthRatio: 0.22, offsetRatio: 0.54 },
-  { color: '#db2777', shadow: 'rgba(131,24,67,0.45)', delay: 0.52, widthRatio: 0.23, offsetRatio: 0.70 },
-  { color: '#be185d', shadow: 'rgba(80,7,36,0.45)', delay: 0.60, widthRatio: 0.25, offsetRatio: 0.86 },
-  { color: '#9d174d', shadow: 'rgba(50,5,22,0.45)', delay: 0.68, widthRatio: 0.32, offsetRatio: 1.02 },
+// Cấu hình các dòng sơn lỏng hữu cơ (Viscous Organic Drip)
+// Mỗi dòng có độ nhớt, đầu giọt trĩu nặng (bulbous head), giọt sơn bắn trước và độ sóng tự nhiên
+interface OrganicDripStream {
+  color: string;
+  shadow: string;
+  xRatio: number;      // Tọa độ ngang trên mặt phẳng nghiêng (-0.5 đến 0.5)
+  widthRatio: number;  // Độ rộng dải sơn
+  delay: number;       // Thời gian chờ trước khi chảy (giây)
+  duration: number;    // Thời gian hoàn thành dòng chảy (giây)
+  waviness: number;    // Biên độ lượn sóng của mép sơn (px)
+  waveFreq: number;    // Tần số lượn sóng
+  phase: number;       // Pha sóng để các dòng không bị trùng nhau
+  headBulge: number;   // Độ phình to của đầu giọt sơn (1.2 - 1.45 lần thân)
+  dripDrops: number;   // Số giọt sơn nhỏ bắn rơi trước
+}
+
+const DRIP_STREAMS: OrganicDripStream[] = [
+  {
+    color: '#ffe4e8',
+    shadow: 'rgba(251, 113, 133, 0.35)',
+    xRatio: -0.42,
+    widthRatio: 0.26,
+    delay: 0.02,
+    duration: 1.15,
+    waviness: 16,
+    waveFreq: 0.009,
+    phase: 0.5,
+    headBulge: 1.35,
+    dripDrops: 2,
+  },
+  {
+    color: '#fbcfe8',
+    shadow: 'rgba(244, 63, 94, 0.38)',
+    xRatio: -0.28,
+    widthRatio: 0.28,
+    delay: 0.08,
+    duration: 1.25,
+    waviness: 20,
+    waveFreq: 0.011,
+    phase: 1.8,
+    headBulge: 1.40,
+    dripDrops: 3,
+  },
+  {
+    color: '#f472b6',
+    shadow: 'rgba(219, 39, 119, 0.42)',
+    xRatio: -0.14,
+    widthRatio: 0.30,
+    delay: 0.16,
+    duration: 1.20,
+    waviness: 18,
+    waveFreq: 0.008,
+    phase: 3.2,
+    headBulge: 1.32,
+    dripDrops: 2,
+  },
+  {
+    color: '#fda4af',
+    shadow: 'rgba(225, 29, 72, 0.38)',
+    xRatio: 0.02,
+    widthRatio: 0.29,
+    delay: 0.22,
+    duration: 1.30,
+    waviness: 22,
+    waveFreq: 0.012,
+    phase: 4.5,
+    headBulge: 1.42,
+    dripDrops: 3,
+  },
+  {
+    color: '#fb7185',
+    shadow: 'rgba(190, 18, 60, 0.44)',
+    xRatio: 0.18,
+    widthRatio: 0.31,
+    delay: 0.30,
+    duration: 1.18,
+    waviness: 19,
+    waveFreq: 0.010,
+    phase: 0.8,
+    headBulge: 1.36,
+    dripDrops: 2,
+  },
+  {
+    color: '#ec4899',
+    shadow: 'rgba(157, 23, 77, 0.46)',
+    xRatio: 0.34,
+    widthRatio: 0.32,
+    delay: 0.38,
+    duration: 1.35,
+    waviness: 24,
+    waveFreq: 0.013,
+    phase: 2.4,
+    headBulge: 1.45,
+    dripDrops: 3,
+  },
+  {
+    color: '#db2777',
+    shadow: 'rgba(131, 24, 67, 0.48)',
+    xRatio: 0.48,
+    widthRatio: 0.32,
+    delay: 0.46,
+    duration: 1.22,
+    waviness: 17,
+    waveFreq: 0.009,
+    phase: 5.1,
+    headBulge: 1.34,
+    dripDrops: 2,
+  },
+  {
+    color: '#f43f5e',
+    shadow: 'rgba(110, 15, 45, 0.48)',
+    xRatio: 0.62,
+    widthRatio: 0.35,
+    delay: 0.54,
+    duration: 1.28,
+    waviness: 21,
+    waveFreq: 0.011,
+    phase: 1.2,
+    headBulge: 1.38,
+    dripDrops: 3,
+  },
+  {
+    color: '#fce7f3',
+    shadow: 'rgba(244, 114, 182, 0.40)',
+    xRatio: 0.76,
+    widthRatio: 0.36,
+    delay: 0.62,
+    duration: 1.20,
+    waviness: 18,
+    waveFreq: 0.010,
+    phase: 3.7,
+    headBulge: 1.30,
+    dripDrops: 1,
+  },
 ];
 
 export default function PaintWipeReveal({ onNext, onBackToCake }: Props) {
@@ -36,8 +159,9 @@ export default function PaintWipeReveal({ onNext, onBackToCake }: Props) {
   const animFrameIdRef = useRef<number | null>(null);
 
   // ===================================================================
-  // 1. VẼ HIỆU ỨNG ĐỔ SƠN TRỰC TIẾP LÊN CANVAS
-  // KHI ĐỔ XONG GIỮ NGUYÊN BẢN SƠN ĐÓ ĐỂ LAU, KHÔNG ĐỔI SANG LỚP NÀO KHÁC
+  // 1. VẼ HIỆU ỨNG SƠN LỎNG CHẢY HỮU CƠ (ORGANIC VISCOUS DRIP)
+  // ĐẦU GIỌT TRĨU NẶNG, MÃI SÓNG LƯỢN TỰ NHIÊN, GIỌT BẮN LI TI
+  // KHI ĐỔ XONG GIỮ NGUYÊN BẢN SƠN TRÊN CANVAS ĐỂ NGƯỜI DÙNG LAU
   // ===================================================================
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -51,11 +175,23 @@ export default function PaintWipeReveal({ onNext, onBackToCake }: Props) {
     const ctx = canvas.getContext('2d', { willReadFrequently: true });
     if (!ctx) return;
 
+    // Âm thanh đổ ào sơn ban đầu
     soundManager.playPaintSplashSound();
 
+    // Hẹn giờ phát tiếng bloop giọt sơn rơi ngộ nghĩnh
+    const dripTimers = [
+      setTimeout(() => soundManager.playLiquidDripSound(), 260),
+      setTimeout(() => soundManager.playLiquidDripSound(), 520),
+      setTimeout(() => soundManager.playLiquidDripSound(), 840),
+    ];
+
     const startTime = performance.now();
-    const angle = (-36 * Math.PI) / 180;
-    const diagDist = Math.sqrt(width * width + height * height) * 1.55;
+    // Góc chảy nghiêng chéo tự nhiên
+    const angle = (-32 * Math.PI) / 180;
+    const diagDist = Math.sqrt(width * width + height * height) * 1.5;
+    const startY = -diagDist * 0.58;
+    const targetY = diagDist * 0.62;
+    const totalTravel = targetY - startY;
 
     const renderPourFrame = (now: number) => {
       const elapsed = (now - startTime) / 1000;
@@ -63,64 +199,192 @@ export default function PaintWipeReveal({ onNext, onBackToCake }: Props) {
 
       let allCompleted = true;
 
-      PAINT_STREAMS.forEach((st) => {
+      // Toàn bộ vẽ trên hệ tọa độ xoay chéo theo hướng dòng chảy
+      ctx.save();
+      ctx.translate(width * 0.5, height * 0.5);
+      ctx.rotate(angle);
+
+      // --- A. DÒNG CHẢY NỀN HỮU CƠ TIẾN DẦN ĐẰNG SAU (ĐẢM BẢO PHỦ KÍN 100%) ---
+      const baseProgress = Math.min(1, Math.max(0, (elapsed - 0.15) / 1.7));
+      if (baseProgress > 0) {
+        const floodFrontY = startY + (1 - Math.pow(1 - baseProgress, 2.5)) * totalTravel;
+        ctx.save();
+        ctx.fillStyle = '#f472b6';
+        ctx.beginPath();
+        ctx.moveTo(-diagDist, startY);
+        ctx.lineTo(-diagDist, floodFrontY);
+
+        // Mép sóng hữu cơ của dòng nền
+        const segs = 20;
+        for (let i = 0; i <= segs; i++) {
+          const px = -diagDist + (i / segs) * (diagDist * 2);
+          const py = floodFrontY + Math.sin(i * 0.8 + elapsed * 3) * 18;
+          ctx.lineTo(px, py);
+        }
+
+        ctx.lineTo(diagDist, startY);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+      }
+
+      // --- B. TỪNG DÒNG SƠN LỎNG CHẢY GIỌT XẾP LỚP (DRIP TONGUES) ---
+      DRIP_STREAMS.forEach((st) => {
         const streamElapsed = elapsed - st.delay;
-        const duration = 0.82;
-        const p = streamElapsed <= 0 ? 0 : Math.min(1, streamElapsed / duration);
+        const p = streamElapsed <= 0 ? 0 : Math.min(1, streamElapsed / st.duration);
         if (p < 1) allCompleted = false;
 
-        // Easing mượt mà
-        const ease = 1 - Math.pow(1 - p, 3);
-        const currentDist = ease * diagDist;
+        // Easing nhớt: chất lỏng chảy vọt ra rồi chậm dần do sức căng bề mặt
+        const ease = 1 - Math.pow(1 - p, 2.8);
+        const currentHeadY = startY + ease * totalTravel;
 
-        if (currentDist <= 0) return;
+        if (currentHeadY <= startY + 10) return;
+
+        const streamWidth = width * st.widthRatio;
+        const streamX = st.xRatio * width * 1.5;
+        const headRadius = (streamWidth * 0.5) * st.headBulge;
+        const neckWidth = streamWidth * 0.72;
+        const neckY = currentHeadY - headRadius * 1.6;
 
         ctx.save();
-        ctx.translate(width * 0.5, height * 0.5);
-        ctx.rotate(angle);
 
-        const bandWidth = width * st.widthRatio + 40;
-        const bandX = (st.offsetRatio - 0.5) * width * 1.4;
-        const startY = -diagDist * 0.72;
-        const bandHeight = currentDist;
+        // 1. Bóng đổ 3D dưới mỗi dải sơn tạo cảm giác lớp sơn dày cộp, bóng bẩy
+        ctx.shadowColor = st.shadow;
+        ctx.shadowBlur = 18;
+        ctx.shadowOffsetX = 4;
+        ctx.shadowOffsetY = 8;
 
-        // Bóng đổ dưới mép dải sơn
-        ctx.fillStyle = st.shadow;
-        ctx.beginPath();
-        if (ctx.roundRect) {
-          ctx.roundRect(bandX - 4, startY, bandWidth + 8, bandHeight + 10, [0, 0, 36, 36]);
-        } else {
-          ctx.rect(bandX - 4, startY, bandWidth + 8, bandHeight + 10);
-        }
-        ctx.fill();
-
-        // Thân dải sơn hồng bóng bẩy
+        // 2. Vẽ thân dải sơn lượn sóng hữu cơ & đầu giọt trĩu nặng
         ctx.fillStyle = st.color;
         ctx.beginPath();
-        if (ctx.roundRect) {
-          ctx.roundRect(bandX, startY, bandWidth, bandHeight, [0, 0, 32, 32]);
-        } else {
-          ctx.rect(bandX, startY, bandWidth, bandHeight);
+
+        // Bắt đầu từ mép trên-trái
+        ctx.moveTo(streamX - streamWidth * 0.5, startY);
+
+        // Men theo mép trái lượn sóng tự nhiên xuống đến cổ giọt sơn
+        const step = 28;
+        for (let y = startY; y < neckY; y += step) {
+          const wave = Math.sin(y * st.waveFreq + st.phase) * st.waviness;
+          ctx.lineTo(streamX - streamWidth * 0.5 + wave, y);
         }
+
+        // Lượn thắt vào cổ giọt sơn (neck)
+        ctx.lineTo(streamX - neckWidth * 0.5, neckY);
+
+        // Nở phình to ra thành đầu giọt sơn tròn trĩu nặng (bulbous teardrop head)
+        ctx.bezierCurveTo(
+          streamX - neckWidth * 0.5,
+          neckY + headRadius * 0.4,
+          streamX - headRadius,
+          currentHeadY - headRadius * 0.5,
+          streamX - headRadius,
+          currentHeadY - headRadius * 0.1
+        );
+
+        // Vòng cung đáy giọt tròn bóng bẩy
+        ctx.arc(
+          streamX,
+          currentHeadY - headRadius * 0.1,
+          headRadius,
+          Math.PI,
+          0,
+          true
+        );
+
+        // Lượn từ bên phải đầu giọt về lại cổ giọt bên phải
+        ctx.bezierCurveTo(
+          streamX + headRadius,
+          currentHeadY - headRadius * 0.5,
+          streamX + neckWidth * 0.5,
+          neckY + headRadius * 0.4,
+          streamX + neckWidth * 0.5,
+          neckY
+        );
+
+        // Men theo mép phải lượn sóng ngược lên trên
+        for (let y = neckY; y > startY; y -= step) {
+          const wave = Math.sin(y * st.waveFreq + st.phase + 1.2) * st.waviness;
+          ctx.lineTo(streamX + streamWidth * 0.5 + wave, y);
+        }
+
+        ctx.lineTo(streamX + streamWidth * 0.5, startY);
+        ctx.closePath();
         ctx.fill();
 
-        // Vệt sáng bóng dầu ướt dọc theo dòng sơn
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.28)';
-        ctx.fillRect(bandX + 6, startY, 7, Math.max(0, bandHeight - 16));
+        // 3. Giọt sơn bắn rơi rớt trước (flying detached droplets)
+        if (currentHeadY < targetY - 60 && st.dripDrops > 0) {
+          for (let d = 1; d <= st.dripDrops; d++) {
+            const dropDist = headRadius + d * 38 + Math.sin(elapsed * 6 + d) * 8;
+            const dropY = currentHeadY + dropDist;
+            const dropX = streamX + Math.sin(dropY * 0.01 + st.phase) * (st.waviness * 0.6);
+            const dropRadiusX = Math.max(4, 11 - d * 2.5);
+            const dropRadiusY = Math.max(6, 17 - d * 3.5); // Giọt thuôn dài vì đang rơi
 
-        // Đầu giọt sơn bo tròn chảy nhô ra
+            ctx.beginPath();
+            ctx.ellipse(dropX, dropY, dropRadiusX, dropRadiusY, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Đốm sáng trên giọt nhỏ
+            ctx.save();
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
+            ctx.beginPath();
+            ctx.arc(dropX - dropRadiusX * 0.3, dropY - dropRadiusY * 0.3, 2, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+          }
+        }
+
+        // Tắt bóng đổ để vẽ vệt sáng bóng dầu ướt (specular wet gloss)
+        ctx.shadowColor = 'transparent';
+
+        // 4. Vệt sáng bóng dầu dọc theo thân dòng sơn
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.36)';
+        ctx.lineWidth = 5;
+        ctx.lineCap = 'round';
         ctx.beginPath();
-        ctx.arc(bandX + bandWidth * 0.5, startY + bandHeight, 20, 0, Math.PI);
-        ctx.fillStyle = st.color;
+        for (let y = startY + 40; y < neckY - 20; y += step) {
+          const wave = Math.sin(y * st.waveFreq + st.phase) * st.waviness;
+          const gx = streamX - streamWidth * 0.5 + wave + 12;
+          if (y === startY + 40) ctx.moveTo(gx, y);
+          else ctx.lineTo(gx, y);
+        }
+        ctx.stroke();
+
+        // 5. Vệt phản chiếu ánh sáng hình lưỡi liềm trên đầu giọt sơn tròn
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.55)';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.arc(
+          streamX - headRadius * 0.22,
+          currentHeadY - headRadius * 0.15,
+          headRadius * 0.62,
+          0.7 * Math.PI,
+          1.15 * Math.PI
+        );
+        ctx.stroke();
+
+        // Đốm sáng điểm lấp lánh (specular glint)
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+        ctx.beginPath();
+        ctx.arc(
+          streamX - headRadius * 0.45,
+          currentHeadY - headRadius * 0.35,
+          3.5,
+          0,
+          Math.PI * 2
+        );
         ctx.fill();
 
         ctx.restore();
       });
 
-      if (!allCompleted) {
+      ctx.restore();
+
+      // Kiểm tra hoàn tất toàn bộ dòng chảy
+      if (!allCompleted || baseProgress < 1) {
         animFrameIdRef.current = requestAnimationFrame(renderPourFrame);
       } else {
-        // ĐỔ SƠN HOÀN TẤT -> GIỮ NGUYÊN NÉT VẼ NÀY TRÊN CANVAS ĐỂ NGƯỜI DÙNG LAU
+        // ĐỔ SƠN HOÀN TẤT: GIỮ NGUYÊN NÉT VẼ ĐẸP NÀY TRÊN CANVAS ĐỂ LAU SƠN
         setIsPouring(false);
       }
     };
@@ -128,12 +392,13 @@ export default function PaintWipeReveal({ onNext, onBackToCake }: Props) {
     animFrameIdRef.current = requestAnimationFrame(renderPourFrame);
 
     return () => {
+      dripTimers.forEach((t) => clearTimeout(t));
       if (animFrameIdRef.current) cancelAnimationFrame(animFrameIdRef.current);
     };
   }, []);
 
   // ===================================================================
-  // 2. XÓA / LAU BỚT SƠN BẰNG CỌ MỀM
+  // 2. XÓA / LAU BỚT SƠN BẰNG CỌ MỀM TỰ NHIÊN
   // CHỈ LỘ PHẦN CON TRỎ LAU QUA, KHÔNG TỰ ĐỘNG XÓA HẾT
   // ===================================================================
   const erasePaint = useCallback((x: number, y: number, prevX?: number, prevY?: number) => {
@@ -150,7 +415,7 @@ export default function PaintWipeReveal({ onNext, onBackToCake }: Props) {
     // Destination-out: Khoét trong suốt lớp sơn đúng tại vị trí con trỏ lau qua
     ctx.globalCompositeOperation = 'destination-out';
 
-    // Nối giữa 2 điểm liên tiếp để đường lau liền mạch
+    // Nối giữa 2 điểm liên tiếp để đường lau liền mạch mềm mại
     if (prevX !== undefined && prevY !== undefined) {
       ctx.beginPath();
       ctx.moveTo(prevX, prevY);

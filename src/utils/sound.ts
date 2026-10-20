@@ -225,6 +225,34 @@ class SoundManager {
     }
   }
 
+  // 💧 Tiếng giọt sơn / chất lỏng nhỏ giọt bloop bloop ASMR cực dễ thương
+  public playLiquidDripSound() {
+    if (this.isMuted) return;
+    const ctx = this.getAudioContext();
+    if (!ctx) return;
+
+    try {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+
+      const baseFreq = 420 + Math.random() * 220;
+      osc.frequency.setValueAtTime(baseFreq, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(baseFreq * 1.85, ctx.currentTime + 0.08);
+
+      gain.gain.setValueAtTime(0.045, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.12);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start();
+      osc.stop(ctx.currentTime + 0.12);
+    } catch {
+      // Ignore
+    }
+  }
+
   // ✨ Tiếng lau kính / lau sơn ASMR nhẹ nhàng
   private lastWipeSoundTime = 0;
   public playWipeSound() {
