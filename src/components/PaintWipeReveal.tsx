@@ -29,12 +29,12 @@ interface OrganicDripStream {
 
 const DRIP_STREAMS: OrganicDripStream[] = [
   {
-    color: '#ffe4e8',
-    shadow: 'rgba(251, 113, 133, 0.35)',
+    color: '#fff0f3', // Kem dâu sữa phớt trắng
+    shadow: 'rgba(215, 130, 145, 0.22)',
     xRatio: -0.42,
     widthRatio: 0.26,
-    delay: 0.05,
-    duration: 2.6,
+    delay: 0.02,
+    duration: 1.5,
     waviness: 16,
     waveFreq: 0.009,
     phase: 0.5,
@@ -42,12 +42,12 @@ const DRIP_STREAMS: OrganicDripStream[] = [
     dripDrops: 2,
   },
   {
-    color: '#fbcfe8',
-    shadow: 'rgba(244, 63, 94, 0.38)',
+    color: '#fce7f3', // Hồng phấn dâu ngọt ngào
+    shadow: 'rgba(205, 115, 135, 0.24)',
     xRatio: -0.28,
     widthRatio: 0.28,
-    delay: 0.18,
-    duration: 2.8,
+    delay: 0.08,
+    duration: 1.6,
     waviness: 20,
     waveFreq: 0.011,
     phase: 1.8,
@@ -55,12 +55,12 @@ const DRIP_STREAMS: OrganicDripStream[] = [
     dripDrops: 3,
   },
   {
-    color: '#f472b6',
-    shadow: 'rgba(219, 39, 119, 0.42)',
+    color: '#ede9fe', // Tím oải hương Lavender kem (đồng điệu hoa dại tím & sáp niêm phong)
+    shadow: 'rgba(167, 139, 215, 0.25)',
     xRatio: -0.14,
     widthRatio: 0.30,
-    delay: 0.32,
-    duration: 2.7,
+    delay: 0.15,
+    duration: 1.55,
     waviness: 18,
     waveFreq: 0.008,
     phase: 3.2,
@@ -68,12 +68,12 @@ const DRIP_STREAMS: OrganicDripStream[] = [
     dripDrops: 2,
   },
   {
-    color: '#fda4af',
-    shadow: 'rgba(225, 29, 72, 0.38)',
+    color: '#fbcfe8', // Hồng bơ dâu dịu nhẹ
+    shadow: 'rgba(210, 110, 135, 0.25)',
     xRatio: 0.02,
     widthRatio: 0.29,
-    delay: 0.45,
-    duration: 2.9,
+    delay: 0.22,
+    duration: 1.65,
     waviness: 22,
     waveFreq: 0.012,
     phase: 4.5,
@@ -81,12 +81,12 @@ const DRIP_STREAMS: OrganicDripStream[] = [
     dripDrops: 3,
   },
   {
-    color: '#fb7185',
-    shadow: 'rgba(190, 18, 60, 0.44)',
+    color: '#fed7aa', // Cam đào sữa pastel ấm áp (tone ấm giấy kraft)
+    shadow: 'rgba(215, 125, 90, 0.24)',
     xRatio: 0.18,
     widthRatio: 0.31,
-    delay: 0.58,
-    duration: 2.7,
+    delay: 0.28,
+    duration: 1.55,
     waviness: 19,
     waveFreq: 0.010,
     phase: 0.8,
@@ -94,12 +94,12 @@ const DRIP_STREAMS: OrganicDripStream[] = [
     dripDrops: 2,
   },
   {
-    color: '#ec4899',
-    shadow: 'rgba(157, 23, 77, 0.46)',
+    color: '#fdf2e9', // Vani sữa bơ kem mịn
+    shadow: 'rgba(210, 140, 100, 0.22)',
     xRatio: 0.34,
     widthRatio: 0.32,
-    delay: 0.72,
-    duration: 3.0,
+    delay: 0.35,
+    duration: 1.68,
     waviness: 24,
     waveFreq: 0.013,
     phase: 2.4,
@@ -107,12 +107,12 @@ const DRIP_STREAMS: OrganicDripStream[] = [
     dripDrops: 3,
   },
   {
-    color: '#db2777',
-    shadow: 'rgba(131, 24, 67, 0.48)',
+    color: '#f472b6', // Hồng dâu kem mềm
+    shadow: 'rgba(190, 85, 115, 0.26)',
     xRatio: 0.48,
     widthRatio: 0.32,
-    delay: 0.85,
-    duration: 2.8,
+    delay: 0.42,
+    duration: 1.60,
     waviness: 17,
     waveFreq: 0.009,
     phase: 5.1,
@@ -120,12 +120,12 @@ const DRIP_STREAMS: OrganicDripStream[] = [
     dripDrops: 2,
   },
   {
-    color: '#f43f5e',
-    shadow: 'rgba(110, 15, 45, 0.48)',
+    color: '#e9d5ff', // Tím Lilac Macaron đồng điệu
+    shadow: 'rgba(160, 120, 200, 0.24)',
     xRatio: 0.62,
     widthRatio: 0.35,
-    delay: 0.98,
-    duration: 2.9,
+    delay: 0.48,
+    duration: 1.65,
     waviness: 21,
     waveFreq: 0.011,
     phase: 1.2,
@@ -133,12 +133,12 @@ const DRIP_STREAMS: OrganicDripStream[] = [
     dripDrops: 3,
   },
   {
-    color: '#fce7f3',
-    shadow: 'rgba(244, 114, 182, 0.40)',
+    color: '#fef3c7', // Kem sữa custard bơ ấm
+    shadow: 'rgba(215, 155, 90, 0.22)',
     xRatio: 0.76,
     widthRatio: 0.36,
-    delay: 1.10,
-    duration: 2.7,
+    delay: 0.54,
+    duration: 1.58,
     waviness: 18,
     waveFreq: 0.010,
     phase: 3.7,
@@ -164,6 +164,7 @@ export default function PaintWipeReveal({ onNext, onBackToCake }: Props) {
   const pointerStartPosRef = useRef<{ x: number; y: number } | null>(null);
   const hasDraggedRef = useRef<boolean>(false);
   const hasTriggeredNextRef = useRef<boolean>(false);
+  const finishPourRef = useRef<(() => void) | null>(null);
 
   // ===================================================================
   // 1. VẼ HIỆU ỨNG SƠN LỎNG CHẢY HỮU CƠ (ORGANIC VISCOUS DRIP)
@@ -185,13 +186,13 @@ export default function PaintWipeReveal({ onNext, onBackToCake }: Props) {
     // Âm thanh đổ ào sơn ban đầu
     soundManager.playPaintSplashSound();
 
-    // Hẹn giờ phát tiếng bloop giọt sơn rơi ngộ nghĩnh theo nhịp chảy chậm rãi
+    // Hẹn giờ phát tiếng bloop giọt sơn rơi ngộ nghĩnh theo nhịp chảy nhanh và mượt hơn (~2.1s)
     const dripTimers = [
-      setTimeout(() => soundManager.playLiquidDripSound(), 400),
-      setTimeout(() => soundManager.playLiquidDripSound(), 900),
-      setTimeout(() => soundManager.playLiquidDripSound(), 1500),
-      setTimeout(() => soundManager.playLiquidDripSound(), 2200),
-      setTimeout(() => soundManager.playLiquidDripSound(), 2900),
+      setTimeout(() => soundManager.playLiquidDripSound(), 200),
+      setTimeout(() => soundManager.playLiquidDripSound(), 550),
+      setTimeout(() => soundManager.playLiquidDripSound(), 950),
+      setTimeout(() => soundManager.playLiquidDripSound(), 1400),
+      setTimeout(() => soundManager.playLiquidDripSound(), 1850),
     ];
 
     const startTime = performance.now();
@@ -214,12 +215,12 @@ export default function PaintWipeReveal({ onNext, onBackToCake }: Props) {
       ctx.rotate(angle);
 
       // --- A. DÒNG CHẢY NỀN HỮU CƠ TIẾN DẦN ĐẰNG SAU (ĐẢM BẢO PHỦ KÍN 100%) ---
-      // Tốc độ phủ sơn chậm rãi, êm ái hơn để thưởng thức trọn vẹn chất lỏng
-      const baseProgress = Math.min(1, Math.max(0, (elapsed - 0.35) / 3.4));
+      // Tốc độ phủ sơn mượt mà, dứt khoát hơn (rút ngắn xuống ~2.1s)
+      const baseProgress = Math.min(1, Math.max(0, (elapsed - 0.15) / 1.85));
       if (baseProgress > 0) {
-        const floodFrontY = startY + (1 - Math.pow(1 - baseProgress, 2.5)) * totalTravel;
+        const floodFrontY = startY + (1 - Math.pow(1 - baseProgress, 2.3)) * totalTravel;
         ctx.save();
-        ctx.fillStyle = '#f472b6';
+        ctx.fillStyle = '#f6a5b5';
         ctx.beginPath();
         ctx.moveTo(-diagDist, startY);
         ctx.lineTo(-diagDist, floodFrontY);
@@ -399,9 +400,19 @@ export default function PaintWipeReveal({ onNext, onBackToCake }: Props) {
       }
     };
 
+    // Hàm cho phép chạm để hoàn thành đổ sơn tức thì nếu người dùng muốn thao tác ngay
+    const finishPour = () => {
+      dripTimers.forEach((t) => clearTimeout(t));
+      if (animFrameIdRef.current) cancelAnimationFrame(animFrameIdRef.current);
+      renderPourFrame(startTime + 10000);
+      setIsPouring(false);
+    };
+    finishPourRef.current = finishPour;
+
     animFrameIdRef.current = requestAnimationFrame(renderPourFrame);
 
     return () => {
+      finishPourRef.current = null;
       dripTimers.forEach((t) => clearTimeout(t));
       if (animFrameIdRef.current) cancelAnimationFrame(animFrameIdRef.current);
     };
@@ -548,7 +559,12 @@ export default function PaintWipeReveal({ onNext, onBackToCake }: Props) {
   }, [getEnvelopeWipeProgress, triggerOpenEnvelope, openStage]);
 
   const handlePointerDown = useCallback((e: React.PointerEvent<HTMLCanvasElement>) => {
-    if (isPouring) return;
+    if (isPouring) {
+      if (finishPourRef.current) {
+        finishPourRef.current();
+      }
+      return;
+    }
     isPointerDownRef.current = true;
     setHasStartedWiping(true);
 
@@ -756,6 +772,21 @@ export default function PaintWipeReveal({ onNext, onBackToCake }: Props) {
         onPointerCancel={handlePointerUp}
         className="fixed inset-0 z-30 touch-none cursor-grab active:cursor-grabbing"
       />
+
+      {/* Gợi ý trong lúc đang đổ sơn: có thể chạm để phủ nhanh */}
+      {isPouring && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 pointer-events-none text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 0.85, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="px-4 py-1.5 rounded-full bg-white/80 backdrop-blur-md border border-pink-200/80 text-stone-600 text-xs font-medium shadow-sm flex items-center gap-1.5"
+          >
+            <span>🍧</span>
+            <span>Chạm màn hình để phủ nhanh...</span>
+          </motion.div>
+        </div>
+      )}
 
       {/* =================================================================== */}
       {/* 3. LỜI GỢI Ý & HIỆU ỨNG CON TRỎ LAU SƠN ✨                          */}
