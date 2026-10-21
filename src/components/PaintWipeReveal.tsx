@@ -29,8 +29,8 @@ interface OrganicDripStream {
 
 const DRIP_STREAMS: OrganicDripStream[] = [
   {
-    color: '#9e2a4b', // Mâm xôi chín mọng (tương phản rõ rệt trên nền kem)
-    shadow: 'rgba(75, 12, 30, 0.40)',
+    color: '#fcd5dc', // Hồng phấn hoa đào sương mai
+    shadow: 'rgba(235, 160, 175, 0.25)',
     xRatio: -0.42,
     widthRatio: 0.26,
     delay: 0.02,
@@ -42,8 +42,8 @@ const DRIP_STREAMS: OrganicDripStream[] = [
     dripDrops: 2,
   },
   {
-    color: '#b0345b', // Dâu rừng quyến rũ
-    shadow: 'rgba(85, 15, 36, 0.38)',
+    color: '#f7b2c0', // Hồng hoa anh đào phớt nhẹ
+    shadow: 'rgba(225, 145, 160, 0.28)',
     xRatio: -0.28,
     widthRatio: 0.28,
     delay: 0.08,
@@ -55,8 +55,8 @@ const DRIP_STREAMS: OrganicDripStream[] = [
     dripDrops: 3,
   },
   {
-    color: '#c2426c', // Hồng mận velvet sang trọng
-    shadow: 'rgba(95, 18, 42, 0.36)',
+    color: '#e8c4e8', // Tím oải hương Lavender phấn nhạt (đồng điệu hoa và sáp tím trên thư)
+    shadow: 'rgba(195, 155, 205, 0.28)',
     xRatio: -0.14,
     widthRatio: 0.30,
     delay: 0.15,
@@ -68,8 +68,8 @@ const DRIP_STREAMS: OrganicDripStream[] = [
     dripDrops: 2,
   },
   {
-    color: '#8c2240', // Cherry thẫm đậm đà
-    shadow: 'rgba(65, 10, 26, 0.42)',
+    color: '#f8b8c6', // Hồng dâu sữa phấn mịn
+    shadow: 'rgba(225, 150, 165, 0.28)',
     xRatio: 0.02,
     widthRatio: 0.29,
     delay: 0.22,
@@ -81,8 +81,8 @@ const DRIP_STREAMS: OrganicDripStream[] = [
     dripDrops: 3,
   },
   {
-    color: '#a82e53', // Mứt dâu tằm sánh bóng
-    shadow: 'rgba(80, 14, 34, 0.40)',
+    color: '#f4a4b5', // Hồng đào phớt dịu mắt
+    shadow: 'rgba(220, 140, 155, 0.30)',
     xRatio: 0.18,
     widthRatio: 0.31,
     delay: 0.28,
@@ -94,8 +94,8 @@ const DRIP_STREAMS: OrganicDripStream[] = [
     dripDrops: 2,
   },
   {
-    color: '#ba3c66', // Rượu vang ngọt mâm xôi
-    shadow: 'rgba(90, 16, 38, 0.38)',
+    color: '#e2bce6', // Tím Lilac phấn êm ái
+    shadow: 'rgba(190, 150, 200, 0.28)',
     xRatio: 0.34,
     widthRatio: 0.32,
     delay: 0.35,
@@ -107,8 +107,8 @@ const DRIP_STREAMS: OrganicDripStream[] = [
     dripDrops: 3,
   },
   {
-    color: '#7a1b36', // Dâu rừng đen trĩu mọng
-    shadow: 'rgba(55, 8, 22, 0.45)',
+    color: '#f9bcc8', // Cánh hoa đào bay phớt
+    shadow: 'rgba(230, 155, 170, 0.28)',
     xRatio: 0.48,
     widthRatio: 0.32,
     delay: 0.42,
@@ -120,8 +120,8 @@ const DRIP_STREAMS: OrganicDripStream[] = [
     dripDrops: 2,
   },
   {
-    color: '#ab3258', // Berry Glaze ấm áp
-    shadow: 'rgba(85, 15, 36, 0.38)',
+    color: '#ebd0ee', // Lavender sữa mềm
+    shadow: 'rgba(200, 160, 210, 0.26)',
     xRatio: 0.62,
     widthRatio: 0.35,
     delay: 0.48,
@@ -133,8 +133,8 @@ const DRIP_STREAMS: OrganicDripStream[] = [
     dripDrops: 3,
   },
   {
-    color: '#be4670', // Mận hồng chín ngọt
-    shadow: 'rgba(95, 18, 42, 0.35)',
+    color: '#f5aab9', // Hồng phấn cánh sen nhẹ
+    shadow: 'rgba(225, 145, 160, 0.30)',
     xRatio: 0.76,
     widthRatio: 0.36,
     delay: 0.54,
@@ -220,7 +220,7 @@ export default function PaintWipeReveal({ onNext, onBackToCake }: Props) {
       if (baseProgress > 0) {
         const floodFrontY = startY + (1 - Math.pow(1 - baseProgress, 2.3)) * totalTravel;
         ctx.save();
-        ctx.fillStyle = '#8f2545'; // Nền mâm xôi đậm đà, tương phản nổi bật trên nền giấy kem
+        ctx.fillStyle = '#f4a8b7'; // Nền hồng phấn hoa đào nhẹ nhàng, tươi tắn và đồng điệu với hoa đào và phong thư
         ctx.beginPath();
         ctx.moveTo(-diagDist, startY);
         ctx.lineTo(-diagDist, floodFrontY);
