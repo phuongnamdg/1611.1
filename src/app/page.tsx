@@ -26,8 +26,11 @@ export default function BirthdayPage() {
   };
 
   return (
-    <main className="relative min-h-screen w-full flex flex-col justify-center items-center overflow-hidden font-sans">
-      {/* 🌸 Hiệu ứng cánh hoa anh đào rơi liên tục 60fps */}
+    <main className="relative min-h-screen w-full flex flex-col justify-center items-center overflow-hidden font-sans bg-[#f6eee0]">
+      {/* 📜 Họa tiết giấy linen / parchment vintage chấm mờ nhẹ đồng bộ toàn trang */}
+      <div className="fixed inset-0 pointer-events-none opacity-25 bg-[radial-gradient(#d3c3a9_1px,transparent_1px)] [background-size:16px_16px] z-0" />
+
+      {/* 🌸 Hiệu ứng cánh hoa đào bay thoang thoảng chút chút thôi */}
       <SakuraPetals />
 
       {/* 💖 Hiệu ứng vệt trái tim bay theo con trỏ chuột */}

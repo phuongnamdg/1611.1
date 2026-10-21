@@ -29,8 +29,8 @@ interface OrganicDripStream {
 
 const DRIP_STREAMS: OrganicDripStream[] = [
   {
-    color: '#fff0f3', // Kem dâu sữa phớt trắng
-    shadow: 'rgba(215, 130, 145, 0.22)',
+    color: '#faf4ea', // Kem giấy vintage sáng
+    shadow: 'rgba(175, 145, 115, 0.16)',
     xRatio: -0.42,
     widthRatio: 0.26,
     delay: 0.02,
@@ -42,8 +42,8 @@ const DRIP_STREAMS: OrganicDripStream[] = [
     dripDrops: 2,
   },
   {
-    color: '#fce7f3', // Hồng phấn dâu ngọt ngào
-    shadow: 'rgba(205, 115, 135, 0.24)',
+    color: '#f4ebd9', // Vani parchment ấm
+    shadow: 'rgba(165, 135, 105, 0.18)',
     xRatio: -0.28,
     widthRatio: 0.28,
     delay: 0.08,
@@ -55,8 +55,8 @@ const DRIP_STREAMS: OrganicDripStream[] = [
     dripDrops: 3,
   },
   {
-    color: '#ede9fe', // Tím oải hương Lavender kem (đồng điệu hoa dại tím & sáp niêm phong)
-    shadow: 'rgba(167, 139, 215, 0.25)',
+    color: '#eee2cc', // Giấy kraft sữa nhạt
+    shadow: 'rgba(160, 130, 100, 0.18)',
     xRatio: -0.14,
     widthRatio: 0.30,
     delay: 0.15,
@@ -68,8 +68,8 @@ const DRIP_STREAMS: OrganicDripStream[] = [
     dripDrops: 2,
   },
   {
-    color: '#fbcfe8', // Hồng bơ dâu dịu nhẹ
-    shadow: 'rgba(210, 110, 135, 0.25)',
+    color: '#f8f0e3', // Kem bơ lụa mềm
+    shadow: 'rgba(170, 140, 110, 0.16)',
     xRatio: 0.02,
     widthRatio: 0.29,
     delay: 0.22,
@@ -81,8 +81,8 @@ const DRIP_STREAMS: OrganicDripStream[] = [
     dripDrops: 3,
   },
   {
-    color: '#fed7aa', // Cam đào sữa pastel ấm áp (tone ấm giấy kraft)
-    shadow: 'rgba(215, 125, 90, 0.24)',
+    color: '#e8d8be', // Kraft ấm tự nhiên
+    shadow: 'rgba(155, 125, 95, 0.20)',
     xRatio: 0.18,
     widthRatio: 0.31,
     delay: 0.28,
@@ -94,8 +94,8 @@ const DRIP_STREAMS: OrganicDripStream[] = [
     dripDrops: 2,
   },
   {
-    color: '#fdf2e9', // Vani sữa bơ kem mịn
-    shadow: 'rgba(210, 140, 100, 0.22)',
+    color: '#f5ece0', // Ngà ấm vintage
+    shadow: 'rgba(165, 135, 105, 0.18)',
     xRatio: 0.34,
     widthRatio: 0.32,
     delay: 0.35,
@@ -107,8 +107,8 @@ const DRIP_STREAMS: OrganicDripStream[] = [
     dripDrops: 3,
   },
   {
-    color: '#f472b6', // Hồng dâu kem mềm
-    shadow: 'rgba(190, 85, 115, 0.26)',
+    color: '#ecdcc5', // Caramel sữa kraft
+    shadow: 'rgba(155, 125, 95, 0.20)',
     xRatio: 0.48,
     widthRatio: 0.32,
     delay: 0.42,
@@ -120,8 +120,8 @@ const DRIP_STREAMS: OrganicDripStream[] = [
     dripDrops: 2,
   },
   {
-    color: '#e9d5ff', // Tím Lilac Macaron đồng điệu
-    shadow: 'rgba(160, 120, 200, 0.24)',
+    color: '#f2e6d5', // Linen kem ấm
+    shadow: 'rgba(160, 130, 100, 0.18)',
     xRatio: 0.62,
     widthRatio: 0.35,
     delay: 0.48,
@@ -133,8 +133,8 @@ const DRIP_STREAMS: OrganicDripStream[] = [
     dripDrops: 3,
   },
   {
-    color: '#fef3c7', // Kem sữa custard bơ ấm
-    shadow: 'rgba(215, 155, 90, 0.22)',
+    color: '#ebd6bd', // Kraft mộc mạc cổ điển
+    shadow: 'rgba(150, 120, 90, 0.20)',
     xRatio: 0.76,
     widthRatio: 0.36,
     delay: 0.54,
@@ -220,7 +220,7 @@ export default function PaintWipeReveal({ onNext, onBackToCake }: Props) {
       if (baseProgress > 0) {
         const floodFrontY = startY + (1 - Math.pow(1 - baseProgress, 2.3)) * totalTravel;
         ctx.save();
-        ctx.fillStyle = '#f6a5b5';
+        ctx.fillStyle = '#ebd9c3'; // Nền kraft / parchment kem ấm đồng điệu 100% với nền ảnh
         ctx.beginPath();
         ctx.moveTo(-diagDist, startY);
         ctx.lineTo(-diagDist, floodFrontY);
@@ -625,7 +625,7 @@ export default function PaintWipeReveal({ onNext, onBackToCake }: Props) {
   }, [checkButtonClick, getEnvelopeWipeProgress]);
 
   return (
-    <div className="fixed inset-0 z-50 w-full h-full overflow-hidden select-none bg-transparent flex items-center justify-center pointer-events-auto">
+    <div className="fixed inset-0 z-20 w-full h-full overflow-hidden select-none bg-transparent flex items-center justify-center pointer-events-auto">
       {/* =================================================================== */}
       {/* 1. LỚP BÊN DƯỚI: PHONG BÌ THƯ VINTAGE HOA DẠI & CON DẤU SÁP TÍM     */}
       {/* (CHUẨN 100% THEO ẢNH MẪU: KRAFT ENVELOPE + BOTANICAL + TAP TO OPEN)  */}

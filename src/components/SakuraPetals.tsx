@@ -34,28 +34,28 @@ export default function SakuraPetals() {
     };
     window.addEventListener('resize', handleResize);
 
-    // Bảng màu cánh hoa anh đào
+    // Bảng màu cánh hoa anh đào phớt nhẹ, trong trẻo và thanh lịch
     const petalColors = [
-      'rgba(255, 183, 197, 0.75)', // Sakura pink
-      'rgba(255, 192, 203, 0.65)', // Light pink
-      'rgba(255, 220, 228, 0.8)',  // Pale pink
-      'rgba(255, 240, 245, 0.7)',  // Lavender blush
-      'rgba(255, 160, 180, 0.6)',  // Deep sakura
+      'rgba(255, 195, 208, 0.60)', // Sakura pink dịu mát
+      'rgba(255, 215, 225, 0.50)', // Light pink trong veo
+      'rgba(250, 190, 205, 0.55)', // Soft rose mỏng manh
+      'rgba(255, 228, 235, 0.65)', // Pale blossom
     ];
 
-    const petalCount = Math.min(35, Math.floor(width / 35));
+    // Chỉ bay "chút chút thôi" - khoảng 8 - 10 cánh hoa lãng đãng, êm đềm
+    const petalCount = Math.min(10, Math.max(6, Math.floor(width / 160)));
     const petals: Petal[] = [];
 
     for (let i = 0; i < petalCount; i++) {
       petals.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        size: Math.random() * 8 + 8,
-        speedX: Math.random() * 1.5 - 0.5,
-        speedY: Math.random() * 1.2 + 0.8,
+        size: Math.random() * 5 + 7,
+        speedX: (Math.random() - 0.5) * 0.6,
+        speedY: Math.random() * 0.45 + 0.35, // Bay rất chậm và êm ái
         rotation: Math.random() * 360,
-        rotationSpeed: (Math.random() - 0.5) * 1.5,
-        opacity: Math.random() * 0.4 + 0.5,
+        rotationSpeed: (Math.random() - 0.5) * 0.6,
+        opacity: Math.random() * 0.3 + 0.45,
         color: petalColors[Math.floor(Math.random() * petalColors.length)],
       });
     }
@@ -128,7 +128,7 @@ export default function SakuraPetals() {
   return (
     <canvas
       ref={canvasRef}
-      className="fixed inset-0 pointer-events-none z-10"
+      className="fixed inset-0 pointer-events-none z-35"
       aria-hidden="true"
     />
   );
