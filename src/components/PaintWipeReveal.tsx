@@ -29,8 +29,8 @@ interface OrganicDripStream {
 
 const DRIP_STREAMS: OrganicDripStream[] = [
   {
-    color: '#faf4ea', // Kem giấy vintage sáng
-    shadow: 'rgba(175, 145, 115, 0.16)',
+    color: '#9e2a4b', // Mâm xôi chín mọng (tương phản rõ rệt trên nền kem)
+    shadow: 'rgba(75, 12, 30, 0.40)',
     xRatio: -0.42,
     widthRatio: 0.26,
     delay: 0.02,
@@ -42,8 +42,8 @@ const DRIP_STREAMS: OrganicDripStream[] = [
     dripDrops: 2,
   },
   {
-    color: '#f4ebd9', // Vani parchment ấm
-    shadow: 'rgba(165, 135, 105, 0.18)',
+    color: '#b0345b', // Dâu rừng quyến rũ
+    shadow: 'rgba(85, 15, 36, 0.38)',
     xRatio: -0.28,
     widthRatio: 0.28,
     delay: 0.08,
@@ -55,8 +55,8 @@ const DRIP_STREAMS: OrganicDripStream[] = [
     dripDrops: 3,
   },
   {
-    color: '#eee2cc', // Giấy kraft sữa nhạt
-    shadow: 'rgba(160, 130, 100, 0.18)',
+    color: '#c2426c', // Hồng mận velvet sang trọng
+    shadow: 'rgba(95, 18, 42, 0.36)',
     xRatio: -0.14,
     widthRatio: 0.30,
     delay: 0.15,
@@ -68,8 +68,8 @@ const DRIP_STREAMS: OrganicDripStream[] = [
     dripDrops: 2,
   },
   {
-    color: '#f8f0e3', // Kem bơ lụa mềm
-    shadow: 'rgba(170, 140, 110, 0.16)',
+    color: '#8c2240', // Cherry thẫm đậm đà
+    shadow: 'rgba(65, 10, 26, 0.42)',
     xRatio: 0.02,
     widthRatio: 0.29,
     delay: 0.22,
@@ -81,8 +81,8 @@ const DRIP_STREAMS: OrganicDripStream[] = [
     dripDrops: 3,
   },
   {
-    color: '#e8d8be', // Kraft ấm tự nhiên
-    shadow: 'rgba(155, 125, 95, 0.20)',
+    color: '#a82e53', // Mứt dâu tằm sánh bóng
+    shadow: 'rgba(80, 14, 34, 0.40)',
     xRatio: 0.18,
     widthRatio: 0.31,
     delay: 0.28,
@@ -94,8 +94,8 @@ const DRIP_STREAMS: OrganicDripStream[] = [
     dripDrops: 2,
   },
   {
-    color: '#f5ece0', // Ngà ấm vintage
-    shadow: 'rgba(165, 135, 105, 0.18)',
+    color: '#ba3c66', // Rượu vang ngọt mâm xôi
+    shadow: 'rgba(90, 16, 38, 0.38)',
     xRatio: 0.34,
     widthRatio: 0.32,
     delay: 0.35,
@@ -107,8 +107,8 @@ const DRIP_STREAMS: OrganicDripStream[] = [
     dripDrops: 3,
   },
   {
-    color: '#ecdcc5', // Caramel sữa kraft
-    shadow: 'rgba(155, 125, 95, 0.20)',
+    color: '#7a1b36', // Dâu rừng đen trĩu mọng
+    shadow: 'rgba(55, 8, 22, 0.45)',
     xRatio: 0.48,
     widthRatio: 0.32,
     delay: 0.42,
@@ -120,8 +120,8 @@ const DRIP_STREAMS: OrganicDripStream[] = [
     dripDrops: 2,
   },
   {
-    color: '#f2e6d5', // Linen kem ấm
-    shadow: 'rgba(160, 130, 100, 0.18)',
+    color: '#ab3258', // Berry Glaze ấm áp
+    shadow: 'rgba(85, 15, 36, 0.38)',
     xRatio: 0.62,
     widthRatio: 0.35,
     delay: 0.48,
@@ -133,8 +133,8 @@ const DRIP_STREAMS: OrganicDripStream[] = [
     dripDrops: 3,
   },
   {
-    color: '#ebd6bd', // Kraft mộc mạc cổ điển
-    shadow: 'rgba(150, 120, 90, 0.20)',
+    color: '#be4670', // Mận hồng chín ngọt
+    shadow: 'rgba(95, 18, 42, 0.35)',
     xRatio: 0.76,
     widthRatio: 0.36,
     delay: 0.54,
@@ -220,7 +220,7 @@ export default function PaintWipeReveal({ onNext, onBackToCake }: Props) {
       if (baseProgress > 0) {
         const floodFrontY = startY + (1 - Math.pow(1 - baseProgress, 2.3)) * totalTravel;
         ctx.save();
-        ctx.fillStyle = '#ebd9c3'; // Nền kraft / parchment kem ấm đồng điệu 100% với nền ảnh
+        ctx.fillStyle = '#8f2545'; // Nền mâm xôi đậm đà, tương phản nổi bật trên nền giấy kem
         ctx.beginPath();
         ctx.moveTo(-diagDist, startY);
         ctx.lineTo(-diagDist, floodFrontY);
