@@ -5,19 +5,25 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Volume2, VolumeX } from 'lucide-react';
 import SakuraPetals from '@/components/SakuraPetals';
 import HeartCursorTrail from '@/components/HeartCursorTrail';
+import WaitingRoomScene from '@/components/WaitingRoom/WaitingRoomScene';
 import Scene1Lock from '@/components/Scene1Lock';
 import Scene2Cake from '@/components/Scene2Cake';
-import Scene3Gifts from '@/components/Scene3Gifts';
-import Scene4Wish from '@/components/Scene4Wish';
-import Scene5Finale from '@/components/Scene5Finale';
+import CustomRevealScene from '@/components/CustomRevealScene';
 import { birthdayData } from '@/config/birthdayData';
 import { soundManager } from '@/utils/sound';
 import { SceneState } from '@/types/birthday';
+import FlowerBloomBurst, { FlowerTheme } from '@/components/FlowerBloomBurst';
+import StarCascadeBurst from '@/components/StarCascadeBurst';
 
 export default function BirthdayPage() {
-  const [scene, setScene] = useState<SceneState>('LOCK');
+  const [scene, setScene] = useState<SceneState>('WAITING_ROOM');
   const [isMuted, setIsMuted] = useState<boolean>(false);
-  const [userWish, setUserWish] = useState<string>('');
+  const [flowerBurstTheme, setFlowerBurstTheme] = useState<FlowerTheme | null>(null);
+  const [isStarBurstActive, setIsStarBurstActive] = useState<boolean>(false);
+
+  const handleStartStarCascade = () => {
+    setIsStarBurstActive(true);
+  };
 
   const toggleSound = () => {
     const nextMuted = !isMuted;
@@ -26,7 +32,7 @@ export default function BirthdayPage() {
   };
 
   return (
-    <main className="relative min-h-screen w-full flex flex-col justify-center items-center overflow-hidden font-sans bg-[#f6eee0]">
+    <main className={`relative min-h-screen w-full flex flex-col items-center ${scene === 'CUSTOM_SCENE' ? 'overflow-y-auto' : 'justify-center overflow-hidden'} font-sans bg-[#f6eee0]`}>
       {/* 📜 Họa tiết giấy linen / parchment vintage chấm mờ nhẹ đồng bộ toàn trang */}
       <div className="fixed inset-0 pointer-events-none opacity-25 bg-[radial-gradient(#d3c3a9_1px,transparent_1px)] [background-size:16px_16px] z-0" />
 
@@ -53,14 +59,31 @@ export default function BirthdayPage() {
 
 
 
-      {/* 🎬 ĐIỀU PHỐI 5 MÀN HÌNH TỪNG FILE RIÊNG BIỆT */}
-      <div className="w-full h-full flex items-center justify-center">
+      {/* 🎬 ĐIỀU PHỐI 6 MÀN HÌNH TỪNG FILE RIÊNG BIỆT */}
+      <div className={`w-full ${scene === 'CUSTOM_SCENE' ? 'min-h-screen flex flex-col items-center justify-start' : 'h-screen flex items-center justify-center'}`}>
         <AnimatePresence mode="wait">
+          {/* SẢNH CHỜ: CĂN PHÒNG VINTAGE & MINIGAME TÌM ĐỒ VẬT */}
+          {scene === 'WAITING_ROOM' && (
+            <motion.div
+              key="scene-waiting-room"
+              className="w-full h-full"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25 }}
+            >
+              <WaitingRoomScene
+                config={birthdayData}
+                onEnterPassword={handleStartStarCascade}
+              />
+            </motion.div>
+          )}
+
           {/* MÀN 1: ĐĂNG NHẬP (File riêng: src/components/Scene1Lock.tsx) */}
           {scene === 'LOCK' && (
             <motion.div
               key="scene-lock"
-              className="w-full"
+              className="w-full h-full flex items-center justify-center"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
@@ -85,68 +108,59 @@ export default function BirthdayPage() {
             >
               <Scene2Cake
                 config={birthdayData}
-                onNext={() => setScene('GIFTS')}
+                onNext={() => setScene('CUSTOM_SCENE')}
+                onStartFlowerBloom={(theme) => setFlowerBurstTheme(theme)}
               />
             </motion.div>
           )}
 
-          {/* MÀN 3: 3 CHIẾC HỘP QUÀ (File riêng: src/components/Scene3Gifts.tsx) */}
-          {scene === 'GIFTS' && (
+          {/* MÀN MỚI SAU KHI HOA NỞ (Mảnh giấy & ảnh kỷ niệm vintage) */}
+          {scene === 'CUSTOM_SCENE' && (
             <motion.div
-              key="scene-gifts"
+              key="scene-custom"
               className="w-full"
-              initial={{ opacity: 0, scale: 0.95 }}
+              initial={{ opacity: 1, scale: 1 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 1.05 }}
-              transition={{ duration: 0.4 }}
+              transition={{ duration: 0.3 }}
             >
-              <Scene3Gifts
+              <CustomRevealScene
                 config={birthdayData}
-                onNext={() => setScene('WISH')}
-              />
-            </motion.div>
-          )}
-
-          {/* MÀN 4: THẢ ĐÈN TRỜI ƯỚC (File riêng: src/components/Scene4Wish.tsx) */}
-          {scene === 'WISH' && (
-            <motion.div
-              key="scene-wish"
-              className="w-full"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 1.05 }}
-              transition={{ duration: 0.4 }}
-            >
-              <Scene4Wish
-                config={birthdayData}
-                onWishSubmitted={(wish) => setUserWish(wish)}
-                onNext={() => setScene('FINALE')}
-              />
-            </motion.div>
-          )}
-
-          {/* MÀN 5: THIỆP POLAROID & BẮN TIM (File riêng: src/components/Scene5Finale.tsx) */}
-          {scene === 'FINALE' && (
-            <motion.div
-              key="scene-finale"
-              className="w-full"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.4 }}
-            >
-              <Scene5Finale
-                config={birthdayData}
-                userWish={userWish}
-                onRestart={() => {
-                  soundManager.stopMelody();
-                  setScene('LOCK');
-                }}
+                onBack={() => setScene('CELEBRATION')}
               />
             </motion.div>
           )}
         </AnimatePresence>
       </div>
+
+      {/* 🌸 HIỆU ỨNG HOA BUNG NỞ KÍN MÀN HÌNH RỒI RƠI XUỐNG ĐỂ LỘ RA MÀN TIẾP THEO */}
+      {flowerBurstTheme && (
+        <FlowerBloomBurst
+          theme={flowerBurstTheme}
+          onFullCoverage={() => {
+            // Khi hoa nở bung kín 100% màn hình, chuyển scene sang CUSTOM_SCENE ngay dưới lớp hoa dày cộp!
+            setScene('CUSTOM_SCENE');
+          }}
+          onComplete={() => {
+            // Khi toàn bộ hoa đã rơi xuống hết khỏi màn hình, gỡ bỏ canvas để tương tác màn mới
+            setFlowerBurstTheme(null);
+          }}
+        />
+      )}
+
+      {/* 🌌 HIỆU ỨNG THÁC SAO PHỦ KÍN 100% MÀN HÌNH RỒI RƠI XUỐNG ĐỂ LỘ RA MÀN HÌNH KHÓA */}
+      {isStarBurstActive && (
+        <StarCascadeBurst
+          onFullCoverage={() => {
+            // Khi sao phủ kín 100% màn hình: chuyển ngay sang LOCK ở phía dưới lớp sao
+            setScene('LOCK');
+          }}
+          onComplete={() => {
+            // Khi toàn bộ sao đã rơi xuống hết khỏi màn hình: gỡ bỏ canvas để tương tác
+            setIsStarBurstActive(false);
+          }}
+        />
+      )}
     </main>
   );
 }

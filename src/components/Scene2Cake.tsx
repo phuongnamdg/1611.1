@@ -3,15 +3,17 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
-import { Gift, ArrowRight } from "lucide-react";
+import { Sparkles, ArrowRight } from "lucide-react";
 import { soundManager } from "@/utils/sound";
 import { BirthdayConfig } from "@/types/birthday";
+import { FlowerTheme } from "@/components/FlowerBloomBurst";
 import Cake2D from "./Cake2D";
 import PaintWipeReveal from "./PaintWipeReveal";
 
 interface Props {
   config?: BirthdayConfig;
   onNext: () => void;
+  onStartFlowerBloom?: (theme: FlowerTheme) => void;
 }
 
 const INTRO_SENTENCES = [
@@ -20,7 +22,11 @@ const INTRO_SENTENCES = [
   "Và bây giờ, hãy nhắm mắt lại, cùng thổi nến và ước một điều ước nhé! ✨",
 ];
 
-export default function Scene2Cake({ onNext }: Props) {
+export default function Scene2Cake({ config, onNext, onStartFlowerBloom }: Props) {
+  const sentences = config?.cakeIntroSentences && config.cakeIntroSentences.length > 0
+    ? config.cakeIntroSentences
+    : INTRO_SENTENCES;
+
   // Trạng thái: 'TYPING' -> 'READY_TO_BLOW'
   const [stage, setStage] = useState<"TYPING" | "READY_TO_BLOW">("TYPING");
   const [sentenceIdx, setSentenceIdx] = useState<number>(0);
@@ -236,7 +242,7 @@ export default function Scene2Cake({ onNext }: Props) {
 
     const timer = setInterval(() => {
       setSentenceIdx((prev) => {
-        if (prev < INTRO_SENTENCES.length - 1) {
+        if (prev < sentences.length - 1) {
           soundManager.playKeypress(560 + (prev + 1) * 60);
           return prev + 1;
         } else {
@@ -250,7 +256,7 @@ export default function Scene2Cake({ onNext }: Props) {
     }, 3600);
 
     return () => clearInterval(timer);
-  }, [stage, startCakeDrop]);
+  }, [stage, startCakeDrop, sentences.length]);
 
   useEffect(() => {
     const handleUserInteraction = () => {
@@ -345,21 +351,6 @@ export default function Scene2Cake({ onNext }: Props) {
         ))}
       </motion.div>
 
-      {/* ⚡ NÚT BỎ QUA LỜI DẪN NHANH Ở GÓC TRÊN BÊN TRÁI KHI ĐANG TYPING */}
-      {stage === "TYPING" && (
-        <div className="fixed top-4 left-4 z-40">
-          <button
-            type="button"
-            onClick={startCakeDrop}
-            className="px-3.5 py-1.5 rounded-full bg-white/85 hover:bg-white text-rose-500 hover:text-rose-600 text-xs font-semibold shadow-xs border border-pink-200 backdrop-blur-md transition-all flex items-center gap-1.5 cursor-pointer hover:scale-105 active:scale-95"
-            title="Bỏ qua lời dẫn để xem bánh kem"
-          >
-            <span>Bỏ qua lời dẫn</span>
-            <span>⏩</span>
-          </button>
-        </div>
-      )}
-
       {/* ===================================================================== */}
       {/* 📜 GIAI ĐOẠN 1: 3 DÒNG CHỮ CHẠY MỜ DẦN ĐÈ LÊN NHAU                    */}
       {/* ===================================================================== */}
@@ -374,26 +365,9 @@ export default function Scene2Cake({ onNext }: Props) {
               transition={{ duration: 0.9, ease: "easeInOut" }}
               className="font-dancing text-3xl sm:text-4xl md:text-5xl text-[#942948] font-semibold leading-relaxed tracking-wide drop-shadow-[0_4px_24px_rgba(255,182,193,0.55)] max-w-md mx-auto"
             >
-              {INTRO_SENTENCES[sentenceIdx]}
+              {sentences[sentenceIdx]}
             </motion.p>
           </AnimatePresence>
-
-          {/* ⚡ NÚT BỎ QUA LỜI DẪN ĐỂ XEM BÁNH KEM NGAY */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.5 }}
-            className="mt-8"
-          >
-            <button
-              type="button"
-              onClick={startCakeDrop}
-              className="px-4 py-2 rounded-full bg-white/85 hover:bg-white text-rose-500 hover:text-rose-600 text-xs font-semibold shadow-md shadow-pink-200/50 border border-pink-200 backdrop-blur-md transition-all flex items-center gap-1.5 cursor-pointer hover:scale-105 active:scale-95"
-            >
-              <span>Bỏ qua lời dẫn</span>
-              <span>🎂 ⏩</span>
-            </button>
-          </motion.div>
         </div>
       )}
 
@@ -421,14 +395,14 @@ export default function Scene2Cake({ onNext }: Props) {
               animate={{ opacity: 1, y: 0 }}
               className="w-full pb-4 max-w-xs mt-3 flex flex-col gap-2.5 items-center"
             >
-              {/* Nút chuyển tiếp chính sang mở 3 hộp quà bí mật */}
+              {/* Nút chuyển tiếp chính sang không gian mới */}
               <button
                 type="button"
                 onClick={onNext}
                 className="w-full py-3.5 px-6 rounded-full bg-gradient-to-r from-pink-500 via-rose-500 to-pink-500 hover:brightness-105 text-white font-bold text-sm shadow-lg shadow-pink-300/40 flex items-center justify-center gap-2 hover:scale-105 active:scale-95 transition-all cursor-pointer"
               >
-                <Gift className="w-4 h-4 text-amber-200 animate-spin" />
-                <span>Mở 3 Chiếc Hộp Bí Mật</span>
+                <Sparkles className="w-4 h-4 text-amber-200" />
+                <span>Khám phá bất ngờ tiếp theo</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
 
@@ -473,7 +447,9 @@ export default function Scene2Cake({ onNext }: Props) {
             className="fixed inset-0 z-50 pointer-events-auto"
           >
             <PaintWipeReveal
+              config={config}
               onNext={onNext}
+              onStartFlowerBloom={onStartFlowerBloom}
               onBackToCake={() => {
                 setShowPaintWipe(false);
                 setHasReturnedFromPaintWipe(true);

@@ -2,13 +2,16 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import confetti from 'canvas-confetti';
-import { Gift, ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight, Sparkles } from 'lucide-react';
 import { soundManager } from '@/utils/sound';
+import FlowerBloomBurst, { FlowerTheme } from '@/components/FlowerBloomBurst';
+import { BirthdayConfig } from '@/types/birthday';
 
 interface Props {
+  config?: BirthdayConfig;
   onNext: () => void;
   onBackToCake?: () => void;
+  onStartFlowerBloom?: (theme: FlowerTheme) => void;
 }
 
 // Cấu hình các dòng sơn lỏng hữu cơ (Viscous Organic Drip)
@@ -147,11 +150,10 @@ const DRIP_STREAMS: OrganicDripStream[] = [
   },
 ];
 
-export default function PaintWipeReveal({ onNext, onBackToCake }: Props) {
+export default function PaintWipeReveal({ config, onNext, onStartFlowerBloom }: Props) {
   const [isPouring, setIsPouring] = useState<boolean>(true);
-  const [hasStartedWiping, setHasStartedWiping] = useState<boolean>(false);
-  const [isEnvelopeRevealed, setIsEnvelopeRevealed] = useState<boolean>(false);
-  const [openStage, setOpenStage] = useState<'IDLE' | 'SHAKING' | 'OPENING' | 'OPENED' | 'MINIMIZED'>('IDLE');
+  const [openStage, setOpenStage] = useState<'IDLE' | 'SHAKING' | 'ENVELOPE_OPENED' | 'BLOOMING' | 'OPENED' | 'MINIMIZED'>('IDLE');
+  const flowerTheme: FlowerTheme = 'WILDFLOWER';
   const [cursorPos, setCursorPos] = useState<{ x: number; y: number } | null>(null);
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -163,7 +165,6 @@ export default function PaintWipeReveal({ onNext, onBackToCake }: Props) {
   // Phân biệt rõ ràng giữa hành động LAU SƠN (kéo chuột/vuốt tay) và CLICK MỞ THƯ (chạm dứt khoát)
   const pointerStartPosRef = useRef<{ x: number; y: number } | null>(null);
   const hasDraggedRef = useRef<boolean>(false);
-  const hasTriggeredNextRef = useRef<boolean>(false);
   const finishPourRef = useRef<(() => void) | null>(null);
 
   // ===================================================================
@@ -492,15 +493,12 @@ export default function PaintWipeReveal({ onNext, onBackToCake }: Props) {
     }
 
     const ratio = sampleCount > 0 ? transparentCount / sampleCount : 0;
-    if (ratio >= 0.28) {
-      setIsEnvelopeRevealed(true);
-    }
     return ratio;
   }, []);
 
   // Hàm kích hoạt: Bấm vào sẽ rung rung một chút rồi bật mở phong thư và thiệp chúc mừng
   const triggerOpenEnvelope = useCallback(() => {
-    if (openStage === 'SHAKING' || openStage === 'OPENING') return;
+    if (openStage === 'SHAKING' || openStage === 'ENVELOPE_OPENED' || openStage === 'BLOOMING') return;
 
     if (openStage === 'MINIMIZED') {
       // Đang thu nhỏ xem phong bì -> bấm vào mở lại thiệp ngay
@@ -511,31 +509,28 @@ export default function PaintWipeReveal({ onNext, onBackToCake }: Props) {
 
     if (openStage !== 'IDLE') return;
 
-    // Giai đoạn 1: Bấm vào thì phong bì rung rung hồi hộp (~550ms)
+    // Giai đoạn 1: Bấm vào thì phong bì rung rung nhẹ nhàng (~400ms)
     setOpenStage('SHAKING');
-    soundManager.playKeypress(450);
+    soundManager.playKeypress(523.25);
 
-    // Giai đoạn 2: Sau 550ms rung -> Nắp phong bì bật mở (chuyển sang ảnh letter-opened.png) & nổ pháo hoa!
+    // Giai đoạn 2: Nắp phong bì bật mở (ENVELOPE_OPENED) trong 700ms -> người dùng thấy rõ hình ảnh mở phong thư
     setTimeout(() => {
-      setOpenStage('OPENING');
-      soundManager.playUnlockSuccess();
-      confetti({
-        particleCount: 85,
-        spread: 90,
-        origin: { y: 0.55 },
-        colors: ['#cbb3d4', '#fbcfe8', '#fed7aa', '#f472b6', '#a78bfa', '#ffd700'],
-      });
+      setOpenStage('ENVELOPE_OPENED');
+      soundManager.playKeypress(659.25);
 
-      // Giai đoạn 3: Sau 600ms tiếp theo -> Lá thiệp rút ra và mở to lên toàn màn hình
+      // Giai đoạn 3: Sau khi ngắm nắp thư mở ra -> Hoa từ miệng phong thư bắt đầu bung nở xòe rực rỡ!
       setTimeout(() => {
-        setOpenStage('OPENED');
-      }, 600);
-    }, 550);
-  }, [openStage]);
+        setOpenStage('BLOOMING');
+        if (onStartFlowerBloom) {
+          onStartFlowerBloom(flowerTheme);
+        }
+      }, 700);
+    }, 400);
+  }, [openStage, flowerTheme, onStartFlowerBloom]);
 
   // Kiểm tra xem vị trí click có trúng phong bì VÀ phong bì đã được lau lộ diện (>= 28%) hay chưa
   const checkButtonClick = useCallback((x: number, y: number) => {
-    if (openStage === 'SHAKING' || openStage === 'OPENING') return;
+    if (openStage === 'SHAKING' || openStage === 'ENVELOPE_OPENED' || openStage === 'BLOOMING') return;
     if (!buttonElRef.current) return;
     const b = buttonElRef.current.getBoundingClientRect();
     const pad = 16;
@@ -566,7 +561,6 @@ export default function PaintWipeReveal({ onNext, onBackToCake }: Props) {
       return;
     }
     isPointerDownRef.current = true;
-    setHasStartedWiping(true);
 
     // Ghi nhận vị trí bắt đầu chạm để phân biệt giữa CLICK (chạm dứt khoát) và DRAG (kéo lau sơn)
     pointerStartPosRef.current = { x: e.clientX, y: e.clientY };
@@ -678,7 +672,7 @@ export default function PaintWipeReveal({ onNext, onBackToCake }: Props) {
             {/* THÂN PHONG BÌ THƯ: KHI BẤM VÀO SẼ RUNG RUNG HỒI HỘP RỒI BẬT MỞ THƯ */}
             <motion.div
               key={openStage === 'IDLE' || openStage === 'SHAKING' ? 'closed-env' : 'opened-env'}
-              initial={openStage === 'OPENING' ? { scale: 0.9, rotate: -4 } : false}
+              initial={openStage === 'ENVELOPE_OPENED' ? { scale: 0.94, rotate: -2 } : false}
               animate={
                 openStage === 'SHAKING'
                   ? {
@@ -686,31 +680,42 @@ export default function PaintWipeReveal({ onNext, onBackToCake }: Props) {
                       x: [0, -4, 4, -4, 4, -2, 2, 0],
                       scale: [1, 1.08, 1.12, 1.08, 1],
                     }
-                  : openStage === 'OPENING'
+                  : openStage === 'ENVELOPE_OPENED'
                   ? {
-                      scale: [0.92, 1.15, 1],
-                      rotate: [-4, 3, -1, 0],
+                      scale: [0.94, 1.08, 1],
+                      rotate: [-2, 2, 0],
+                      opacity: 1,
+                    }
+                  : openStage === 'BLOOMING'
+                  ? {
+                      scale: 1.02,
+                      opacity: 1,
+                      rotate: 0,
                     }
                   : openStage === 'OPENED'
-                  ? { scale: 0.92, opacity: 0.35, y: 20 }
+                  ? { scale: 0.95, opacity: 0.85, y: 30 }
+                  : openStage === 'MINIMIZED'
+                  ? { scale: 1, opacity: 1, y: [0, -6, 0] }
                   : { y: [0, -5, 0] }
               }
               transition={
                 openStage === 'SHAKING'
-                  ? { duration: 0.55, ease: 'easeInOut' }
-                  : openStage === 'OPENING'
+                  ? { duration: 0.4, ease: 'easeInOut' }
+                  : openStage === 'ENVELOPE_OPENED'
                   ? { duration: 0.5, ease: 'easeOut' }
+                  : openStage === 'BLOOMING'
+                  ? { duration: 0.45, ease: 'easeOut' }
                   : openStage === 'OPENED'
                   ? { duration: 0.4 }
                   : { duration: 3.2, repeat: Infinity, ease: 'easeInOut' }
               }
               whileHover={openStage === 'IDLE' || openStage === 'MINIMIZED' ? { scale: 1.05 } : {}}
               whileTap={openStage === 'IDLE' || openStage === 'MINIMIZED' ? { scale: 0.96 } : {}}
-              className="relative w-44 sm:w-52 aspect-[4/3] drop-shadow-[0_12px_24px_rgba(145,115,80,0.22)] transition-transform duration-300 flex items-center justify-center"
+              className="relative w-48 sm:w-56 aspect-[4/3] drop-shadow-[0_12px_24px_rgba(145,115,80,0.22)] transition-transform duration-300 flex items-center justify-center"
             >
               <img
                 src={
-                  openStage === 'OPENING' || openStage === 'OPENED' || openStage === 'MINIMIZED'
+                  openStage === 'ENVELOPE_OPENED' || openStage === 'BLOOMING' || openStage === 'OPENED' || openStage === 'MINIMIZED'
                     ? '/letter-opened.png'
                     : '/letter.png'
                 }
@@ -728,35 +733,14 @@ export default function PaintWipeReveal({ onNext, onBackToCake }: Props) {
             >
               {openStage === 'SHAKING'
                 ? 'Đang mở thư... ✨'
-                : openStage === 'OPENING'
+                : openStage === 'ENVELOPE_OPENED'
                 ? 'Đã mở phong thư! 🌸'
+                : openStage === 'BLOOMING'
+                ? 'Hoa đang nở rộ... 🌸'
                 : openStage === 'MINIMIZED'
                 ? 'Chạm để đọc lại thiệp 💌'
-                : 'Tap to open'}
+                : config?.envelopePromptText || 'Tap to open'}
             </motion.p>
-          </div>
-
-          {/* Các nút bấm điều hướng góc dưới (Tone màu Kraft Vintage thanh nhã) */}
-          <div className="absolute bottom-6 z-20 flex items-center gap-3">
-            {onBackToCake && (
-              <button
-                type="button"
-                onClick={onBackToCake}
-                className="px-3.5 py-1.5 rounded-full bg-[#ede1cc]/80 hover:bg-[#ede1cc] text-[#785b40] text-xs font-semibold shadow-xs border border-[#d8c3a1] flex items-center gap-1.5 backdrop-blur-md cursor-pointer hover:scale-105 active:scale-95 transition-all"
-              >
-                <span>🎂</span>
-                <span>Xem lại bánh kem</span>
-              </button>
-            )}
-
-            <button
-              type="button"
-              onClick={onNext}
-              className="px-3.5 py-1.5 rounded-full bg-[#ede1cc]/80 hover:bg-[#ede1cc] text-[#a04554] text-xs font-semibold shadow-xs border border-[#d8c3a1] flex items-center gap-1 backdrop-blur-md cursor-pointer hover:scale-105 active:scale-95 transition-all"
-            >
-              <span>Bỏ qua</span>
-              <span>⏩</span>
-            </button>
           </div>
         </div>
       )}
@@ -789,44 +773,33 @@ export default function PaintWipeReveal({ onNext, onBackToCake }: Props) {
       )}
 
       {/* =================================================================== */}
-      {/* 3. LỜI GỢI Ý & HIỆU ỨNG CON TRỎ LAU SƠN ✨                          */}
+      {/* 3. HIỆU ỨNG CON TRỎ LAU SƠN ✨                                      */}
       {/* =================================================================== */}
-      {!isPouring && (
-        <>
-          <div className="fixed top-8 left-1/2 -translate-x-1/2 z-40 pointer-events-none text-center">
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
-              className="px-5 py-2 rounded-full bg-white/90 backdrop-blur-md border border-pink-200 text-stone-700 text-xs sm:text-sm font-bold shadow-lg shadow-pink-300/40 flex items-center gap-2"
-            >
-              <span className="text-base">{isEnvelopeRevealed ? '💌' : '🧽'}</span>
-              <span>
-                {isEnvelopeRevealed
-                  ? 'Bức thư đã lộ diện! Hãy chạm vào phong bì để mở nhé ✨'
-                  : 'Dùng con trỏ hoặc ngón tay lau bớt sơn để tìm bức thư bí mật ✨'}
-              </span>
-            </motion.div>
-          </div>
-
-          {/* Vệt sáng lấp lánh đi theo con trỏ khi lau */}
-          {cursorPos && (
-            <div
-              style={{
-                left: `${cursorPos.x}px`,
-                top: `${cursorPos.y}px`,
-              }}
-              className="fixed pointer-events-none z-45 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center"
-            >
-              <div className="w-12 h-12 rounded-full border-2 border-white/80 bg-white/20 backdrop-blur-xs shadow-[0_0_20px_rgba(255,255,255,0.7)] animate-ping opacity-60" />
-              <span className="absolute text-xl drop-shadow-md">✨</span>
-            </div>
-          )}
-        </>
+      {!isPouring && cursorPos && (
+        <div
+          style={{
+            left: `${cursorPos.x}px`,
+            top: `${cursorPos.y}px`,
+          }}
+          className="fixed pointer-events-none z-45 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center"
+        >
+          <div className="w-12 h-12 rounded-full border-2 border-white/80 bg-white/20 backdrop-blur-xs shadow-[0_0_20px_rgba(255,255,255,0.7)] animate-ping opacity-60" />
+          <span className="absolute text-xl drop-shadow-md">✨</span>
+        </div>
       )}
 
       {/* =================================================================== */}
-      {/* 4. TẤM THIỆP CHÚC MỪNG MỞ RA TỪ PHONG BÌ (RUNG RUNG RỒI MỞ THIỆP RA) */}
+      {/* 4. HIỆU ỨNG HOA XÒE NỞ RỘ Y HỆT TIKTOK (FLOWER BLOOM BURST)         */}
+      {/* HOA BUNG NỞ KÍN MÀN HÌNH RỒI MỞ TRỰC TIẾP RA BACKGROUND MỚI        */}
+      {/* =================================================================== */}
+      <AnimatePresence>
+        {openStage === 'BLOOMING' && !onStartFlowerBloom && (
+          <FlowerBloomBurst onComplete={onNext} theme={flowerTheme} />
+        )}
+      </AnimatePresence>
+
+      {/* =================================================================== */}
+      {/* 5. TẤM THIỆP CHÚC MỪNG MỞ RA TỪ PHONG BÌ (RUNG RUNG RỒI MỞ THIỆP RA) */}
       {/* =================================================================== */}
       <AnimatePresence>
         {openStage === 'OPENED' && (
@@ -834,13 +807,13 @@ export default function PaintWipeReveal({ onNext, onBackToCake }: Props) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs select-none"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/15 backdrop-blur-[1px] select-none"
           >
             <motion.div
-              initial={{ scale: 0.65, y: 70, opacity: 0 }}
+              initial={{ scale: 0.82, y: 120, opacity: 0 }}
               animate={{ scale: 1, y: 0, opacity: 1 }}
-              exit={{ scale: 0.8, y: 30, opacity: 0 }}
-              transition={{ type: 'spring', damping: 22, stiffness: 220 }}
+              exit={{ scale: 0.85, y: 40, opacity: 0 }}
+              transition={{ type: 'spring', damping: 26, stiffness: 220 }}
               className="relative w-full max-w-sm sm:max-w-md p-5 sm:p-7 rounded-[32px] bg-[#fffcf5] border-2 border-[#e6d1b8] shadow-[0_25px_60px_rgba(110,75,40,0.32)] flex flex-col items-center text-center max-h-[92vh] overflow-y-auto"
             >
               {/* Ánh sáng lung linh trên góc thiệp */}
@@ -903,8 +876,8 @@ export default function PaintWipeReveal({ onNext, onBackToCake }: Props) {
                   onClick={onNext}
                   className="w-full py-3 px-6 rounded-full bg-gradient-to-r from-[#d96a84] via-[#c9536e] to-[#d96a84] hover:brightness-105 text-white font-bold text-sm sm:text-base shadow-[0_8px_25px_rgba(201,83,110,0.38)] border border-white/60 flex items-center justify-center gap-2.5 transition-all cursor-pointer"
                 >
-                  <Gift className="w-5 h-5 text-amber-200 animate-bounce" />
-                  <span>Mở 3 Chiếc Hộp Bí Mật</span>
+                  <Sparkles className="w-5 h-5 text-amber-200 animate-pulse" />
+                  <span>Khám phá bất ngờ tiếp theo</span>
                   <ArrowRight className="w-4 h-4" />
                 </motion.button>
 

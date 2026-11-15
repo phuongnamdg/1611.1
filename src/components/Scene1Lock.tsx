@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Delete, Sparkles } from 'lucide-react';
 import { soundManager } from '@/utils/sound';
@@ -18,44 +18,69 @@ export default function Scene1Lock({ config, onUnlock }: Props) {
 
   const targetPassword = config?.birthDatePassword || '1611';
 
-  const handleKeyPress = (num: string) => {
-    soundManager.playKeypress();
-    if (pin.length < 4) {
-      const nextPin = pin + num;
-      setPin(nextPin);
-      setPinError('');
+  const handleKeyPress = useCallback(
+    (num: string) => {
+      soundManager.playKeypress();
+      setPin((prev) => {
+        if (prev.length < 4) {
+          const nextPin = prev + num;
+          setPinError('');
 
-      if (nextPin.length === 4) {
-        // 👇 MẬT KHẨU MẶC ĐỊNH LÀ 1611 (16/11) 👇
-        if (nextPin === targetPassword.replace(/[^0-9]/g, '')) {
-          soundManager.playUnlockSuccess();
-          setTimeout(() => {
-            onUnlock();
-          }, 600);
-        } else {
-          setPinError('Sai mật khẩu nha cưng? 😠😠');
-          soundManager.playKeypress(200);
-          setIsShaking(true);
-          setTimeout(() => {
-            setPin('');
-            setIsShaking(false);
-          }, 750);
+          if (nextPin.length === 4) {
+            // 👇 MẬT KHẨU MẶC ĐỊNH LÀ 1611 (16/11) 👇
+            if (nextPin === targetPassword.replace(/[^0-9]/g, '')) {
+              soundManager.playUnlockSuccess();
+              setTimeout(() => {
+                onUnlock();
+              }, 600);
+            } else {
+              setPinError(config?.lockErrorMsg || 'Sai mật khẩu nha cưng? 😠😠');
+              soundManager.playKeypress(200);
+              setIsShaking(true);
+              setTimeout(() => {
+                setPin('');
+                setIsShaking(false);
+              }, 750);
+            }
+          }
+          return nextPin;
         }
-      }
-    }
-  };
+        return prev;
+      });
+    },
+    [targetPassword, onUnlock, config?.lockErrorMsg]
+  );
 
-  const handleClear = () => {
+  const handleClear = useCallback(() => {
     soundManager.playKeypress(400);
     setPin('');
     setPinError('');
-  };
+  }, []);
 
-  const handleDelete = () => {
+  const handleDelete = useCallback(() => {
     soundManager.playKeypress(400);
     setPin((prev) => prev.slice(0, -1));
     setPinError('');
-  };
+  }, []);
+
+  // 🎹 Hỗ trợ gõ trực tiếp từ bàn phím máy tính lẫn click chuột trên màn hình
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key >= '0' && e.key <= '9') {
+        e.preventDefault();
+        handleKeyPress(e.key);
+      } else if (e.key === 'Backspace') {
+        e.preventDefault();
+        handleDelete();
+      } else if (e.key === 'Escape' || e.key === 'c' || e.key === 'C') {
+        e.preventDefault();
+        handleClear();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleKeyPress, handleDelete, handleClear]);
 
   return (
     <motion.div
@@ -65,21 +90,8 @@ export default function Scene1Lock({ config, onUnlock }: Props) {
       exit={{ opacity: 0, scale: 1.05 }}
       className="relative z-20 flex flex-col items-center justify-center min-h-screen px-4 py-8 w-full font-sans"
     >
-      {/* ⚡ NÚT SKIP NHANH Ở GÓC TRÊN BÊN TRÁI */}
-      <div className="fixed top-4 left-4 z-40">
-        <button
-          type="button"
-          onClick={onUnlock}
-          className="px-3.5 py-1.5 rounded-full bg-white/85 hover:bg-white text-rose-500 hover:text-rose-600 text-xs font-semibold shadow-xs border border-pink-200 backdrop-blur-md transition-all flex items-center gap-1.5 cursor-pointer hover:scale-105 active:scale-95"
-          title="Bỏ qua mật khẩu để xem nhanh"
-        >
-          <span>Bỏ qua</span>
-          <span>⏩</span>
-        </button>
-      </div>
-
       {/* ===================================================================== */}
-      {/* KHUNG CARD CHÍNH 2 CỘT                 */}
+      {/* KHUNG CARD CHÍNH 2 CỘT                                                */}
       {/* ===================================================================== */}
       <div className="w-full max-w-lg sm:max-w-xl bg-white/95 backdrop-blur-xl rounded-[32px] p-5 sm:p-7 shadow-[0_20px_50px_rgba(255,182,193,0.35)] border border-pink-100 flex flex-col sm:flex-row items-center gap-5 sm:gap-6">
         
@@ -109,7 +121,7 @@ export default function Scene1Lock({ config, onUnlock }: Props) {
               <Sparkles className="w-3.5 h-3.5 fill-pink-300" />
             </motion.div>
 
-            {/* 👇 THAY ẢNH BẰNG CÁCH THẢ FILE VÀO public/avatar.jpg HOẶC SỬA LINK DƯỚI 👇 */}
+            {/* 👇 THAY ẢNH BẰNG CÁCH THẢ FILE VÀO public/avt.jpg HOẶC SỬA LINK DƯỚI 👇 */}
             <img
               src="/avt.jpg"
               alt="Công chúa"
@@ -163,7 +175,7 @@ export default function Scene1Lock({ config, onUnlock }: Props) {
               <button
                 key={digit}
                 onClick={() => handleKeyPress(digit)}
-                className="h-11 rounded-xl bg-[#fff7f2] hover:bg-[#ffede2] text-[#b36363] font-bold text-base border border-[#fae5d9] shadow-sm flex items-center justify-center transition-all active:scale-95"
+                className="h-11 rounded-xl bg-[#fff7f2] hover:bg-[#ffede2] text-[#b36363] font-bold text-base border border-[#fae5d9] shadow-sm flex items-center justify-center transition-all active:scale-95 cursor-pointer"
               >
                 {digit}
               </button>
@@ -172,7 +184,7 @@ export default function Scene1Lock({ config, onUnlock }: Props) {
             {/* Nút C (Clear / Xóa hết) */}
             <button
               onClick={handleClear}
-              className="h-11 rounded-xl bg-[#fff7f2] hover:bg-rose-50 text-[#c25e5e] font-bold text-sm border border-[#fae5d9] shadow-sm flex items-center justify-center transition-all active:scale-95"
+              className="h-11 rounded-xl bg-[#fff7f2] hover:bg-rose-50 text-[#c25e5e] font-bold text-sm border border-[#fae5d9] shadow-sm flex items-center justify-center transition-all active:scale-95 cursor-pointer"
             >
               C
             </button>
@@ -180,7 +192,7 @@ export default function Scene1Lock({ config, onUnlock }: Props) {
             {/* Phím 0 */}
             <button
               onClick={() => handleKeyPress('0')}
-              className="h-11 rounded-xl bg-[#fff7f2] hover:bg-[#ffede2] text-[#b36363] font-bold text-base border border-[#fae5d9] shadow-sm flex items-center justify-center transition-all active:scale-95"
+              className="h-11 rounded-xl bg-[#fff7f2] hover:bg-[#ffede2] text-[#b36363] font-bold text-base border border-[#fae5d9] shadow-sm flex items-center justify-center transition-all active:scale-95 cursor-pointer"
             >
               0
             </button>
@@ -188,22 +200,10 @@ export default function Scene1Lock({ config, onUnlock }: Props) {
             {/* Phím Xóa 1 số (Backspace) */}
             <button
               onClick={handleDelete}
-              className="h-11 rounded-xl bg-[#fff7f2] hover:bg-rose-50 text-[#c25e5e] font-bold text-base border border-[#fae5d9] shadow-sm flex items-center justify-center transition-all active:scale-95"
+              className="h-11 rounded-xl bg-[#fff7f2] hover:bg-rose-50 text-[#c25e5e] font-bold text-base border border-[#fae5d9] shadow-sm flex items-center justify-center transition-all active:scale-95 cursor-pointer"
               aria-label="Xóa"
             >
               <Delete className="w-5 h-5" />
-            </button>
-          </div>
-
-          {/* ⚡ NÚT BỎ QUA MẬT KHẨU (TIỆN LỢI ĐỂ TEST / XEM BÁNH KEM NGAY) */}
-          <div className="mt-3.5 w-full flex justify-center">
-            <button
-              type="button"
-              onClick={onUnlock}
-              className="px-4 py-1.5 rounded-full bg-white/80 hover:bg-white text-rose-500 hover:text-rose-600 text-xs font-semibold shadow-xs border border-pink-200/80 transition-all flex items-center gap-1.5 cursor-pointer hover:scale-105 active:scale-95"
-            >
-              <span>Bỏ qua mật khẩu</span>
-              <span className="text-[10px]">⏩</span>
             </button>
           </div>
         </div>

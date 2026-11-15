@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import confetti from 'canvas-confetti';
 import { Mic } from 'lucide-react';
 
 interface Props {
@@ -21,29 +20,6 @@ export default function Cake2D({
   isMicListening = false,
   onRequestMic,
 }: Props) {
-  // Key hiệu ứng để xem lại mở băng rôn bất kỳ lúc nào
-  const [bannerKey, setBannerKey] = useState<number>(0);
-
-  const handleReplayBanner = () => {
-    setBannerKey((k) => k + 1);
-    confetti({
-      particleCount: 65,
-      angle: 60,
-      spread: 60,
-      origin: { x: 0.05, y: 0.85 },
-      colors: ["#FFB7C5", "#FF69B4", "#FFD700", "#FFF0F5", "#FF8DA1"],
-      startVelocity: 45,
-    });
-    confetti({
-      particleCount: 65,
-      angle: 120,
-      spread: 60,
-      origin: { x: 0.95, y: 0.85 },
-      colors: ["#FFB7C5", "#FF69B4", "#FFD700", "#FFF0F5", "#FF8DA1"],
-      startVelocity: 45,
-    });
-  };
-
   // Tiến trình nhấn giữ (0 đến 100%)
   const [holdProgress, setHoldProgress] = useState<number>(0);
   const [isPressing, setIsPressing] = useState<boolean>(false);
@@ -131,44 +107,6 @@ export default function Cake2D({
   return (
     <div className="relative w-full max-w-[380px] sm:max-w-[420px] mx-auto flex flex-col items-center justify-center select-none py-2">
       {/* =================================================================== */}
-      {/* DÒNG HƯỚNG DẪN TƯƠNG TÁC (TỰ ĐỘNG CHUYỂN TRẠNG THÁI)                */}
-      {/* =================================================================== */}
-      <div className="min-h-[38px] flex items-center justify-center mb-1 text-center z-30">
-        {!isCandleBlown ? (
-          <motion.div
-            key={isPressing || blowStrength > 0.12 ? 'holding' : isMicListening ? 'mic-on' : 'idle'}
-            initial={{ opacity: 0, y: -4 }}
-            animate={{ opacity: 1, y: 0 }}
-            onClick={() => {
-              if (!isCandleBlown) {
-                if (!isMicListening && onRequestMic) {
-                  onRequestMic();
-                } else {
-                  setHoldProgress(100);
-                }
-              }
-            }}
-            className={`px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all cursor-pointer select-none active:scale-95 ${
-              isPressing || blowStrength > 0.12
-                ? 'bg-amber-500 text-stone-900 shadow-lg shadow-amber-500/40 animate-pulse font-bold'
-                : isMicListening
-                ? 'bg-emerald-500/90 text-white border border-emerald-300/40 shadow-[0_0_15px_rgba(16,185,129,0.35)]'
-                : 'bg-black/60 backdrop-blur-md text-[#fde68a] border border-amber-400/30 shadow-[0_0_15px_rgba(251,191,36,0.15)] hover:bg-black/80'
-            }`}
-            title="Nhấn giữ ngọn nến hoặc thổi vào mic để thổi tắt"
-          >
-            {isPressing || blowStrength > 0.12
-              ? holdProgress > 60
-                ? 'giữ nữa… sắp tắt rồi! 💨'
-                : 'giữ tiếp… đang thổi nến… 💨'
-              : isMicListening
-              ? '🎙️ Đang nghe micro… Hãy thổi phù vào mic nào! 💨'
-              : '👆 Nhấn giữ nến để thổi (hoặc bấm để bật Micro 🎤)'}
-          </motion.div>
-        ) : null}
-      </div>
-
-      {/* =================================================================== */}
       {/* KHUNG BĂNG RÔN & BÁNH KEM CHUẨN MẪU TIKTOK                          */}
       {/* =================================================================== */}
       <div className="relative w-full flex flex-col items-center justify-center">
@@ -176,7 +114,7 @@ export default function Cake2D({
         <div className="relative w-[110%] sm:w-[116%] -mb-4 sm:-mb-6 z-10 select-none pointer-events-none">
           {/* Dải cờ mở bung từ tâm sang 2 bên bằng scaleX */}
           <motion.div
-            key={`banner-${bannerKey}`}
+            key="banner-open"
             style={{ transformOrigin: '50% 20%' }}
             initial={{ scaleX: 0, opacity: 0.9 }}
             animate={{ scaleX: 1, opacity: 1 }}
@@ -257,7 +195,7 @@ export default function Cake2D({
 
           {/* 🌟 2 Điểm sao sáng lướt mở từ tâm sang 2 bên */}
           <motion.div
-            key={`star-l-${bannerKey}`}
+            key="star-left"
             initial={{ left: '50%', opacity: 0 }}
             animate={{
               left: ['50%', '50%', '0%'],
@@ -275,7 +213,7 @@ export default function Cake2D({
           </motion.div>
 
           <motion.div
-            key={`star-r-${bannerKey}`}
+            key="star-right"
             initial={{ left: '50%', opacity: 0 }}
             animate={{
               left: ['50%', '50%', '100%'],
@@ -457,29 +395,16 @@ export default function Cake2D({
                 title="Bấm để trình duyệt cấp quyền truy cập Micro"
               >
                 <Mic className="w-4 h-4 text-amber-200 animate-pulse" />
-                <span>Bật Micro để thổi nến 🎙️</span>
+                <span></span>
               </button>
             ) : (
               <div className="px-3.5 py-1.5 rounded-full bg-emerald-500/90 text-white text-xs font-bold shadow-md shadow-emerald-500/30 flex items-center gap-2 border border-emerald-300/40 animate-pulse">
                 <span className="w-2 h-2 rounded-full bg-white animate-ping" />
-                <span>Micro đang lắng nghe… Hãy thổi phù vào mic nào! 💨</span>
+                <span>Thổi vào mic hoặc chạm vào nến để thổi tắt</span>
               </div>
             )}
           </div>
         )}
-
-        {/* 🔄 NÚT XEM LẠI MỞ BĂNG RÔN & PHÁO HOA (GIÚP TEST TRỰC QUAN MỌI LÚC) */}
-        <div className="mt-3 flex justify-center z-30">
-          <button
-            type="button"
-            onClick={handleReplayBanner}
-            className="px-3.5 py-1.5 rounded-full bg-white/70 hover:bg-white text-rose-500 hover:text-rose-600 text-xs font-semibold border border-pink-200/80 shadow-xs backdrop-blur-md transition-all flex items-center gap-1.5 cursor-pointer hover:scale-105 active:scale-95"
-            title="Bấm để phát lại hoạt ảnh mở dải cờ từ tâm và bắn pháo hoa"
-          >
-            <span>🔄</span>
-            <span>Xem lại mở băng rôn & pháo hoa</span>
-          </button>
-        </div>
       </div>
     </div>
   );

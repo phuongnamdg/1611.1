@@ -7,21 +7,19 @@ export interface BirthdayConfig {
 
   // Tiêu đề các màn hình
   scene1Title: string; // Tiêu đề Màn 1 (Cổng bí mật)
-  scene2Title: string; // Tiêu đề Màn 2 (Chúc mừng & Thổi nến)
-  scene3Title: string; // Tiêu đề Màn 3 (3 Hộp quà)
-  scene4Title: string; // Tiêu đề Màn 4 (Thả đèn trời)
-  scene5Title: string; // Tiêu đề Màn 5 (Kỷ niệm kết thúc)
+  scene2Title?: string;
 
-  // Nội dung chi tiết các món quà
-  defaultWishes: string[];
-  flowerMessage: string;
-  songTitle: string;
-  songArtist: string;
-  letterContent: string[];
+  // Tùy chỉnh lời thoại các màn
+  lockErrorMsg?: string;
+  cakeIntroSentences?: string[];
+  envelopePromptText?: string;
+  paperCardsText?: {
+    [cardId: string]: string[];
+  };
 
-  // Thiệp cuối trang (Màn 5 Polaroid)
-  finaleCardQuote: string;
-  finaleCardHashtag: string;
+  // Cấu hình Sảnh chờ (The Waiting Room)
+  targetBirthdayTime?: string; // Múi giờ Asia/Ho_Chi_Minh (ví dụ "2026-11-16T00:00:00+07:00")
+  isCountdownTestMode?: boolean; // Bật nút test nhanh
 }
 
-export type SceneState = 'LOCK' | 'CELEBRATION' | 'GIFTS' | 'WISH' | 'FINALE';
+export type SceneState = 'WAITING_ROOM' | 'LOCK' | 'CELEBRATION' | 'CUSTOM_SCENE';
